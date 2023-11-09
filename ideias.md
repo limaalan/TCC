@@ -57,3 +57,13 @@ Jogo terá uma estética low poly "fofinha" (lovely planet), duas ou três armas
 <img src="imgs/overwatch.jpeg" width=50%/>
 
 [fonte](https://pt.jugomobile.com/revisao-de-overwatch-2/)
+
+# Orientação
+Parágrafos tem uma "mini" introdução e "mini" finalização, e costumam ser auto-contidos.
+
+deixar os termos em inglês em *italico*
+deixar multiplayer por multijogador
+
+# FONTES
+
+https://pngtree.com/free-png-vectors/keyboard -> TECLADO
