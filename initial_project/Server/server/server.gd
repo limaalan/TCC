@@ -3,9 +3,11 @@ const PORT := 7777
 const MAX_CLIENTS :=64
 const MAX_LOBBIES:= 1 
 const MAX_PLAYERS_PER_LOBBY :=2
+const DISTANCE_BETWEEN_LOBBIES = 100
 
 var lobbies :Array[Lobby] = []
 var idle_clients:Array[int]= []
+var lobby_spots : Array[Lobby] = []
 var peer := ENetMultiplayerPeer.new()
 
 func _ready() -> void: 
@@ -18,6 +20,8 @@ func _ready() -> void:
 	multiplayer.multiplayer_peer = peer
 	peer.peer_connected.connect(_on_peer_connected)
 	peer.peer_disconnected.connect(_on_peer_disconnected)
+	
+	lobby_spots.resize(MAX_LOBBIES)
 	
 	
 func _on_peer_connected(id:int)-> void:
@@ -39,6 +43,7 @@ func remove_client_from_lobby(client_id:int)-> void:
 		
 	if maybe_lobby.clients.is_empty():
 		lobbies.erase(maybe_lobby)
+		update_lobby_spots()
 		maybe_lobby.queue_free()
 		print("cliend %d desconectou-se do lobby" %client_id)
 
@@ -48,6 +53,21 @@ func get_lobby_from_client_id(id:int)->Lobby:
 		if lobby.clients.has(id):
 			return lobby
 	return null
+
+#Associa um lobby à uma coordenada 3d
+func update_lobby_spots() ->void:
+	for lobby in lobbies:
+		if lobby in lobby_spots:
+			continue
+		for i in lobby_spots.size():
+			if lobby_spots[i] == null :
+				lobby_spots[i] = lobby
+				lobby.global_position.y = DISTANCE_BETWEEN_LOBBIES*i
+				break
+				
+	for i in lobby_spots.size():
+		if lobby_spots[i] != null and lobby_spots[i] not  in lobbies:
+			lobby_spots[i] = null
 	
 @rpc("any_peer", "call_remote", "reliable")
 func c_try_connect_client_to_lobby()-> void :
@@ -57,21 +77,39 @@ func c_try_connect_client_to_lobby()-> void :
 	if maybe_lobby:
 		maybe_lobby.add_client(client_id)
 		idle_clients.erase(client_id)
-		print("Cliente %d conectou-se ao lobby %s" %[client_id, maybe_lobby.name])
 		lobby_clients_updated(maybe_lobby)
+		if maybe_lobby.clients.size() >= MAX_PLAYERS_PER_LOBBY:
+			lock_lobby(maybe_lobby)
+		
+		print("Cliente %d conectou-se ao lobby %s" %[client_id, maybe_lobby.name])
 		return
 	s_client_cant_connect_to_lobby.rpc_id(client_id)
 	
+func lock_lobby(lobby:Lobby)->void:
+	lobby.status = Lobby.LOCKED
+	create_lobby_on_clients(lobby)
+	
+func create_lobby_on_clients(lobby:Lobby)->void:
+	for lobby_client_id in lobby.clients:
+		s_create_lobby_on_clients.rpc_id(lobby_client_id, lobby.name)
+@rpc("authority", "call_remote", "reliable")
+func s_create_lobby_on_clients(lobby_name:String)->void:
+	pass
+
 func get_non_full_lobby()->Lobby: #get or create
 	for lobby in lobbies:
+		if lobby.status != Lobby.IDLE:
+			continue
 		print("Size:", lobby.clients.size())
 		if lobby.clients.size() < MAX_PLAYERS_PER_LOBBY:
+
 			return lobby
 	if lobbies.size()< MAX_LOBBIES:
 		print("Lobbies size:" , lobbies.size())
 		var new_lobby := Lobby.new()
 		lobbies.append(new_lobby)
 		new_lobby.name = str(new_lobby.get_instance_id())
+		update_lobby_spots()
 		add_child(new_lobby)
 		return new_lobby
 	print("Todas as salas estão cheias.")
