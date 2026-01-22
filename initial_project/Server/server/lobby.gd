@@ -38,7 +38,23 @@ func start_loading_map():
 func s_start_loading_map():#passar ID do mapa quando eu tiver vários mapas...
 	pass
 	
+@rpc ("any_peer", "call_local", "reliable")
+func c_map_ready()->void:
+	var client_id =  multiplayer.get_remote_sender_id()
+	if !client_id in clients or client_id in ready_clients:
+		return
+	ready_clients.append(client_id)
 	
-	
+	for client in clients :
+		if client not in ready_clients:
+			return
+	for ready_client_id in ready_clients:
+		s_start_match.rpc_id(ready_client_id)
+		
+	ready_clients.clear()
+
+@rpc("authority", "call_remote", "reliable")
+func s_start_match()->void:
+	pass
 	
 	
