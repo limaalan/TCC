@@ -27,7 +27,7 @@ func c_lock_client():
 	ready_clients.clear()
 
 func start_loading_map():
-	var map = Node3D.new()
+	var map = load("res://maps/server_map_farm.tscn").instantiate()
 	map.name="Map"
 	add_child(map, true)  #força nome 
 	
@@ -48,11 +48,53 @@ func c_map_ready()->void:
 	for client in clients :
 		if client not in ready_clients:
 			return
+			
+	spawn_players()
+	await get_tree().create_timer(1).timeout
+	
 	for ready_client_id in ready_clients:
 		s_start_match.rpc_id(ready_client_id)
 		
 	ready_clients.clear()
 
+func spawn_players()->void:
+	var spawn_points := get_tree().get_nodes_in_group("SpawnPoints")
+	var blue_spawn_points :Array[Node3D] = []
+	var red_spawn_points :Array[Node3D] = []
+	
+	for spawn_point in spawn_points:
+		if spawn_point.name.begins_with("Blue"):
+			blue_spawn_points.append(spawn_point)
+		elif  spawn_point.name.begins_with("Red"):
+			red_spawn_points.append(spawn_point)
+			
+	ready_clients.shuffle() # embaralha array com os clientes prontos
+	
+	for i in ready_clients.size():
+		var team := 0 
+		var spawn_tform := Transform3D.IDENTITY
+		if i%2 == 0 :
+			team = 0 
+			spawn_tform = blue_spawn_points[0].global_transform # utilizando o global pra garantir que vai ser pego certo independente da hierarquia
+			blue_spawn_points.pop_front()
+			
+		else :
+			team = 1
+			spawn_tform = red_spawn_points[0].global_transform
+			red_spawn_points.pop_front()
+		var player :CharacterBody3D = preload("res://player/player_server.tscn").instantiate()
+		player.name = str(ready_clients[i])
+		player.global_transform = spawn_tform
+		add_child(player, true)
+		
+		for ready_client_id in ready_clients :
+			s_spawn_player.rpc_id(ready_client_id, ready_clients[i], spawn_tform, team)
+			
+
+@rpc ("authority", "call_remote", "reliable")
+func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int)->void:
+	pass
+		 
 @rpc("authority", "call_remote", "reliable")
 func s_start_match()->void:
 	pass
