@@ -2,10 +2,25 @@ extends Node3D
 class_name Lobby
 enum {IDLE, LOCKED, GAME}
 var status:= IDLE
+# Este dicionário vai manter o estado de toda a partida ( tempo , pontuação ... )
+# dentro da chave "ps" estão os valores dos player states
+var world_state := {"ps":{}} 
+
 
 var clients : Array[int] = []
 var ready_clients: Array[int] =[]
 
+func _ready() -> void:
+	set_physics_process(false)
+
+func _physics_process(delta: float) -> void:
+	for client_id in clients:
+		s_send_world_state.rpc_id( client_id, world_state) 
+		
+@rpc ("authority", "call_remote", "unreliable_ordered")
+func s_send_world_state(new_word_state:Dictionary)->void:
+	pass
+	
 func add_client(id:int)->void: 
 	clients.append(id)
 	
@@ -56,6 +71,7 @@ func c_map_ready()->void:
 		s_start_match.rpc_id(ready_client_id)
 		
 	ready_clients.clear()
+	set_physics_process(true)
 
 func spawn_players()->void:
 	var spawn_points := get_tree().get_nodes_in_group("SpawnPoints")
@@ -98,5 +114,11 @@ func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int)->void
 @rpc("authority", "call_remote", "reliable")
 func s_start_match()->void:
 	pass
+	
+@rpc("any_peer", "call_remote", "unreliable_ordered")
+func c_send_player_state(playerState:Dictionary)->void:
+	#atribuindo ao state global dos jogadores o valor recebido por RPC das posições
+	world_state.ps[multiplayer.get_remote_sender_id()] = playerState 
+	
 	
 	
