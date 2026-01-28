@@ -91,6 +91,7 @@ func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int)->void
 		player = preload("res://player/local/player_local.tscn").instantiate()
 	else : 
 		player = preload("res://player/remote/player_remote.tscn").instantiate()
+		player.team = team
 	
 	player.name = str(client_id)
 	player.global_transform = spawn_tform
