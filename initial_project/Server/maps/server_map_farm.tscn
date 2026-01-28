@@ -487,28 +487,28 @@ data = PackedVector3Array(0.8713, 0.7999, -0.0026, 1.0208, 0.9489, -0.0026, 1.02
 [node name="SpawnPoints" type="Node3D" parent="."]
 
 [node name="BluePlayerSpawnPoint" type="Node3D" parent="SpawnPoints" groups=["SpawnPoints"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.675, 0, 30)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.675, 0, 6.460515)
 
 [node name="BluePlayerSpawnPoint2" type="Node3D" parent="SpawnPoints" groups=["SpawnPoints"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.675, 0, 30)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.675, 0, 6.460515)
 
 [node name="BluePlayerSpawnPoint3" type="Node3D" parent="SpawnPoints" groups=["SpawnPoints"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32500005, 0, 30)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32500005, 0, 6.460515)
 
 [node name="BluePlayerSpawnPoint4" type="Node3D" parent="SpawnPoints" groups=["SpawnPoints"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.325, 0, 30)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.325, 0, 6.460515)
 
 [node name="RedPlayerSpawnPoint5" type="Node3D" parent="SpawnPoints" groups=["SpawnPoints"]]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.3250001, 0, -30)
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.3250001, 0, -4.673504)
 
 [node name="RedPlayerSpawnPoint6" type="Node3D" parent="SpawnPoints" groups=["SpawnPoints"]]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.325, 0, -30)
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.325, 0, -4.673504)
 
 [node name="RedPlayerSpawnPoint7" type="Node3D" parent="SpawnPoints" groups=["SpawnPoints"]]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.6749998, 0, -30)
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.6749998, 0, -4.673504)
 
 [node name="RedPlayerSpawnPoint8" type="Node3D" parent="SpawnPoints" groups=["SpawnPoints"]]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 3.675, 0, -30)
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 3.675, 0, -4.673504)
 
 [node name="PlayerBoundaries" type="Node3D" parent="."]
 

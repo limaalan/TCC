@@ -4,7 +4,7 @@ class_name Lobby
 var players:= {} # Dicionário dos jogadores chave:valor =  { id: PlayerScene } 
 var world_state:Dictionary
 
-func get_local_player()->CharacterBody3D:
+func get_local_player()->PlayerLocal:
 	return players.get(multiplayer.get_unique_id())
 	
 func get_remote_players()->Dictionary:
@@ -12,7 +12,7 @@ func get_remote_players()->Dictionary:
 	for client_id in players.keys():
 		if client_id == multiplayer.get_unique_id():
 			continue
-		var maybe_remote_player : CharacterBody3D = players.get(client_id)
+		var maybe_remote_player : PlayerRemote = players.get(client_id)
 		if is_instance_valid(maybe_remote_player):
 			remote_players[client_id] = maybe_remote_player
 	
@@ -36,7 +36,8 @@ func create_player_data()->Dictionary:
 	var local_player := get_local_player()
 	var local_player_state := {
 		"pos":local_player.position,
-		"rot_y": local_player.rotation.y
+		"rot_y": local_player.rotation.y,
+		"anim": local_player.current_anim
 		}
 	return local_player_state
 	
@@ -49,10 +50,11 @@ func handle_world_state()->void:
 	for client_id in world_state.ps.keys():
 		if not client_id in remote_players.keys():
 			continue
-		var remote_player :CharacterBody3D = remote_players.get(client_id)
+		var remote_player :PlayerRemote = remote_players.get(client_id)
 		var data :Dictionary = world_state.ps.get(client_id) # pega o state daquele player remote específico ( pelo ID)
 		remote_player.position = data.pos
 		remote_player.rotation.y = data.rot_y
+		remote_player.set_anim(data.anim)
 	
 @rpc("any_peer", "call_remote", "unreliable_ordered")
 func c_send_player_state(playerState:Dictionary)->void:

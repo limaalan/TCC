@@ -1,5 +1,10 @@
 extends CharacterBody3D
+class_name PlayerLocal
 
+const IDLE_ANIM = 'Idle'
+const AIR_ANIM = 'Jump_Idle'
+const WALK_ANIM = 'Walk_Shoot'
+const RUN_ANIM = 'Run_Shoot'
 
 @export var normal_speed := 3.0
 @export var sprint_speed := 5.0
@@ -12,6 +17,8 @@ extends CharacterBody3D
 
 var is_grounded := true
 var is_sprinting := false
+var current_anim : String
+
 
 
 func _ready() -> void:
@@ -25,6 +32,17 @@ func set_procecess(enabled:bool)->void:
 
 func _physics_process(delta: float) -> void:
 	move()
+	choose_anim()
+	
+func choose_anim()->void:
+	if not is_grounded:
+		current_anim = AIR_ANIM
+		return
+	
+	if velocity.x or velocity.z :
+		current_anim = RUN_ANIM if is_sprinting else WALK_ANIM
+		return
+	current_anim = IDLE_ANIM
 
 
 func move():
