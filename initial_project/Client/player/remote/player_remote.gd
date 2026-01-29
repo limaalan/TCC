@@ -39,6 +39,12 @@ var team :int
 func _ready() -> void:
 	update_player_colors()
 	
+func update_body_geometry(old_data: Dictionary , new_data:Dictionary, lerp_weight:float)->void:
+	position = lerp(old_data.pos, new_data.pos, lerp_weight)
+	rotation.y = lerp_angle(old_data.rot_y , new_data.rot_y , lerp_weight)
+	set_anim(new_data.anim)
+	set_rot_x_visuals(lerp_angle(old_data.rot_x, new_data.rot_x, lerp_weight))
+	
 func update_player_colors() -> void:
 	var team_material = BLUE_MATERIAL if team == 0 else RED_MATERIAL
 	helmet_mesh.set_surface_override_material(HELMET_SURFACE_SLOT, team_material)

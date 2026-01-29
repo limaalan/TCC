@@ -1,8 +1,9 @@
 extends Node3D
 class_name Lobby
+const INTERPOLATION_BUFFER_MS := 100 
 
 var players:= {} # Dicionário dos jogadores chave:valor =  { id: PlayerScene } 
-var world_state:Dictionary
+var world_state_buffer:Array[Dictionary] = []
 
 func get_local_player()->PlayerLocal:
 	return players.get(multiplayer.get_unique_id())
@@ -44,19 +45,39 @@ func create_player_data()->Dictionary:
 	
 func handle_world_state()->void:
 	#ainda não inicializou , não tem playerState...
-	if not (world_state.has("ps")):
+	if world_state_buffer.size()<2:
 		return
 		
+	var target_render_unix_ms := floori(Time.get_unix_time_from_system() * 1000) - INTERPOLATION_BUFFER_MS
+	
+	#Remove states recebidos do server que já passaram
+	while world_state_buffer.size()>2 and target_render_unix_ms > world_state_buffer[1].t :
+		world_state_buffer.pop_front()
+		
+	var lerp_weight = remap(target_render_unix_ms, world_state_buffer[0].t, world_state_buffer[1].t, 0, 1)
+		
 	var remote_players := get_remote_players()
-	for client_id in world_state.ps.keys():
+	
+	#Se algum dos states está faltando player_states ps
+	if not world_state_buffer[0].has("ps") or not world_state_buffer[1 ].has("ps"):
+		return
+	
+	for client_id in world_state_buffer[1].ps.keys():
 		if not client_id in remote_players.keys():
 			continue
+			
+		if not client_id in world_state_buffer[0].ps.keys():
+			continue
+		
 		var remote_player :PlayerRemote = remote_players.get(client_id)
-		var data :Dictionary = world_state.ps.get(client_id) # pega o state daquele player remote específico ( pelo ID)
-		remote_player.position = data.pos
-		remote_player.rotation.y = data.rot_y
-		remote_player.set_anim(data.anim)
-		remote_player.set_rot_x_visuals(data.rot_x)
+		
+		remote_player.update_body_geometry(
+			world_state_buffer[0].ps.get(client_id),
+			world_state_buffer[1].ps.get(client_id),
+			lerp_weight
+		)
+		
+		
 	
 @rpc("any_peer", "call_remote", "unreliable_ordered")
 func c_send_player_state(playerState:Dictionary)->void:
@@ -103,4 +124,4 @@ func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int)->void
 	
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
-	world_state = new_word_state
+	world_state_buappend(new_word_state)

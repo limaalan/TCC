@@ -4,7 +4,10 @@ enum {IDLE, LOCKED, GAME}
 var status:= IDLE
 # Este dicionário vai manter o estado de toda a partida ( tempo , pontuação ... )
 # dentro da chave "ps" estão os valores dos player states
-var world_state := {"ps":{}} 
+# t = timestamp do servidor	
+var world_state := {"ps":{}, "t": 0.0} 
+
+const WORLD_STATE_SEND_FRAME :=3
 
 
 var clients : Array[int] = []
@@ -14,8 +17,10 @@ func _ready() -> void:
 	set_physics_process(false)
 
 func _physics_process(delta: float) -> void:
-	for client_id in clients:
-		s_send_world_state.rpc_id( client_id, world_state) 
+	if Engine.get_physics_frames()% WORLD_STATE_SEND_FRAME == 0:
+		world_state.t = floori(Time.get_unix_time_from_system()*1000)
+		for client_id in clients:
+			s_send_world_state.rpc_id( client_id, world_state) 
 		
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
