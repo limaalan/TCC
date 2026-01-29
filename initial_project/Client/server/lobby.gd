@@ -37,6 +37,7 @@ func create_player_data()->Dictionary:
 	var local_player_state := {
 		"pos":local_player.position,
 		"rot_y": local_player.rotation.y,
+		"rot_x": local_player.head.rotation.x,
 		"anim": local_player.current_anim
 		}
 	return local_player_state
@@ -55,6 +56,7 @@ func handle_world_state()->void:
 		remote_player.position = data.pos
 		remote_player.rotation.y = data.rot_y
 		remote_player.set_anim(data.anim)
+		remote_player.set_rot_x_visuals(data.rot_x)
 	
 @rpc("any_peer", "call_remote", "unreliable_ordered")
 func c_send_player_state(playerState:Dictionary)->void:
