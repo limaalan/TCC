@@ -6,6 +6,9 @@ signal on_lobby_locked
 const PORT := 7777
 const ADDRESS :="127.0.0.1"
 
+@onready var clock_sync_timer: Timer = $ClockSyncTimer
+var clock_deviation_ms:= 0
+const CLOCK_DEVIATION_CALC_WEIGHT= 0.5
 
 var peer := ENetMultiplayerPeer.new()
 
@@ -20,6 +23,7 @@ func _ready() -> void:
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	
 func _on_connected_to_server()-> void:
+	clock_sync_timer.start()
 	print ("conectou-se ao servidor")
 		
 		
@@ -56,3 +60,22 @@ func s_create_lobby_on_clients(lobby_name:String)->void:
 	lobby.name = lobby_name
 	add_child(lobby,true)
 	on_lobby_locked.emit()
+
+
+func _on_clock_sync_timer_timeout() -> void:
+	c_get_server_clock_time.rpc_id(1, floori(Time.get_unix_time_from_system()*1000))
+	
+#cliente mandando seu relógio
+@rpc("any_peer", "call_remote", "unreliable_ordered" )
+func c_get_server_clock_time(client_clock_time:int)->void:
+	pass
+	
+#ativando quando o server manda o tempo atual
+@rpc("any_peer", "call_remote", "unreliable_ordered" )
+func s_return_server_clock_time(server_clock_time:int, old_client_clock_time:int)->void:
+	var local_time_when_server_sent_time = (floori(Time.get_unix_time_from_system()*1000)+old_client_clock_time)/2
+	clock_deviation_ms = lerp(clock_deviation_ms, local_time_when_server_sent_time - server_clock_time,CLOCK_DEVIATION_CALC_WEIGHT)
+	
+	
+	
+	

@@ -2,7 +2,7 @@ extends Node
 const PORT := 7777
 const MAX_CLIENTS :=64
 const MAX_LOBBIES:= 1 
-const MAX_PLAYERS_PER_LOBBY :=2
+const MAX_PLAYERS_PER_LOBBY :=3
 const DISTANCE_BETWEEN_LOBBIES = 100
 
 var lobbies :Array[Lobby] = []
@@ -131,3 +131,13 @@ func s_client_cant_connect_to_lobby()-> void:
 func c_cancel_quick_play_search()->void:
 	var client_id = multiplayer.get_remote_sender_id()
 	remove_client_from_lobby(client_id)
+
+
+@rpc("any_peer", "call_remote", "unreliable_ordered" )
+func c_get_server_clock_time(client_clock_time:int)->void:
+	s_return_server_clock_time.rpc_id(multiplayer.get_remote_sender_id(), floori(Time.get_unix_time_from_system()*1000),client_clock_time )
+	
+@rpc("any_peer", "call_remote", "unreliable_ordered" )
+func s_return_server_clock_time(server_clock_time:int, old_client_clock_time:int)->void:
+	pass
+	

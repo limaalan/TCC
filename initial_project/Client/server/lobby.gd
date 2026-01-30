@@ -48,7 +48,7 @@ func handle_world_state()->void:
 	if world_state_buffer.size()<2:
 		return
 		
-	var target_render_unix_ms := floori(Time.get_unix_time_from_system() * 1000) - INTERPOLATION_BUFFER_MS
+	var target_render_unix_ms :int = floori(Time.get_unix_time_from_system() * 1000) - INTERPOLATION_BUFFER_MS - Server.clock_deviation_ms
 	
 	#Remove states recebidos do server que já passaram
 	while world_state_buffer.size()>2 and target_render_unix_ms > world_state_buffer[1].t :
@@ -124,4 +124,4 @@ func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int)->void
 	
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
-	world_state_buappend(new_word_state)
+	world_state_buffer.append(new_word_state)
