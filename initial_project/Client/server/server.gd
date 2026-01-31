@@ -30,11 +30,11 @@ func _on_connected_to_server()-> void:
 func _on_connection_failed()-> void:
 	print ("Falhou ao conectar-se ao servidor")
 		
-func try_connect_client_to_lobby()-> void:
-	c_try_connect_client_to_lobby.rpc_id(1)
+func try_connect_client_to_lobby(player_name:String)-> void:
+	c_try_connect_client_to_lobby.rpc_id(1,player_name)
 
 @rpc("any_peer", "call_remote", "reliable")
-func c_try_connect_client_to_lobby()-> void :
+func c_try_connect_client_to_lobby(player_name:String)-> void :
 	pass
 
 @rpc("authority", "call_remote", "reliable")

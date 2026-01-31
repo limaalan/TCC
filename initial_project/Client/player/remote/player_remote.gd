@@ -15,7 +15,7 @@ const ARM_Y_ROT_SCALAR: PackedFloat32Array = [ -0.39 , -1.25]
 @onready var bone_abdomen := skeleton.find_bone("Abdomen")
 @onready var bone_upper_arm_r := skeleton.find_bone("UpperArm.R")
 
-
+@onready var name_tag_player: Label3D = $NameTagPlayer
  
 const ANIM_BLEND_TIME = 0.2
 const RED_MATERIAL :StandardMaterial3D = preload("res://assets/materials/red_team_material.tres")
@@ -35,9 +35,13 @@ const BODY_SHIRT_SLOT = 3
 
 
 var team :int
+var display_name:String
 
 func _ready() -> void:
 	update_player_colors()
+	update_name_tag()
+
+
 	
 func update_body_geometry(old_data: Dictionary , new_data:Dictionary, lerp_weight:float)->void:
 	position = lerp(old_data.pos, new_data.pos, lerp_weight)
@@ -86,3 +90,5 @@ func set_anim (anim_name:String)->void:
 	else:
 		animation_player.play(anim_name,ANIM_BLEND_TIME)
 	
+func update_name_tag()->void:
+	name_tag_player.text = display_name

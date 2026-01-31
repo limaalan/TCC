@@ -10,7 +10,7 @@ var world_state := {"ps":{}, "t": 0.0}
 const WORLD_STATE_SEND_FRAME :=3
 
 
-var clients : Array[int] = []
+var client_data : Dictionary = {}
 var ready_clients: Array[int] =[]
 
 func _ready() -> void:
@@ -19,27 +19,27 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if Engine.get_physics_frames()% WORLD_STATE_SEND_FRAME == 0:
 		world_state.t = floori(Time.get_unix_time_from_system()*1000)
-		for client_id in clients:
+		for client_id in client_data.keys():
 			s_send_world_state.rpc_id( client_id, world_state) 
 		
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
 	pass
 	
-func add_client(id:int)->void: 
-	clients.append(id)
+func add_client(id:int, player_name:String)->void:
+	client_data[id] ={"display_name":player_name}
 	
 func remove_client(id:int)->void:
-	clients.erase(id)
+	client_data.erase(id) # funciona em dicionários e arrays também
 
 @rpc("any_peer", "call_remote", "reliable")
 func c_lock_client():
 	var client_id =  multiplayer.get_remote_sender_id()
-	if !client_id in clients or client_id in ready_clients:
+	if !client_id in client_data.keys() or client_id in ready_clients:
 		return
 	ready_clients.append(client_id)
 	
-	for client in clients :
+	for client in client_data.keys() :
 		if client not in ready_clients:
 			return
 	start_loading_map()
@@ -61,11 +61,11 @@ func s_start_loading_map():#passar ID do mapa quando eu tiver vários mapas...
 @rpc ("any_peer", "call_local", "reliable")
 func c_map_ready()->void:
 	var client_id =  multiplayer.get_remote_sender_id()
-	if !client_id in clients or client_id in ready_clients:
+	if !client_id in client_data.keys() or client_id in ready_clients:
 		return
 	ready_clients.append(client_id)
 	
-	for client in clients :
+	for client in client_data.keys() :
 		if client not in ready_clients:
 			return
 			
@@ -109,11 +109,18 @@ func spawn_players()->void:
 		add_child(player, true)
 		
 		for ready_client_id in ready_clients :
-			s_spawn_player.rpc_id(ready_client_id, ready_clients[i], spawn_tform, team)
+			s_spawn_player.rpc_id(
+				ready_client_id,
+				ready_clients[i],
+				spawn_tform,
+				team,
+				client_data.get(ready_clients[i]).display_name
+				
+			)
 			
 
 @rpc ("authority", "call_remote", "reliable")
-func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int)->void:
+func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int, player_name : String)->void:
 	pass
 		 
 @rpc("authority", "call_remote", "reliable")

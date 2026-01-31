@@ -49,6 +49,7 @@ focus_mode = 0
 text = "Exit"
 
 [node name="QuickPlayConnectionUI" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -96,6 +97,22 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 32
 text = "Cancel"
+
+[node name="PlayerNameLineEdit" type="LineEdit" parent="."]
+custom_minimum_size = Vector2(256, 32)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = -64.0
+offset_right = 288.0
+offset_bottom = -32.0
+grow_vertical = 0
+placeholder_text = "Player Name"
+max_length = 256
+context_menu_enabled = false
+shortcut_keys_enabled = false
 
 [connection signal="pressed" from="VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
