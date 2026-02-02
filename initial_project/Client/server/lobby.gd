@@ -20,6 +20,7 @@ func get_remote_players()->Dictionary:
 	return remote_players
 
 func _ready()-> void:
+	add_to_group("Lobby")
 	c_lock_client.rpc_id(1)
 	set_physics_process(false)
 
@@ -108,7 +109,7 @@ func s_start_match()->void:
 	set_physics_process(true)
 	
 @rpc ("authority", "call_remote", "reliable")
-func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , player_name : String)->void:
+func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , player_name : String, weapon_id:int)->void:
 	var player : CharacterBody3D
 	if client_id == multiplayer.get_unique_id():
 		player = preload("res://player/local/player_local.tscn").instantiate()
@@ -120,9 +121,20 @@ func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , play
 	player.name = str(client_id)
 	player.global_transform = spawn_tform
 	add_child(player, true)
-	
 	players[client_id] = player
+	
+	print("WeaponID: ", weapon_id)
 	
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
 	world_state_buffer.append(new_word_state)
+	
+func weapon_selected(weapon_id:int)->void:
+	c_weapon_selected.rpc_id(1, weapon_id)
+@rpc ("any_peer", "call_remote", "reliable")
+func c_weapon_selected(weapon_id:int)->void:
+	pass
+
+@rpc("authority", "call_remote", "reliable")
+func s_start_weapon_selection()->void:
+	get_tree().call_group("WeaponSelectionUI", "activate")

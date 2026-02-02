@@ -68,15 +68,18 @@ func c_map_ready()->void:
 	for client in client_data.keys() :
 		if client not in ready_clients:
 			return
-			
-	spawn_players()
-	await get_tree().create_timer(1).timeout
 	
 	for ready_client_id in ready_clients:
-		s_start_match.rpc_id(ready_client_id)
-		
+		s_start_weapon_selection.rpc_id(client_id)
 	ready_clients.clear()
-	set_physics_process(true)
+	#spawn_players()
+	#await get_tree().create_timer(1).timeout
+	#
+	#for ready_client_id in ready_clients:
+		#s_start_match.rpc_id(ready_client_id)
+		#
+	#ready_clients.clear()
+	#set_physics_process(true)
 
 func spawn_players()->void:
 	var spawn_points := get_tree().get_nodes_in_group("SpawnPoints")
@@ -114,13 +117,13 @@ func spawn_players()->void:
 				ready_clients[i],
 				spawn_tform,
 				team,
-				client_data.get(ready_clients[i]).display_name
-				
+				client_data.get(ready_clients[i]).display_name,
+				client_data.get(ready_clients[i]).weapon_id
 			)
 			
 
 @rpc ("authority", "call_remote", "reliable")
-func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int, player_name : String)->void:
+func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int, player_name : String, weapon_id :int)->void:
 	pass
 		 
 @rpc("authority", "call_remote", "reliable")
@@ -132,5 +135,28 @@ func c_send_player_state(playerState:Dictionary)->void:
 	#atribuindo ao state global dos jogadores o valor recebido por RPC das posições
 	world_state.ps[multiplayer.get_remote_sender_id()] = playerState 
 	
+@rpc ("any_peer", "call_remote", "reliable")
+func c_weapon_selected(weapon_id:int)->void:
 	
+	var client_id =  multiplayer.get_remote_sender_id()
+	if !client_id in client_data.keys() or client_id in ready_clients:
+		return
+	ready_clients.append(client_id)
+	client_data[client_id].weapon_id = weapon_id
+
+	for client in client_data.keys() :
+		if client not in ready_clients:
+			return
 	
+	spawn_players()
+	await get_tree().create_timer(1).timeout
+	
+	for ready_client_id in ready_clients:
+		s_start_match.rpc_id(ready_client_id)
+		
+	ready_clients.clear()
+	set_physics_process(true)
+	
+@rpc("authority", "call_remote", "reliable")
+func s_start_weapon_selection()->void:
+	pass

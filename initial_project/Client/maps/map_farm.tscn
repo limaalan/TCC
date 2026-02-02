@@ -1,4 +1,4 @@
-[gd_scene load_steps=262 format=4 uid="uid://bcvkqs2vjyu2g"]
+[gd_scene load_steps=263 format=4 uid="uid://bcvkqs2vjyu2g"]
 
 [ext_resource type="Texture2D" uid="uid://eeb52qhocefr" path="res://assets/textures/kloofendal_48d_partly_cloudy_puresky_4k.hdr" id="1_7qr5j"]
 [ext_resource type="PackedScene" uid="uid://diskf01bp2a51" path="res://assets/meshes/buildings/silo.glb" id="1_sd11y"]
@@ -29,6 +29,7 @@
 [ext_resource type="PackedScene" uid="uid://nfeni8wyk23t" path="res://assets/meshes/props/SackTrench.gltf" id="22_ifawi"]
 [ext_resource type="PackedScene" uid="uid://c6lkxlwovgcpx" path="res://assets/meshes/buildings/fence.glb" id="23_hut3g"]
 [ext_resource type="Script" uid="uid://ipn7xeoq3v0c" path="res://player/spawn_point/player_spawn_point.gd" id="30_038ih"]
+[ext_resource type="PackedScene" uid="uid://r1fsrv56vckp" path="res://ui/weapon_selection/weapon_selection_ui.tscn" id="30_sx166"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_posn1"]
 panorama = ExtResource("1_7qr5j")
@@ -3602,6 +3603,8 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/StaticBody3D123"]
 shape = SubResource("WorldBoundaryShape3D_uwt8e")
+
+[node name="WeaponSelectionUI" parent="." instance=ExtResource("30_sx166")]
 
 [editable path="Meshes/Buildings/silo"]
 [editable path="Meshes/Buildings/silo2"]
