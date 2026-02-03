@@ -160,3 +160,14 @@ func c_weapon_selected(weapon_id:int)->void:
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
 	pass
+	
+@rpc ("any_peer", "call_remote", "unreliable")
+func c_shot_fired(time_stamp:int , player_data:Dictionary)->void:
+	var sender_id:= multiplayer.get_remote_sender_id()
+	for client_id in client_data.keys()	:
+		if client_id != sender_id:
+			s_play_shoot_fx.rpc_id(client_id,sender_id )
+		
+@rpc("authority", "call_remote", "unreliable")
+func s_play_shoot_fx(target_client_id:int)->void:
+	pass

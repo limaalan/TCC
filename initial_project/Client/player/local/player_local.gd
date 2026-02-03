@@ -34,6 +34,13 @@ func set_procecess(enabled:bool)->void:
 func _physics_process(delta: float) -> void:
 	move()
 	choose_anim()
+	check_shoot_input()
+	
+func check_shoot_input()->void:
+	if Input.is_action_just_pressed("shoot"):
+		weapon_holder.start_trigger_pressed()
+	elif Input.is_action_just_released("shoot"):
+		weapon_holder.end_trigger_pressed()
 	
 func choose_anim()->void:
 	if not is_grounded:

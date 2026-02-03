@@ -5388,7 +5388,7 @@ bone_name = "Shotgun"
 bone_idx = 45
 
 [node name="WeaponHolder" type="Node3D" parent="character_soldier/CharacterArmature/Skeleton3D/WeaponHolder"]
-transform = Transform3D(-0.037341177, -0.3538806, 0.9345449, 0.97941285, 0.17269696, 0.104528464, -0.19838366, 0.91920847, 0.34014654, 0, 0, 0)
+transform = Transform3D(-0.06408804, -0.65187967, 0.7556095, 0.9849092, 0.08066376, 0.15312663, -0.16077048, 0.75402015, 0.63687253, 0, 0, 0)
 script = ExtResource("2_mo6r7")
 metadata/_custom_type_script = "uid://ba3jleujag8nb"
 

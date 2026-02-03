@@ -91,3 +91,7 @@ func set_anim (anim_name:String)->void:
 	
 func update_name_tag()->void:
 	name_tag_player.text = display_name
+	
+	
+func play_shoot_fx()->void:
+	weapon_holder.weapon.play_shoot_fx()

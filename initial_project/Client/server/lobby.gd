@@ -137,3 +137,18 @@ func c_weapon_selected(weapon_id:int)->void:
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
 	get_tree().call_group("WeaponSelectionUI", "activate")
+
+
+func local_shot_fired()->void:
+	c_shot_fired.rpc_id(1, floori(Time.get_unix_time_from_system()*1000) - Server.clock_deviation_ms, create_player_data())
+
+@rpc ("any_peer", "call_remote", "unreliable")
+func c_shot_fired(time_stamp:int , player_data:Dictionary)->void:
+	pass
+	
+@rpc("authority", "call_remote", "unreliable")
+func s_play_shoot_fx(target_client_id:int)->void:
+	var remote_players := get_remote_players()
+	if not target_client_id in remote_players:
+		return
+	remote_players[target_client_id].play_shoot_fx()
