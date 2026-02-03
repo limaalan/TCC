@@ -1,4 +1,4 @@
-extends CharacterBody3D
+extends PlayerCharacter
 class_name PlayerLocal
 
 const IDLE_ANIM = 'Idle'
@@ -22,6 +22,7 @@ var current_anim : String
 
 
 func _ready() -> void:
+	super()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	set_procecess(false)
 

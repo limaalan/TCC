@@ -110,21 +110,20 @@ func s_start_match()->void:
 	
 @rpc ("authority", "call_remote", "reliable")
 func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , player_name : String, weapon_id:int)->void:
-	var player : CharacterBody3D
+	var player : PlayerCharacter
 	if client_id == multiplayer.get_unique_id():
 		player = preload("res://player/local/player_local.tscn").instantiate()
 	else : 
 		player = preload("res://player/remote/player_remote.tscn").instantiate()
-		player.team = team
 		player.display_name = player_name
 	
+	player.team = team
+	player.weapon_id = weapon_id 
 	player.name = str(client_id)
 	player.global_transform = spawn_tform
 	add_child(player, true)
 	players[client_id] = player
-	
-	print("WeaponID: ", weapon_id)
-	
+		
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
 	world_state_buffer.append(new_word_state)

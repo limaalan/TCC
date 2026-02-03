@@ -1,4 +1,4 @@
-extends CharacterBody3D
+extends PlayerCharacter
 class_name PlayerRemote
 @onready var animation_player: AnimationPlayer = $character_soldier/AnimationPlayer
 
@@ -33,11 +33,10 @@ const BODY_SKIN_SLOT = 0
 const BODY_PANTS_SLOT = 2
 const BODY_SHIRT_SLOT = 3
 
-
-var team :int
 var display_name:String
 
 func _ready() -> void:
+	super()
 	update_player_colors()
 	update_name_tag()
 
