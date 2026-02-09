@@ -1803,3 +1803,6 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/StaticBody3D123"]
 shape = SubResource("WorldBoundaryShape3D_uwt8e")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.009656906, -0.6436696, 0.76524246, 0.008122081, 0.76530355, 0.64361846, -0.99992037, -1.0019763e-09, 0.012618399, 21.735882, 15.3153, 0)
