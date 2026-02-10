@@ -152,3 +152,21 @@ func s_play_shoot_fx(target_client_id:int)->void:
 	if not target_client_id in remote_players:
 		return
 	remote_players[target_client_id].play_shoot_fx()
+
+@rpc("authority", "call_remote", "unreliable")
+func s_spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int):
+	var bullet_hit_fx :Node3D 
+	match type :
+		0:
+			bullet_hit_fx = preload("res://player/bullet_hit_fx/bullet_hit_fx_environment.tscn").instantiate()
+		1:
+			bullet_hit_fx = preload("res://player/bullet_hit_fx/bullet_hit_fx_player.tscn").instantiate()
+	var spawn_tform := Transform3D.IDENTITY
+	
+	if not normal.is_equal_approx(Vector3.UP) and not normal.is_equal_approx(Vector3.DOWN):
+		spawn_tform = spawn_tform.looking_at(normal)
+		spawn_tform = spawn_tform.rotated_local(Vector3.RIGHT , -PI / 2) #rotacionado 90° direita
+	spawn_tform.origin = pos
+	bullet_hit_fx.global_transform = spawn_tform
+	add_child(bullet_hit_fx)
+#Verificar porque não marca o chão com o sprite da bala

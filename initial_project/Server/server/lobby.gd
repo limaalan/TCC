@@ -248,6 +248,18 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 	
 	if result.collider is HitBox:
 		print (result.collider.player.name + "Foi acertado!")
+		spawn_bullet_hit_fx(result.position - global_position, result.normal, 1)
+	else :
+		spawn_bullet_hit_fx(result.position - global_position, result.normal, 0)
+	
+	
+func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void: #env 0, player 1
+	for client_id in client_data.keys(): # pega os clientes do lobby
+		s_spawn_bullet_hit_fx.rpc_id(client_id, pos, normal, type)
+		
+@rpc("authority", "call_remote", "unreliable")
+func s_spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int):
+	pass
 	
 		
 @rpc("authority", "call_remote", "unreliable")
