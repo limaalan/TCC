@@ -13,6 +13,7 @@ const WORLD_STATES_TO_REMEMBER := 60
 const RAYCAST_CHECK_DISTANCE := 100
 const PHYSICS_LAYER_EXACT = 16
 const PHYSICS_LAYER_HITBOX = 4 
+const MAX_SHOT_RANDOM_DEGREES = 5
 
 var client_data : Dictionary = {}
 var ready_clients: Array[int] =[]
@@ -230,27 +231,34 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 	if not shooter_id in server_players.keys():
 		return
 		
+	var weapon_data := WeaponConfig.get_weapon_data(client_data.get(shooter_id).weapon_id)
 	# Faz o raycast a partir da cabeça do atirador
 	var space_state := get_world_3d().direct_space_state
 	var shooter_dummy: ServerPlayerDummy = server_players.get(shooter_id).dummy
 	var ray_params:= PhysicsRayQueryParameters3D.new()
-	var shoot_tform := shooter_dummy.head.global_transform
-	
+	var head_tform := shooter_dummy.head.global_transform
+
 	ray_params.from = shooter_dummy.head.global_position
-	ray_params.to = ray_params.from + shoot_tform.basis.z * (RAYCAST_CHECK_DISTANCE*-1) #-1 pois eixo Z negativo é pra frente nesse caso
 	ray_params.collide_with_areas = true
 	ray_params.exclude = shooter_dummy.hitboxes
 	ray_params.collision_mask = PHYSICS_LAYER_EXACT + PHYSICS_LAYER_HITBOX
-	
-	var result = space_state.intersect_ray(ray_params)
-	if result.is_empty() : 
-		return
-	
-	if result.collider is HitBox:
-		print (result.collider.player.name + "Foi acertado!")
-		spawn_bullet_hit_fx(result.position - global_position, result.normal, 1)
-	else :
-		spawn_bullet_hit_fx(result.position - global_position, result.normal, 0)
+
+	for i in weapon_data.projectiles: #shotgun 6 projéteis = 6 ray casts, cada um com precisão aleatória
+		var rand_rot:float = deg_to_rad(randf() * (1 - weapon_data.accuracy ) * MAX_SHOT_RANDOM_DEGREES )
+		var shoot_tform:= head_tform.rotated_local(Vector3.FORWARD , randf() * PI *2)
+		shoot_tform = shoot_tform.rotated_local(Vector3.UP, rand_rot) 
+		print("Calculating shot ",i , rand_rot, shoot_tform )
+		ray_params.to = ray_params.from + shoot_tform.basis.z * (RAYCAST_CHECK_DISTANCE*-1) #-1 pois eixo Z negativo é pra frente nesse caso
+		
+		var result: = space_state.intersect_ray(ray_params)
+		if result.is_empty() : 
+			continue
+		
+		if result.collider is HitBox:
+			print (result.collider.player.name + "Foi acertado!")
+			spawn_bullet_hit_fx(result.position - global_position, result.normal, 1)
+		else :
+			spawn_bullet_hit_fx(result.position - global_position, result.normal, 0)
 	
 	
 func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void: #env 0, player 1
