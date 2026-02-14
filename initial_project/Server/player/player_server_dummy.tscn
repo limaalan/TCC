@@ -4990,6 +4990,7 @@ bone_idx = 6
 [node name="Hitbox" type="Area3D" parent="character_soldier/CharacterArmature/Skeleton3D/BoneAttachmentNeck"]
 transform = Transform3D(1, 0, 0, 0, 1, -1.4901161e-08, 0, 0, 1, 3.7136488e-08, 0.41672516, -0.06434357)
 script = ExtResource("1_i7oy8")
+damage_multiplayer = 2.0
 metadata/_custom_type_script = "uid://dqtsbglcm5a7"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="character_soldier/CharacterArmature/Skeleton3D/BoneAttachmentNeck/Hitbox"]

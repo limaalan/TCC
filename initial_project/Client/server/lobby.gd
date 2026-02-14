@@ -156,7 +156,7 @@ func s_play_shoot_fx(target_client_id:int)->void:
 @rpc("authority", "call_remote", "unreliable")
 func s_spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int):
 	var bullet_hit_fx :Node3D 
-	match type :
+	match type : 
 		0:
 			bullet_hit_fx = preload("res://player/bullet_hit_fx/bullet_hit_fx_environment.tscn").instantiate()
 		1:
@@ -170,3 +170,9 @@ func s_spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int):
 	bullet_hit_fx.global_transform = spawn_tform
 	add_child(bullet_hit_fx)
 #Verificar porque não marca o chão com o sprite da bala
+
+@rpc ("authority", "call_remote", "unreliable_ordered")
+func s_update_health(target_client_id:int, current_health:int , max_health:int, changed_amount:int)->void:
+	var maybe_player :PlayerCharacter = players.get(target_client_id)
+	if is_instance_valid(maybe_player):
+		maybe_player.update_health_bar(current_health, max_health, changed_amount)

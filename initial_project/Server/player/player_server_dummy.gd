@@ -18,6 +18,7 @@ const ARM_Y_ROT_SCALAR: PackedFloat32Array = [ -0.39 , -1.25]
 
 @onready var head: Node3D = $Head
 
+var id:int
 var hitboxes: Array[RID] = []
 
 func _ready()->void:

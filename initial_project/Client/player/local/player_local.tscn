@@ -8,11 +8,12 @@
 radius = 0.25
 height = 1.6
 
-[node name="PlayerLocal" type="CharacterBody3D" node_paths=PackedStringArray("weapon_holder") groups=["PlayerLocal"]]
+[node name="PlayerLocal" type="CharacterBody3D" node_paths=PackedStringArray("weapon_holder", "health_bar") groups=["PlayerLocal"]]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_gucd0")
 weapon_holder = NodePath("Head/LocalWeaponHolder")
+health_bar = NodePath("HUD/MarginContainer/HealthBar")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
@@ -30,3 +31,5 @@ script = ExtResource("2_y8ftr")
 metadata/_custom_type_script = "uid://ba3jleujag8nb"
 
 [node name="HUD" parent="." instance=ExtResource("3_w115m")]
+
+[editable path="HUD"]

@@ -1,7 +1,8 @@
-[gd_scene load_steps=37 format=4 uid="uid://dx2ewumh1oio0"]
+[gd_scene load_steps=39 format=4 uid="uid://dx2ewumh1oio0"]
 
 [ext_resource type="Script" uid="uid://cttovpdkkewee" path="res://player/remote/player_remote.gd" id="1_55a7p"]
 [ext_resource type="Script" uid="uid://ba3jleujag8nb" path="res://player/weapons/weapon_holder.gd" id="2_mo6r7"]
+[ext_resource type="PackedScene" uid="uid://bwtxrovlkuog2" path="res://player/player_info/player_info.tscn" id="3_2kk07"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s7k6g"]
 radius = 0.25
@@ -4914,11 +4915,16 @@ _data = {
 &"Yes": SubResource("Animation_43r8r")
 }
 
-[node name="PlayerRemote" type="CharacterBody3D" node_paths=PackedStringArray("weapon_holder")]
+[sub_resource type="ViewportTexture" id="ViewportTexture_8v6k4"]
+viewport_path = NodePath("SubViewport")
+
+[node name="PlayerRemote" type="CharacterBody3D" node_paths=PackedStringArray("name_tag_player", "weapon_holder", "health_bar")]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_55a7p")
+name_tag_player = NodePath("SubViewport/PlayerInfo/VBoxContainer/PlayerNameLabel")
 weapon_holder = NodePath("character_soldier/CharacterArmature/Skeleton3D/WeaponHolder/WeaponHolder")
+health_bar = NodePath("SubViewport/PlayerInfo/VBoxContainer/HealthBar")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
@@ -5398,7 +5404,16 @@ libraries = {
 }
 autoplay = "Idle"
 
-[node name="NameTagPlayer" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+[node name="PlayerInfoSprite" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+pixel_size = 0.005
 billboard = 1
-text = "asdasdasd"
+texture = SubResource("ViewportTexture_8v6k4")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+transparent_bg = true
+size = Vector2i(1024, 1024)
+
+[node name="PlayerInfo" parent="SubViewport" instance=ExtResource("3_2kk07")]
+
+[editable path="SubViewport/PlayerInfo"]

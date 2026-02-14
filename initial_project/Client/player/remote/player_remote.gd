@@ -15,7 +15,7 @@ const ARM_Y_ROT_SCALAR: PackedFloat32Array = [ -0.39 , -1.25]
 @onready var bone_abdomen := skeleton.find_bone("Abdomen")
 @onready var bone_upper_arm_r := skeleton.find_bone("UpperArm.R")
 
-@onready var name_tag_player: Label3D = $NameTagPlayer
+@export var name_tag_player: Label
  
 const ANIM_BLEND_TIME = 0.2
 const RED_MATERIAL :StandardMaterial3D = preload("res://assets/materials/red_team_material.tres")
