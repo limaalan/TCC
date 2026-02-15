@@ -4,6 +4,7 @@ const INTERPOLATION_BUFFER_MS := 100
 
 var players:= {} # Dicionário dos jogadores chave:valor =  { id: PlayerScene } 
 var world_state_buffer:Array[Dictionary] = []
+var pickups := {}
 
 func get_local_player()->PlayerLocal:
 	return players.get(multiplayer.get_unique_id())
@@ -176,3 +177,21 @@ func s_update_health(target_client_id:int, current_health:int , max_health:int, 
 	var maybe_player :PlayerCharacter = players.get(target_client_id)
 	if is_instance_valid(maybe_player):
 		maybe_player.update_health_bar(current_health, max_health, changed_amount)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_spawn_pickup(pickup_name:String, pickup_type:int , pos : Vector3)->void:
+	var pickup :Pickup = preload("res://player/pickups/pickup.tscn").instantiate()
+	pickup.name = pickup_name
+	pickup.position = pos
+	add_child(pickup, true) # força o nome , pra garantir que é o que foi setado no pickup,nome, importate pois o nome deve bater entre server e cliente
+	pickups[pickup_name] = pickup
+
+@rpc("authority", "call_remote", "reliable")
+func s_pickup_cooldown_started(pickup_name:String)->void:
+	pickups.get(pickup_name).cooldown_started()
+	
+
+@rpc("authority", "call_remote", "reliable")
+func s_pickup_cooldown_ended(pickup_name:String)->void:
+	pickups.get(pickup_name).cooldown_ended()

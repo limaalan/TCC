@@ -7,6 +7,7 @@ var status:= IDLE
 # t = timestamp do servidor	
 var current_world_state := {"ps":{}, "t": 0.0} 
 var previous_world_states :Array[Dictionary] = []
+var pickups :Array[Pickup] = []
 
 const WORLD_STATE_SEND_FRAME :=3
 const WORLD_STATES_TO_REMEMBER := 60
@@ -66,6 +67,13 @@ func start_loading_map():
 	map.name="Map"
 	add_child(map, true)  #força nome 
 	
+	var pickup_holder = map.get_node("Pickups")
+	if pickup_holder != null :
+		for maybe_pickup in pickup_holder.get_children() :
+			if maybe_pickup is Pickup:
+				maybe_pickup.lobby = self
+				pickups.append(maybe_pickup)
+	
 	for ready_client in ready_clients:
 		s_start_loading_map.rpc_id(ready_client)
 		
@@ -79,6 +87,9 @@ func c_map_ready()->void:
 	if !client_id in client_data.keys() or client_id in ready_clients:
 		return
 	ready_clients.append(client_id)
+	
+	for pickup in pickups:
+		s_spawn_pickup.rpc_id(client_id, pickup.name, pickup.pickup_type, pickup.position)
 	
 	for client in client_data.keys() :
 		if client not in ready_clients:
@@ -95,6 +106,10 @@ func c_map_ready()->void:
 		#
 	#ready_clients.clear()
 	#set_physics_process(true)
+
+@rpc("authority", "call_remote", "reliable")
+func s_spawn_pickup(pickup_name:String, pickup_type:int , pos : Vector3)->void:
+	pass
 
 func spawn_players()->void:
 	var spawn_points := get_tree().get_nodes_in_group("SpawnPoints")
@@ -164,8 +179,17 @@ func s_start_match()->void:
 	
 @rpc("any_peer", "call_remote", "unreliable_ordered")
 func c_send_player_state(playerState:Dictionary)->void:
+	var client_id := multiplayer.get_remote_sender_id()
+	if not server_players.has(client_id):
+		return
+	
 	#atribuindo ao state global dos jogadores o valor recebido por RPC das posições
-	current_world_state.ps[multiplayer.get_remote_sender_id()] = playerState 
+	current_world_state.ps[client_id] = playerState 
+	server_players.get(client_id).real.position = playerState.pos
+	server_players.get(client_id).real.rotation.y = playerState.rot_y
+	server_players.get(client_id).real.set_anim(playerState.anim) 
+	
+	
 	
 @rpc ("any_peer", "call_remote", "reliable")
 func c_weapon_selected(weapon_id:int)->void:
@@ -306,4 +330,20 @@ func update_health(target_client_id:int, current_health:int , max_health:int, ch
 
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_update_health(target_client_id:int, current_health:int , max_health:int, changed_amount:int)->void:
+	pass
+
+func pickup_cooldown_started(pickup_name :String )->void:
+	for client_id in client_data.keys():
+		s_pickup_cooldown_started.rpc_id(client_id, pickup_name)
+
+@rpc("authority", "call_remote", "reliable")
+func s_pickup_cooldown_started(pickup_name:String)->void:
+	pass
+
+func pickup_cooldown_ended (pickup_name :String)->void:
+	for client_id in client_data.keys():
+		s_pickup_cooldown_ended.rpc_id(client_id, pickup_name)
+
+@rpc("authority", "call_remote", "reliable")
+func s_pickup_cooldown_ended(pickup_name:String)->void:
 	pass

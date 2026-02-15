@@ -1,0 +1,94 @@
+[gd_scene load_steps=6 format=3 uid="uid://hehg6iw75o4u"]
+
+[ext_resource type="Script" uid="uid://cl16x4axckpf0" path="res://player/pickups/pickup.gd" id="1_ec5yq"]
+[ext_resource type="Material" uid="uid://bv8t0ww8thvdg" path="res://assets/materials/pickup_ready_material.tres" id="1_xcju5"]
+
+[sub_resource type="Animation" id="Animation_8enfv"]
+resource_name = "mesh_floating"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.3, -0.25, 0, 0.4, 0, 0.5, -0.4, 0, 0.4, 0, 0.3, -0.4, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1, 2)
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 6.2831855, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_f2w88"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3es0k"]
+_data = {
+&"RESET": SubResource("Animation_f2w88"),
+&"mesh_floating": SubResource("Animation_8enfv")
+}
+
+[node name="Pickup" type="Node3D"]
+script = ExtResource("1_ec5yq")
+
+[node name="Base" type="Node3D" parent="."]
+
+[node name="CSGTorus3D" type="CSGTorus3D" parent="Base"]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 0)
+inner_radius = 0.3
+outer_radius = 0.5
+sides = 16
+ring_sides = 3
+smooth_faces = false
+
+[node name="Platform" type="CSGCylinder3D" parent="Base"]
+unique_name_in_owner = true
+radius = 0.3
+height = 0.1
+sides = 16
+smooth_faces = false
+material = ExtResource("1_xcju5")
+
+[node name="MeshHolder" type="Node3D" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../MeshHolder")
+libraries = {
+&"": SubResource("AnimationLibrary_3es0k")
+}
+autoplay = "mesh_floating"

@@ -1,4 +1,6 @@
-[gd_scene load_steps=160 format=3 uid="uid://di0a3qbam82tj"]
+[gd_scene load_steps=161 format=3 uid="uid://di0a3qbam82tj"]
+
+[ext_resource type="PackedScene" uid="uid://bmfk1ivn60vy7" path="res://player/pickups/pickup.tscn" id="1_qkapt"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_4x4ek"]
 
@@ -1806,3 +1808,11 @@ shape = SubResource("WorldBoundaryShape3D_uwt8e")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.009656906, -0.6436696, 0.76524246, 0.008122081, 0.76530355, 0.64361846, -0.99992037, -1.0019763e-09, 0.012618399, 21.735882, 15.3153, 0)
+
+[node name="Pickups" type="Node3D" parent="."]
+
+[node name="HealthPickup" parent="Pickups" instance=ExtResource("1_qkapt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.3618374)
+
+[node name="HealthPickup2" parent="Pickups" instance=ExtResource("1_qkapt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.3851156)
