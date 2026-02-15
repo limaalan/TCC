@@ -268,8 +268,18 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			
 			#Cálculo do dano causado pela arma
 			var hurt_server_player :PlayerServerReal = server_players.get(hurt_client_id).real
-			var health_change = -weapon_data.damage * result.collider.damage_multiplayer
-			hurt_server_player.change_health(health_change)
+			var base_damage = -weapon_data.damage * result.collider.damage_multiplayer
+			
+			#TODO mover cálculo do dano pra outra função, utilizar Curve ou Gradiente , também dá pra configurar isso por tipo de arma
+			var damage_falloff_start := 10 
+			var damage_falloff_end := 20 
+			var damage_max_falloff := 0.4
+			var distance = ray_params.from.distance_to(result.position)
+			var damage_falloff_multiplier = remap(distance, damage_falloff_start, damage_falloff_end, 1 , damage_max_falloff)
+			damage_falloff_multiplier = clampf(damage_falloff_multiplier, damage_max_falloff, 1) # valor fica entra 0.4 e 1
+			var damage_dealt = base_damage*damage_falloff_multiplier
+
+			hurt_server_player.change_health(damage_dealt)
 			
 			print (result.collider.player.name + "Foi acertado!")
 			spawn_bullet_hit_fx(result.position - global_position, result.normal, 1)
