@@ -109,8 +109,8 @@ func get_non_full_lobby()->Lobby: #get or create
 		var new_lobby := Lobby.new()
 		lobbies.append(new_lobby)
 		new_lobby.name = str(new_lobby.get_instance_id())
-		update_lobby_spots()
 		add_child(new_lobby)
+		update_lobby_spots()
 		return new_lobby
 	print("Todas as salas estão cheias.")
 	return null

@@ -14,8 +14,8 @@ func get_remote_players()->Dictionary:
 	for client_id in players.keys():
 		if client_id == multiplayer.get_unique_id():
 			continue
-		var maybe_remote_player : PlayerRemote = players.get(client_id)
-		if is_instance_valid(maybe_remote_player):
+		var maybe_remote_player = players.get(client_id)
+		if is_instance_valid(maybe_remote_player) and maybe_remote_player is PlayerRemote:
 			remote_players[client_id] = maybe_remote_player
 	
 	return remote_players
@@ -128,6 +128,10 @@ func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , play
 	player.name = str(client_id)
 	player.global_transform = spawn_tform
 	add_child(player, true)
+	
+	if players.has(client_id) and is_instance_valid(players[client_id]):
+		players[client_id].queue_free()
+		
 	players[client_id] = player
 		
 @rpc ("authority", "call_remote", "unreliable_ordered")

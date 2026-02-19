@@ -387,6 +387,9 @@ func s_pickup_cooldown_ended(pickup_name:String)->void:
 	pass
 
 func player_died(dead_player_id : int)->void:
+	if not server_players.has(dead_player_id):
+		return
+		
 	server_players.get(dead_player_id).real.queue_free()
 	server_players.get(dead_player_id).dummy.queue_free()
 	server_players.erase(dead_player_id)
@@ -394,8 +397,9 @@ func player_died(dead_player_id : int)->void:
 	
 	for client_id in client_data.keys():
 		s_player_died.rpc_id(client_id, dead_player_id)
-		await get_tree().create_timer(DEATH_COOLDOWN_LENGTH).timeout
-		s_start_weapon_selection.rpc_id(dead_player_id)
+	
+	await get_tree().create_timer(DEATH_COOLDOWN_LENGTH).timeout
+	s_start_weapon_selection.rpc_id(dead_player_id)
 		
 @rpc("authority", "call_remote", "reliable")
 func s_player_died(dead_player_id:int)->void:
