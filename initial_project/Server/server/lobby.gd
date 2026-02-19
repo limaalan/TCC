@@ -8,6 +8,7 @@ var status:= IDLE
 var current_world_state := {"ps":{}, "t": 0.0} 
 var previous_world_states :Array[Dictionary] = []
 var pickups :Array[Pickup] = []
+var spawn_points :Array[Node3D] = []
 
 const WORLD_STATE_SEND_FRAME :=3
 const WORLD_STATES_TO_REMEMBER := 60
@@ -15,6 +16,7 @@ const RAYCAST_CHECK_DISTANCE := 100
 const PHYSICS_LAYER_EXACT = 16
 const PHYSICS_LAYER_HITBOX = 4 
 const MAX_SHOT_RANDOM_DEGREES = 5
+const DEATH_COOLDOWN_LENGTH := 5
 
 var client_data : Dictionary = {}
 var ready_clients: Array[int] =[]
@@ -67,6 +69,12 @@ func start_loading_map():
 	map.name="Map"
 	add_child(map, true)  #força nome 
 	
+	var spawn_point_holder = map.get_node("SpawnPoints")
+	if spawn_point_holder != null :
+		for spawn_point in spawn_point_holder.get_children() :
+			spawn_points.append(spawn_point)
+	
+	
 	var pickup_holder = map.get_node("Pickups")
 	if pickup_holder != null :
 		for maybe_pickup in pickup_holder.get_children() :
@@ -112,7 +120,6 @@ func s_spawn_pickup(pickup_name:String, pickup_type:int , pos : Vector3)->void:
 	pass
 
 func spawn_players()->void:
-	var spawn_points := get_tree().get_nodes_in_group("SpawnPoints")
 	var blue_spawn_points :Array[Node3D] = []
 	var red_spawn_points :Array[Node3D] = []
 	
@@ -146,7 +153,8 @@ func spawn_players()->void:
 				spawn_tform,
 				team,
 				client_data.get(ready_clients[i]).display_name,
-				client_data.get(ready_clients[i]).weapon_id
+				client_data.get(ready_clients[i]).weapon_id,
+				true
 			)
 			
 func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)->void:
@@ -170,7 +178,7 @@ func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)-
 
 
 @rpc ("authority", "call_remote", "reliable")
-func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int, player_name : String, weapon_id :int)->void:
+func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int, player_name : String, weapon_id :int, auto_freeze:bool)->void:
 	pass
 		 
 @rpc("authority", "call_remote", "reliable")
@@ -197,13 +205,18 @@ func c_weapon_selected(weapon_id:int)->void:
 	var client_id =  multiplayer.get_remote_sender_id()
 	if !client_id in client_data.keys() or client_id in ready_clients:
 		return
-	ready_clients.append(client_id)
 	client_data[client_id].weapon_id = weapon_id
 
+	if status == GAME:
+		respawn_player(client_id)
+		return
+
+	ready_clients.append(client_id)
 	for client in client_data.keys() :
 		if client not in ready_clients:
 			return
 	
+	status = GAME
 	spawn_players()
 	await get_tree().create_timer(1).timeout
 	
@@ -212,6 +225,31 @@ func c_weapon_selected(weapon_id:int)->void:
 		
 	ready_clients.clear()
 	set_physics_process(true)
+	
+func respawn_player(respawn_client_id:int)->void:
+	var team:int = client_data.get(respawn_client_id).team
+	var team_prefix = "Blue" if team == 0 else "Red"
+	var possible_spawn_points :Array[Node3D]= []
+	for spawn_point in spawn_points:
+		if spawn_point.name.begins_with(team_prefix):
+			possible_spawn_points.append(spawn_point) 
+	
+	var spawn_point :Node3D =  possible_spawn_points.pick_random()
+	
+	#spawn para o server
+	spawn_server_player(respawn_client_id, spawn_point.transform, team)
+	
+	#spawn para os jogadores
+	for client_id in client_data.keys() :
+			s_spawn_player.rpc_id(
+				client_id,
+				respawn_client_id,
+				spawn_point.transform,
+				team,
+				client_data.get(respawn_client_id).display_name,
+				client_data.get(respawn_client_id).weapon_id, 
+				false
+			)
 	
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
@@ -346,4 +384,19 @@ func pickup_cooldown_ended (pickup_name :String)->void:
 
 @rpc("authority", "call_remote", "reliable")
 func s_pickup_cooldown_ended(pickup_name:String)->void:
+	pass
+
+func player_died(dead_player_id : int)->void:
+	server_players.get(dead_player_id).real.queue_free()
+	server_players.get(dead_player_id).dummy.queue_free()
+	server_players.erase(dead_player_id)
+	current_world_state.ps.erase(dead_player_id)
+	
+	for client_id in client_data.keys():
+		s_player_died.rpc_id(client_id, dead_player_id)
+		await get_tree().create_timer(DEATH_COOLDOWN_LENGTH).timeout
+		s_start_weapon_selection.rpc_id(dead_player_id)
+		
+@rpc("authority", "call_remote", "reliable")
+func s_player_died(dead_player_id:int)->void:
 	pass

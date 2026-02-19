@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=4 uid="uid://dx2ewumh1oio0"]
+[gd_scene load_steps=40 format=4 uid="uid://dx2ewumh1oio0"]
 
 [ext_resource type="Script" uid="uid://cttovpdkkewee" path="res://player/remote/player_remote.gd" id="1_55a7p"]
 [ext_resource type="Script" uid="uid://ba3jleujag8nb" path="res://player/weapons/weapon_holder.gd" id="2_mo6r7"]
@@ -4918,6 +4918,21 @@ _data = {
 [sub_resource type="ViewportTexture" id="ViewportTexture_8v6k4"]
 viewport_path = NodePath("SubViewport")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a0gmw"]
+resource_local_to_scene = true
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0.84313726, 0, 0.8117647)
+skew = Vector2(0.3, 0)
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+corner_detail = 6
+
 [node name="PlayerRemote" type="CharacterBody3D" node_paths=PackedStringArray("name_tag_player", "weapon_holder", "health_bar")]
 collision_layer = 2
 collision_mask = 3
@@ -5415,5 +5430,8 @@ transparent_bg = true
 size = Vector2i(1024, 1024)
 
 [node name="PlayerInfo" parent="SubViewport" instance=ExtResource("3_2kk07")]
+
+[node name="HealthBar" parent="SubViewport/PlayerInfo/VBoxContainer" index="1"]
+theme_override_styles/fill = SubResource("StyleBoxFlat_a0gmw")
 
 [editable path="SubViewport/PlayerInfo"]

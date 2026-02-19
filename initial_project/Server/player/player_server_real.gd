@@ -23,4 +23,4 @@ func change_health(amount:int)->void:
 	lobby.update_health(name.to_int(), current_health, MAX_HEALTH, amount)
 		
 func die()->void :
-	print (name , "Morreu")
+	lobby.player_died(name.to_int())

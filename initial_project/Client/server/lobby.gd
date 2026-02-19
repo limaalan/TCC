@@ -71,6 +71,9 @@ func handle_world_state()->void:
 		if not client_id in world_state_buffer[0].ps.keys():
 			continue
 		
+		if not is_instance_valid(players.get(client_id)):
+			continue
+		
 		var remote_player :PlayerRemote = remote_players.get(client_id)
 		
 		remote_player.update_body_geometry(
@@ -110,10 +113,12 @@ func s_start_match()->void:
 	set_physics_process(true)
 	
 @rpc ("authority", "call_remote", "reliable")
-func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , player_name : String, weapon_id:int)->void:
+func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , player_name : String, weapon_id:int, auto_freeze:bool)->void:
 	var player : PlayerCharacter
+
 	if client_id == multiplayer.get_unique_id():
 		player = preload("res://player/local/player_local.tscn").instantiate()
+		player.auto_freeze = auto_freeze
 	else : 
 		player = preload("res://player/remote/player_remote.tscn").instantiate()
 		player.display_name = player_name
@@ -195,3 +200,15 @@ func s_pickup_cooldown_started(pickup_name:String)->void:
 @rpc("authority", "call_remote", "reliable")
 func s_pickup_cooldown_ended(pickup_name:String)->void:
 	pickups.get(pickup_name).cooldown_ended()
+
+@rpc("authority", "call_remote", "reliable")
+func s_player_died(dead_player_id:int)->void:
+	if players.has(dead_player_id):
+		players.get(dead_player_id).queue_free()
+		players[dead_player_id] = null
+	
+	
+	
+	
+	
+	

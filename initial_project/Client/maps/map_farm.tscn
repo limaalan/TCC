@@ -3606,6 +3606,9 @@ shape = SubResource("WorldBoundaryShape3D_uwt8e")
 
 [node name="WeaponSelectionUI" parent="." instance=ExtResource("30_sx166")]
 
+[node name="PreviewCamera" type="Camera3D" parent="."]
+transform = Transform3D(-4.371139e-08, 0.6427876, -0.76604444, 0, 0.76604444, 0.6427876, 1, 2.8097137e-08, -3.3484866e-08, -7, 7, 0)
+
 [editable path="Meshes/Buildings/silo"]
 [editable path="Meshes/Buildings/silo2"]
 [editable path="Meshes/Buildings/silo3"]

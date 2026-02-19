@@ -14,7 +14,7 @@ const RUN_ANIM = 'Run_Shoot'
 
 @onready var head: Node3D = $Head
 
-
+var auto_freeze := false
 var is_grounded := true
 var is_sprinting := false
 var current_anim : String
@@ -24,7 +24,8 @@ var current_anim : String
 func _ready() -> void:
 	super()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	set_procecess(false)
+	if auto_freeze: #spawn inicial fica congelado até todos players carregarem, respawn não
+		set_procecess(false)
 
 func set_procecess(enabled:bool)->void:
 	set_process(enabled)
