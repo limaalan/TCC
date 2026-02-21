@@ -212,7 +212,9 @@ func s_player_died(dead_player_id:int)->void:
 		players[dead_player_id] = null
 	
 	
-	
+@rpc("authority", "call_remote", "reliable")
+func s_update_game_scores(blue_score:int , red_score : int):
+	get_tree().call_group("MatchInfoUi", "update_score", blue_score, red_score)
 	
 	
 	

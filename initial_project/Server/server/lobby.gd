@@ -45,7 +45,7 @@ func s_send_world_state(new_word_state:Dictionary)->void:
 	pass
 	
 func add_client(id:int, player_name:String)->void:
-	client_data[id] ={"display_name":player_name}
+	client_data[id] ={"display_name":player_name, "kills":0, "deaths":0}
 	
 func remove_client(id:int)->void:
 	client_data.erase(id) # funciona em dicionários e arrays também
@@ -341,7 +341,7 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			damage_falloff_multiplier = clampf(damage_falloff_multiplier, damage_max_falloff, 1) # valor fica entra 0.4 e 1
 			var damage_dealt = base_damage*damage_falloff_multiplier
 
-			hurt_server_player.change_health(damage_dealt)
+			hurt_server_player.change_health(damage_dealt, shooter_id)
 			
 			print (result.collider.player.name + "Foi acertado!")
 			spawn_bullet_hit_fx(result.position - global_position, result.normal, 1)
@@ -386,7 +386,7 @@ func pickup_cooldown_ended (pickup_name :String)->void:
 func s_pickup_cooldown_ended(pickup_name:String)->void:
 	pass
 
-func player_died(dead_player_id : int)->void:
+func player_died(dead_player_id : int, killer_id:int)->void:
 	if not server_players.has(dead_player_id):
 		return
 		
@@ -395,12 +395,35 @@ func player_died(dead_player_id : int)->void:
 	server_players.erase(dead_player_id)
 	current_world_state.ps.erase(dead_player_id)
 	
+	client_data.get(dead_player_id).deaths +=1
+	if dead_player_id != killer_id: #Não conta kill se foi suicídio por granada 
+		client_data.get(dead_player_id).kills +=1
+	
 	for client_id in client_data.keys():
 		s_player_died.rpc_id(client_id, dead_player_id)
-	
+		
+	update_game_scores()
 	await get_tree().create_timer(DEATH_COOLDOWN_LENGTH).timeout
 	s_start_weapon_selection.rpc_id(dead_player_id)
 		
 @rpc("authority", "call_remote", "reliable")
 func s_player_died(dead_player_id:int)->void:
+	pass
+
+func update_game_scores()->void:
+	var blue_team_kills := 0
+	var red_team_kills := 0
+	
+	for data in client_data.values():
+		if data.team == 0 : #TODO mudar pra enum dos times
+			red_team_kills+= data.deaths
+		else :
+			blue_team_kills+=data.deaths
+
+	for client_id in client_data.keys():
+		s_update_game_scores.rpc_id(client_id, blue_team_kills, red_team_kills)
+		
+ 
+@rpc("authority", "call_remote", "reliable")
+func s_update_game_scores(blue_score:int , red_score : int):
 	pass
