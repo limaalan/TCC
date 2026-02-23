@@ -216,5 +216,8 @@ func s_player_died(dead_player_id:int)->void:
 func s_update_game_scores(blue_score:int , red_score : int):
 	get_tree().call_group("MatchInfoUi", "update_score", blue_score, red_score)
 	
-	
+@rpc("authority", "call_remote", "unreliable_ordered")
+func s_update_match_time_left(time_left:int)->void:
+	get_tree().call_group("MatchInfoUi", "update_match_time_left", time_left)
+
 	

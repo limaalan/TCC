@@ -17,13 +17,19 @@ const PHYSICS_LAYER_EXACT = 16
 const PHYSICS_LAYER_HITBOX = 4 
 const MAX_SHOT_RANDOM_DEGREES = 5
 const DEATH_COOLDOWN_LENGTH := 5
+const MATCH_LENGTH_SEC :=300 #5min
 
 var client_data : Dictionary = {}
 var ready_clients: Array[int] =[]
 var server_players := {}
+var match_time_left = MATCH_LENGTH_SEC
+
+var match_timer := Timer.new()
 
 func _ready() -> void:
 	set_physics_process(false)
+	add_child(match_timer)
+	match_timer.timeout.connect(match_timer_sec_passed)
 
 func _physics_process(delta: float) -> void:
 	if Engine.get_physics_frames()% WORLD_STATE_SEND_FRAME == 0:
@@ -216,8 +222,13 @@ func c_weapon_selected(weapon_id:int)->void:
 		if client not in ready_clients:
 			return
 	
+	start_match()
+	
+func start_match()->void:
 	status = GAME
 	spawn_players()
+	
+
 	await get_tree().create_timer(1).timeout
 	
 	for ready_client_id in ready_clients:
@@ -225,6 +236,10 @@ func c_weapon_selected(weapon_id:int)->void:
 		
 	ready_clients.clear()
 	set_physics_process(true)
+	match_timer.start()
+	update_match_time_left()
+	
+
 	
 func respawn_player(respawn_client_id:int)->void:
 	var team:int = client_data.get(respawn_client_id).team
@@ -427,3 +442,15 @@ func update_game_scores()->void:
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
 	pass
+
+func match_timer_sec_passed()->void:
+	match_time_left -= 1
+	update_match_time_left()
+
+func update_match_time_left()->void:
+	for client_id in client_data.keys():
+		s_update_match_time_left.rpc_id(client_id, match_time_left)
+	
+@rpc("authority", "call_remote", "unreliable_ordered")
+func s_update_match_time_left(time_left:int)->void:
+	pass 
