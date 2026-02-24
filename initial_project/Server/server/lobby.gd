@@ -413,7 +413,7 @@ func player_died(dead_player_id : int, killer_id:int)->void:
 	
 	client_data.get(dead_player_id).deaths +=1
 	if dead_player_id != killer_id: #Não conta kill se foi suicídio por granada 
-		client_data.get(dead_player_id).kills +=1
+		client_data.get(killer_id).kills +=1
 	
 	for client_id in client_data.keys():
 		s_player_died.rpc_id(client_id, dead_player_id)
