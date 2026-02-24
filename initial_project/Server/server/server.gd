@@ -42,9 +42,7 @@ func remove_client_from_lobby(client_id:int)-> void:
 		lobby_clients_updated(maybe_lobby)
 		
 	if maybe_lobby.client_data.keys().is_empty():
-		lobbies.erase(maybe_lobby)
-		update_lobby_spots()
-		maybe_lobby.queue_free()
+		delete_lobby(maybe_lobby)
 		print("cliend %d desconectou-se do lobby" %client_id)
 
 	
@@ -141,3 +139,7 @@ func c_get_server_clock_time(client_clock_time:int)->void:
 func s_return_server_clock_time(server_clock_time:int, old_client_clock_time:int)->void:
 	pass
 	
+func delete_lobby(lobby:Lobby)->void:
+	lobbies.erase(lobby)
+	update_lobby_spots()
+	lobby.queue_free()

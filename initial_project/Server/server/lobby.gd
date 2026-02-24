@@ -1,6 +1,6 @@
 extends Node3D
 class_name Lobby
-enum {IDLE, LOCKED, GAME}
+enum {IDLE, LOCKED, GAME, FINISHED}
 var status:= IDLE
 # Este dicionário vai manter o estado de toda a partida ( tempo , pontuação ... )
 # dentro da chave "ps" estão os valores dos player states
@@ -18,6 +18,7 @@ const PHYSICS_LAYER_HITBOX = 4
 const MAX_SHOT_RANDOM_DEGREES = 5
 const DEATH_COOLDOWN_LENGTH := 5
 const MATCH_LENGTH_SEC :=300 #5min
+const TEAM_SCORE_TO_WIN :=2
 
 var client_data : Dictionary = {}
 var ready_clients: Array[int] =[]
@@ -437,7 +438,9 @@ func update_game_scores()->void:
 
 	for client_id in client_data.keys():
 		s_update_game_scores.rpc_id(client_id, blue_team_kills, red_team_kills)
-		
+	
+	if blue_team_kills >= TEAM_SCORE_TO_WIN or red_team_kills >= TEAM_SCORE_TO_WIN:
+		end_match()
  
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
@@ -446,6 +449,8 @@ func s_update_game_scores(blue_score:int , red_score : int):
 func match_timer_sec_passed()->void:
 	match_time_left -= 1
 	update_match_time_left()
+	if match_time_left <= 0:
+		end_match()
 
 func update_match_time_left()->void:
 	for client_id in client_data.keys():
@@ -454,3 +459,17 @@ func update_match_time_left()->void:
 @rpc("authority", "call_remote", "unreliable_ordered")
 func s_update_match_time_left(time_left:int)->void:
 	pass 
+
+func end_match()->void:
+	status = FINISHED
+	match_timer.stop()
+	set_physics_process(false)
+	
+	for client_id in client_data.keys():
+		s_end_match.rpc_id(client_id, client_data)
+		
+	Server.delete_lobby(self)
+	
+@rpc("authority","call_remote","reliable")
+func s_end_match(end_client_data:Dictionary)->void:
+	pass

@@ -220,4 +220,7 @@ func s_update_game_scores(blue_score:int , red_score : int):
 func s_update_match_time_left(time_left:int)->void:
 	get_tree().call_group("MatchInfoUi", "update_match_time_left", time_left)
 
-	
+@rpc("authority","call_remote","reliable")
+func s_end_match(end_client_data:Dictionary)->void:
+	get_tree().call_group("LocalGameSceneManager", "change_scene","res://ui/match_end_info/match_end_info_ui.tscn", end_client_data)
+	queue_free()
