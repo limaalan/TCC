@@ -6,6 +6,7 @@ const AIR_ANIM = 'Jump_Idle'
 const WALK_ANIM = 'Walk_Shoot'
 const RUN_ANIM = 'Run_Shoot'
 
+@export var grenade_amount_label:Label
 @export var normal_speed := 3.0
 @export var sprint_speed := 5.0
 @export var jump_velocity := 4.0
@@ -36,6 +37,7 @@ func _physics_process(delta: float) -> void:
 	move()
 	choose_anim()
 	check_shoot_input()
+	check_throw_grenade_input()
 	
 func check_shoot_input()->void:
 	if Input.is_action_just_pressed("shoot"):
@@ -84,7 +86,13 @@ func _input(event) -> void:
 	if event is InputEventMouseMotion:
 		look_around(event.relative)
 
+func check_throw_grenade_input() ->void:
+	if Input.is_action_just_pressed("throw_grenade"):
+		get_tree().call_group("Lobby","try_throw_grenade")
 
+func update_grenades_left(grenades_left:int)->void:
+	grenade_amount_label.text = str(grenades_left)
+	
 func look_around(relative:Vector2):
 	rotate_y(-relative.x * mouse_sensitivity)
 	head.rotate_x(-relative.y * mouse_sensitivity)

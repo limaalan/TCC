@@ -6,6 +6,7 @@ const MAX_HEALTH := 100
 
 var current_health := MAX_HEALTH
 var lobby :Lobby
+var grenades_left := 2
 
 @onready var animation_player: AnimationPlayer = $character_soldier/AnimationPlayer
 

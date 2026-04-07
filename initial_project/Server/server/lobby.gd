@@ -5,10 +5,12 @@ var status:= IDLE
 # Este dicionário vai manter o estado de toda a partida ( tempo , pontuação ... )
 # dentro da chave "ps" estão os valores dos player states
 # t = timestamp do servidor	
-var current_world_state := {"ps":{}, "t": 0.0} 
+# gr = posição das granadas
+var current_world_state := {"ps":{}, "t": 0.0, "gr":{}} 
 var previous_world_states :Array[Dictionary] = []
 var pickups :Array[Pickup] = []
 var spawn_points :Array[Node3D] = []
+var grenades:= {} # chave : id granada , valor ela mesmo
 
 const WORLD_STATE_SEND_FRAME :=3
 const WORLD_STATES_TO_REMEMBER := 60
@@ -35,6 +37,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if Engine.get_physics_frames()% WORLD_STATE_SEND_FRAME == 0:
 		current_world_state.t = floori(Time.get_unix_time_from_system()*1000)
+		update_grenades_in_world_state()
 		for client_id in client_data.keys():
 			s_send_world_state.rpc_id( client_id, current_world_state) 
 			
@@ -47,6 +50,11 @@ func _physics_process(delta: float) -> void:
 		current_world_state.ps[client_id].anim_pos = server_players.get(client_id).real.animation_player.current_animation_position
 	
 	previous_world_states.push_front(current_world_state.duplicate(true))	
+	
+func update_grenades_in_world_state()->void:
+	for grenade_name in grenades.keys():
+		current_world_state.gr[grenade_name] = {"tform":grenades.get(grenade_name).transform}
+
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
 	pass
@@ -472,4 +480,46 @@ func end_match()->void:
 	
 @rpc("authority","call_remote","reliable")
 func s_end_match(end_client_data:Dictionary)->void:
+	pass
+
+@rpc("any_peer", 'call_remote', 'reliable')
+func c_try_throw_grenade(player_state:Dictionary)->void:
+	var client_id := multiplayer.get_remote_sender_id()
+	if not server_players.has(client_id): return
+	
+	var player :PlayerServerReal = server_players.get(client_id).real
+	
+	if player.grenades_left <= 0 : return 
+	player.grenades_left -= 1
+	
+	s_update_grenades_left.rpc_id(client_id, player.grenades_left)
+	var grenade :Grenade = preload("res://player/grenade/grenade.tscn").instantiate()
+	var direction := Vector3.FORWARD
+	direction = direction.rotated(Vector3.RIGHT, player_state.rot_x)
+	direction = direction.rotated(Vector3.UP, player_state.rot_y)
+	
+	grenade.set_data(self, direction, player)
+	grenade.position = player_state.pos + Vector3.UP * 1.2
+	
+	grenade.name = str(grenade.get_instance_id())
+	add_child(grenade,true)
+	grenades[grenade.name]=grenade
+
+
+@rpc("authority", "call_remote", "unreliable_ordered")
+func s_update_grenades_left(grenades_left:int)->void:
+	pass
+
+func grenade_exploded(grenade:Grenade)->void:
+	var grenade_name = grenade.name
+	grenades.erase(grenade_name)
+	current_world_state.gr.erase(grenade_name)
+	grenade.queue_free()
+	
+	for client_id in client_data.keys():
+		s_explode_grenade.rpc_id(client_id, grenade_name)
+	pass
+
+@rpc("authority", "call_remote","reliable")
+func s_explode_grenade(grenade_name:String)->void:
 	pass
