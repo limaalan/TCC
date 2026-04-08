@@ -272,6 +272,9 @@ func explode_grenade(grenade_name :String)->void:
 	if not grenade_name in grenades.keys(): return 
 	var grenade:Grenade = grenades.get(grenade_name).inst
 	if is_instance_valid(grenade):
+		var explosion_fx :Node3D = preload("res://player/grenade/grenade_explosion_fx.tscn").instantiate()
+		explosion_fx.global_transform = grenade.global_transform
+		add_child(explosion_fx)
 		grenade.queue_free()
 		
 	grenades[grenade_name].exploded = true

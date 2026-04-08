@@ -1,0 +1,127 @@
+[gd_scene load_steps=20 format=3 uid="uid://ckuy3llhk16tv"]
+
+[ext_resource type="Script" uid="uid://u2j2jpe740d2" path="res://player/grenade/grenade_explosion_fx.gd" id="1_7h5my"]
+[ext_resource type="Texture2D" uid="uid://c8cdsrc8ot1p8" path="res://assets/textures/circle_32.png" id="1_yy0e4"]
+
+[sub_resource type="Gradient" id="Gradient_ds1hb"]
+offsets = PackedFloat32Array(0, 0.45660377, 1)
+colors = PackedColorArray(1, 0.6, 0, 0, 1, 0.38431373, 0, 0.6666667, 1, 0.4509804, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_yy0e4"]
+gradient = SubResource("Gradient_ds1hb")
+
+[sub_resource type="Curve" id="Curve_7h5my"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.7515385, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_gw02c"]
+curve = SubResource("Curve_7h5my")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_k0fcb"]
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_gw02c")
+color_ramp = SubResource("GradientTexture1D_yy0e4")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cil24"]
+transparency = 1
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_sicv1"]
+material = SubResource("StandardMaterial3D_cil24")
+radius = 4.0
+height = 8.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7h5my"]
+spread = 180.0
+initial_velocity_min = 30.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, 0, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gw02c"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.9647059, 0.4509804, 1)
+albedo_texture = ExtResource("1_yy0e4")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_k0fcb"]
+material = SubResource("StandardMaterial3D_gw02c")
+size = Vector2(0.05, 0.05)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gw02c"]
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 8.0
+
+[sub_resource type="Curve" id="Curve_yy0e4"]
+_data = [Vector2(0, 0), 0.0, 4.4710164, 0, 0, Vector2(0.5017182, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -5.1837807, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_7h5my"]
+curve = SubResource("Curve_yy0e4")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yy0e4"]
+emission_shape = 1
+emission_sphere_radius = 2.0
+direction = Vector3(0, 1, 0)
+spread = 10.0
+initial_velocity_min = 0.19999999
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+alpha_curve = SubResource("CurveTexture_7h5my")
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_7h5my"]
+load_path = "res://.godot/imported/circle_32.png-1f93c02320731d0bd583452090f46824.s3tc.ctex"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k0fcb"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.20784314, 0.20784314, 0.20784314, 1)
+albedo_texture = SubResource("CompressedTexture2D_7h5my")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_cil24"]
+material = SubResource("StandardMaterial3D_k0fcb")
+size = Vector2(0.1, 0.1)
+
+[node name="GrenadeExplosionFX" type="Node3D"]
+script = ExtResource("1_7h5my")
+
+[node name="MainSphereParticles" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 1
+lifetime = 0.15000000000000002
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_k0fcb")
+draw_pass_1 = SubResource("SphereMesh_sicv1")
+
+[node name="SparkParticles" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 32
+lifetime = 0.15000000000000002
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_7h5my")
+draw_pass_1 = SubResource("QuadMesh_k0fcb")
+
+[node name="SlowSparkParticles" type="GPUParticles3D" parent="."]
+emitting = false
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_gw02c")
+draw_pass_1 = SubResource("QuadMesh_k0fcb")
+
+[node name="DustParticles" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 32
+lifetime = 4.0
+one_shot = true
+explosiveness = 0.7
+process_material = SubResource("ParticleProcessMaterial_yy0e4")
+draw_pass_1 = SubResource("QuadMesh_cil24")
