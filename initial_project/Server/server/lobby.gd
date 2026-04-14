@@ -490,9 +490,9 @@ func c_try_throw_grenade(player_state:Dictionary)->void:
 	var player :PlayerServerReal = server_players.get(client_id).real
 	
 	if player.grenades_left <= 0 : return 
-	player.grenades_left -= 1
 	
-	s_update_grenades_left.rpc_id(client_id, player.grenades_left)
+	player.update_grenades_left(player.grenades_left-1)
+	
 	var grenade :Grenade = preload("res://player/grenade/grenade.tscn").instantiate()
 	var direction := Vector3.FORWARD
 	direction = direction.rotated(Vector3.RIGHT, player_state.rot_x)
@@ -505,6 +505,8 @@ func c_try_throw_grenade(player_state:Dictionary)->void:
 	add_child(grenade,true)
 	grenades[grenade.name]=grenade
 
+func update_grenades_left(client_id:int , amount:int)->void:
+	s_update_grenades_left.rpc_id(client_id, amount)
 
 @rpc("authority", "call_remote", "unreliable_ordered")
 func s_update_grenades_left(grenades_left:int)->void:

@@ -1818,3 +1818,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.3618374)
 
 [node name="HealthPickup2" parent="Pickups" instance=ExtResource("1_qkapt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.3851156)
+
+[node name="GrenadePickup" parent="Pickups" instance=ExtResource("1_qkapt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.3618374)
+pickup_type = 1
+cooldown_time = 8.0
+
+[node name="GrenadePickup2" parent="Pickups" instance=ExtResource("1_qkapt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.3851156)
+pickup_type = 1
+cooldown_time = 8.0

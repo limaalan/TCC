@@ -222,6 +222,7 @@ func s_spawn_pickup(pickup_name:String, pickup_type:int , pos : Vector3)->void:
 	var pickup :Pickup = preload("res://player/pickups/pickup.tscn").instantiate()
 	pickup.name = pickup_name
 	pickup.position = pos
+	pickup.pickup_type = pickup_type
 	add_child(pickup, true) # força o nome , pra garantir que é o que foi setado no pickup,nome, importate pois o nome deve bater entre server e cliente
 	pickups[pickup_name] = pickup
 
