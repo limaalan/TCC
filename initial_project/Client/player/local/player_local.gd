@@ -110,6 +110,10 @@ func look_around(relative:Vector2):
 	head.rotate_x(-relative.y * mouse_sensitivity)
 	head.rotation.x = clampf(head.rotation.x, -PI/2, PI/2)
 
+func update_health_bar(current_health:int, max_health:int, changed_amount:int) ->void:
+	super(current_health, max_health, changed_amount);
+	if (changed_amount < 0):
+		get_tree().call_group("CameraShakeComponent","add_noise", absi(changed_amount) / float(max_health))
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
