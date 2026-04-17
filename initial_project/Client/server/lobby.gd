@@ -128,6 +128,8 @@ func s_start_loading_map():#passar ID do mapa quando eu tiver vários mapas...
 	map.ready.connect(map_ready)
 	add_child(map, true)
 	get_tree().call_group("LocalGameSceneManager","clear_scenes")
+	AudioManager.play_music(AudioManager.MusicKeys.BattleMusic)
+
 
 func map_ready()->void:
 	c_map_ready.rpc_id(1) # manda pro server map ready

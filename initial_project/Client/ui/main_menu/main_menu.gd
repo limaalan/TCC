@@ -8,6 +8,8 @@ func _ready()->void:
 	if (FileAccess.file_exists(NAME_SAVE_PATH)):
 		var file = FileAccess.open(NAME_SAVE_PATH,FileAccess.READ)
 		player_name_line_edit.text = file.get_as_text().left(NAME_MAX_LEN)
+	
+	AudioManager.play_music(AudioManager.MusicKeys.MenuMusic)
 
 func _on_play_button_pressed() -> void:
 	var player_name = player_name_line_edit.text
