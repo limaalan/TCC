@@ -115,6 +115,7 @@ func update_health_bar(current_health:int, max_health:int, changed_amount:int) -
 	if (changed_amount < 0):
 		get_tree().call_group("CameraShakeComponent","add_noise", absi(changed_amount) / float(max_health))
 
+	get_tree().call_group("HealthChangeMask", "update_mask", current_health /float(max_health))
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE

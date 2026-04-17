@@ -36,6 +36,7 @@ WeaponSelectionUI=""
 MatchInfoUi=""
 GrenadePromptsControl=""
 CameraShakeComponent=""
+HealthChangeMask=""
 
 [input]
 
