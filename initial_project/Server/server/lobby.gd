@@ -525,3 +525,9 @@ func grenade_exploded(grenade:Grenade)->void:
 @rpc("authority", "call_remote","reliable")
 func s_explode_grenade(grenade_name:String)->void:
 	pass
+
+func play_pickup_fx(client_id: int, pickup_type:int)->void:
+	s_play_pickup_fx.rpc_id(client_id, pickup_type)
+@rpc("authority", "call_remote","unreliable")
+func s_play_pickup_fx(pickup_type:int)->void:
+	pass

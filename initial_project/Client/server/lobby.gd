@@ -281,3 +281,11 @@ func explode_grenade(grenade_name :String)->void:
 		grenade.queue_free()
 		
 	grenades[grenade_name].exploded = true
+	
+@rpc("authority", "call_remote","unreliable")
+func s_play_pickup_fx(pickup_type:int)->void:
+	match pickup_type:
+		Pickup.PickupTypes.HealthPickup:
+			AudioManager.play_sfx(AudioManager.SFXKeys.PickupHealth)
+		Pickup.PickupTypes.GrenadePickup:
+			AudioManager.play_sfx(AudioManager.SFXKeys.PickupGrenade)

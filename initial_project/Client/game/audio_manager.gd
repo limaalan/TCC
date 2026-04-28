@@ -39,3 +39,19 @@ func play_music(music_key: MusicKeys)->void:
 	
 func set_music_volume(volume_linear:float)->void:
 	AudioServer.set_bus_volume_db(1, db_to_linear(volume_linear))
+	
+func play_sfx(sfx_key : SFXKeys)->void:
+	var stream:AudioStream
+	match sfx_key:
+		SFXKeys.UIClick:
+			stream = load("res://assets/audio/sfx/ui_click.ogg")
+		SFXKeys.PickupHealth:
+			stream = load("res://assets/audio/sfx/pickup_health.ogg")
+		SFXKeys.PickupGrenade:
+			stream = load("res://assets/audio/sfx/pickup_grenade.ogg")
+	var sfx_player := AudioStreamPlayer.new()
+	sfx_player.stream = stream
+	sfx_player.bus = "SFX"
+	sfx_player.finished.connect(sfx_player.queue_free)
+	add_child(sfx_player)
+	sfx_player.play()

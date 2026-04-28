@@ -21,6 +21,7 @@ func _on_play_button_pressed() -> void:
 	
 	Server.try_connect_client_to_lobby(player_name)
 	$QuickPlayConnectionUI.activate()
+	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 
 func _on_exit_button_pressed() -> void:
 	get_tree().quit()

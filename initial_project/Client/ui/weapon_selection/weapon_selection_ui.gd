@@ -21,7 +21,7 @@ func weapon_selected(weapon_id:int)->void:
 	auto_select_timer.stop()
 	get_tree().call_group("Lobby", "weapon_selected", weapon_id)
 	hide()
-
+	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 
 func _on_auto_select_timer_timeout() -> void:
 	weapon_selected(0)

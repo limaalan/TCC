@@ -31,11 +31,13 @@ func on_cant_connect_to_lobby()->void:
 
 func _on_close_button_pressed() -> void:
 	hide()
+	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 
 
 func _on_cancel_button_pressed() -> void:
 	hide()
 	Server.cancel_quick_play_search()
+	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 
 func on_lobby_locked()->void:
 	status_label.text="Jogo Iniciando..."
