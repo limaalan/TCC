@@ -67,6 +67,9 @@ monitorable = false
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GrenadeDetectionArea3D"]
 shape = SubResource("SphereShape3D_y8ftr")
 
+[node name="FootStepTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="area_entered" from="GrenadeDetectionArea3D" to="." method="_on_grenade_detection_area_area_entered"]
 [connection signal="area_exited" from="GrenadeDetectionArea3D" to="." method="_on_grenade_detection_area_area_exited"]
 

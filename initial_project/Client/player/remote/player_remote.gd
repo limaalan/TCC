@@ -84,6 +84,9 @@ func set_rot_x_visuals(rot_x:float)->void:
 	
 
 func set_anim (anim_name:String)->void:
+	if animation_player.assigned_animation == "Jump_Idle" and anim_name != "Jump_Idle":
+		AudioManager.play_sfx(AudioManager.SFXKeys.JumpLand, global_position, 0.2)
+		
 	if animation_player.assigned_animation == anim_name:
 		return
 	else:
@@ -92,6 +95,8 @@ func set_anim (anim_name:String)->void:
 func update_name_tag()->void:
 	name_tag_player.text = display_name
 	
-	
 func play_shoot_fx()->void:
 	weapon_holder.weapon.play_shoot_fx()
+	
+func play_footstep_sfx()->void:
+	AudioManager.play_sfx(AudioManager.SFXKeys.Footstep, global_position, 0.2)

@@ -5,6 +5,9 @@ const IDLE_ANIM = 'Idle'
 const AIR_ANIM = 'Jump_Idle'
 const WALK_ANIM = 'Walk_Shoot'
 const RUN_ANIM = 'Run_Shoot'
+const FOOTSTEP_SFX_WALK_INTERVAL := 0.5
+const FOOTSTEP_SFX_RUN_INTERVAL := 0.37
+const FOOTSTEP_SFX_PITCH_RANDOM := 0.2
 
 @export var grenade_amount_label:Label
 @export var normal_speed := 3.0
@@ -14,6 +17,7 @@ const RUN_ANIM = 'Run_Shoot'
 @export var mouse_sensitivity := 0.005
 
 @onready var head: Node3D = $Head
+@onready var foot_step_timer: Timer = $FootStepTimer
 
 var auto_freeze := false
 var is_grounded := true
@@ -59,14 +63,24 @@ func choose_anim()->void:
 
 
 func move():
+	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
+	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+
 	if is_on_floor():
 		is_sprinting = Input.is_action_pressed("sprint")
 	
 		if Input.is_action_just_pressed("jump"):
 			velocity.y = jump_velocity
-	
+			
+		if not direction.is_zero_approx() and foot_step_timer.is_stopped():
+			AudioManager.play_sfx(AudioManager.SFXKeys.Footstep, Vector3.ZERO, FOOTSTEP_SFX_PITCH_RANDOM)
+			var audio_interval = FOOTSTEP_SFX_RUN_INTERVAL if not is_sprinting else FOOTSTEP_SFX_RUN_INTERVAL
+			foot_step_timer.start(audio_interval)
+		
 		if not is_grounded:
 			is_grounded = true
+			AudioManager.play_sfx(AudioManager.SFXKeys.JumpLand, Vector3.ZERO, FOOTSTEP_SFX_PITCH_RANDOM)
+
 	
 	else:
 		velocity.y -= gravity
@@ -75,8 +89,6 @@ func move():
 			is_grounded = false
 	
 	var speed := normal_speed if not is_sprinting else sprint_speed
-	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
-	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
 	velocity.z = direction.z * speed
 	velocity.x = direction.x * speed

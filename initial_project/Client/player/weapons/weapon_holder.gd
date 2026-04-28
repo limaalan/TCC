@@ -12,4 +12,5 @@ func instantiate_weapon(weaponId:int)->void:
 		2: #Shotgun
 			weapon = preload("res://player/weapons/weapon_shotgun.tscn").instantiate()
 		
+	weapon.weapon_id = weaponId
 	add_child(weapon)

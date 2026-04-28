@@ -17,7 +17,7 @@ func shoot()->void:
 	
 	is_on_cooldown = true
 	get_tree().create_timer(weapon.shot_cooldown).timeout.connect(on_cooldown_timer_timeout)
-	weapon.play_shoot_fx()
+	weapon.play_shoot_fx(true)
 	if recoil_tween != null:
 		recoil_tween.kill() # faz voltar pro começo
 		
