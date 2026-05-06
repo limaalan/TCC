@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://4a7egmd7mp37"]
+
+[ext_resource type="Script" uid="uid://bkc7ad8j6dk65" path="res://ui/settings_widget/scene_settings_widget.gd" id="1_4c38t"]
+
+[node name="SettingsWidget" type="VBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 16
+script = ExtResource("1_4c38t")
+
+[node name="AudioContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+alignment = 2
+
+[node name="Label" type="Label" parent="AudioContainer"]
+layout_mode = 2
+text = "Audio"
+
+[node name="AudioCheckBox" type="CheckBox" parent="AudioContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+
+[node name="FullscreenContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+alignment = 2
+
+[node name="Label" type="Label" parent="FullscreenContainer"]
+layout_mode = 2
+text = "FullScreen"
+
+[node name="FullscreenCheckBox" type="CheckBox" parent="FullscreenContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+
+[connection signal="toggled" from="AudioContainer/AudioCheckBox" to="." method="_on_audio_check_box_toggled"]
+[connection signal="toggled" from="FullscreenContainer/FullscreenCheckBox" to="." method="_on_fullscreen_check_box_toggled"]

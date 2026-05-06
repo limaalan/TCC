@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dcjptc5h2hwgq"]
+[gd_scene load_steps=5 format=3 uid="uid://dcjptc5h2hwgq"]
 
 [ext_resource type="Script" uid="uid://n20766avlehg" path="res://ui/main_menu/main_menu.gd" id="1_r785l"]
 [ext_resource type="Texture2D" uid="uid://byukgpq4ekqs4" path="res://assets/textures/bg_black_and_white.png" id="2_3848r"]
 [ext_resource type="Script" uid="uid://lna88f213mp" path="res://ui/main_menu/quick_play_connection_ui.gd" id="3_omy8q"]
+[ext_resource type="PackedScene" uid="uid://4a7egmd7mp37" path="res://ui/settings_widget/scene_settings_widget.tscn" id="4_i5wg5"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -98,21 +99,34 @@ size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 32
 text = "Cancel"
 
-[node name="PlayerNameLineEdit" type="LineEdit" parent="."]
-custom_minimum_size = Vector2(256, 32)
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = -64.0
-offset_right = 288.0
-offset_bottom = -32.0
-grow_vertical = 0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="PlayerNameLineEdit" type="LineEdit" parent="MarginContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 32)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
 placeholder_text = "Player Name"
 max_length = 256
 context_menu_enabled = false
 shortcut_keys_enabled = false
+
+[node name="SettingsWidget" parent="MarginContainer" instance=ExtResource("4_i5wg5")]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
 
 [connection signal="pressed" from="VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]

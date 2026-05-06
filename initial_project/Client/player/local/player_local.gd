@@ -18,8 +18,11 @@ const FOOTSTEP_SFX_PITCH_RANDOM := 0.2
 
 @onready var head: Node3D = $Head
 @onready var foot_step_timer: Timer = $FootStepTimer
+@onready var pause_screen: Control = $PauseScreen
 
 var auto_freeze := false
+var is_frozen := false
+var is_paused := false
 var is_grounded := true
 var is_sprinting := false
 var current_anim : String
@@ -31,7 +34,32 @@ func _ready() -> void:
 	super()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if auto_freeze: #spawn inicial fica congelado até todos players carregarem, respawn não
-		set_procecess(false)
+		freeze()
+		
+	pause_screen.hide()
+	
+func pause()->void:
+	set_procecess(false)
+	is_paused = true
+	pause_screen.show()
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	
+func unpause()->void:
+	if not is_frozen :
+		set_procecess(true)
+	is_paused = false
+	pause_screen.hide()
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
+func freeze()->void:
+	set_procecess(false)
+	is_frozen = true
+	
+func unfreeze()->void:
+	if not is_paused :
+		set_procecess(true)
+	is_frozen = false
+		
 
 func set_procecess(enabled:bool)->void:
 	set_process(enabled)
@@ -128,9 +156,10 @@ func update_health_bar(current_health:int, max_health:int, changed_amount:int) -
 		get_tree().call_group("CameraShakeComponent","add_noise", absi(changed_amount) / float(max_health))
 
 	get_tree().call_group("HealthChangeMask", "update_mask", current_health /float(max_health))
+
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		pause() if not is_paused else unpause()
 
 
 func _on_grenade_detection_area_area_entered(area: Area3D) -> void:

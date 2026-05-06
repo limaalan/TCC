@@ -2,7 +2,7 @@ extends Control
 const NAME_SAVE_PATH :='user://player_name.dat'
 const NAME_MAX_LEN = 16
 
-@onready var player_name_line_edit: LineEdit = $PlayerNameLineEdit
+@onready var player_name_line_edit: LineEdit = %PlayerNameLineEdit
 
 func _ready()->void:
 	if (FileAccess.file_exists(NAME_SAVE_PATH)):

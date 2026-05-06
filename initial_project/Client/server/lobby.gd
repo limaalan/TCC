@@ -140,7 +140,7 @@ func c_map_ready()->void:
 	
 @rpc("authority", "call_remote", "reliable")
 func s_start_match()->void:
-	get_tree().call_group("PlayerLocal","set_procecess",true)
+	get_tree().call_group("PlayerLocal","unfreeze")
 	set_physics_process(true)
 	
 @rpc ("authority", "call_remote", "reliable")
@@ -289,3 +289,7 @@ func s_play_pickup_fx(pickup_type:int)->void:
 			AudioManager.play_sfx(AudioManager.SFXKeys.PickupHealth)
 		Pickup.PickupTypes.GrenadePickup:
 			AudioManager.play_sfx(AudioManager.SFXKeys.PickupGrenade)
+			
+			
+func exit_game ()->void :
+	queue_free()
