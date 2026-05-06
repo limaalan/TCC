@@ -424,14 +424,14 @@ func player_died(dead_player_id : int, killer_id:int)->void:
 		client_data.get(killer_id).kills +=1
 	
 	for client_id in client_data.keys():
-		s_player_died.rpc_id(client_id, dead_player_id)
+		s_player_died.rpc_id(client_id, dead_player_id, killer_id)
 		
 	update_game_scores()
 	await get_tree().create_timer(DEATH_COOLDOWN_LENGTH).timeout
 	s_start_weapon_selection.rpc_id(dead_player_id)
 		
 @rpc("authority", "call_remote", "reliable")
-func s_player_died(dead_player_id:int)->void:
+func s_player_died(dead_player_id:int, killer_id:int)->void:
 	pass
 
 func update_game_scores()->void:

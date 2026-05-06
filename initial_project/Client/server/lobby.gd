@@ -6,6 +6,7 @@ var players:= {} # Dicionário dos jogadores chave:valor =  { id: PlayerScene }
 var world_state_buffer:Array[Dictionary] = []
 var pickups := {}
 var grenades := {}
+var player_names_and_teams := {} # key player ID value outro dicionário com player name e Time
 
 func get_local_player()->PlayerLocal:
 	return players.get(multiplayer.get_unique_id())
@@ -164,6 +165,7 @@ func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , play
 		players[client_id].queue_free()
 		
 	players[client_id] = player
+	player_names_and_teams [client_id] = {"display_name":player_name, "team": team}
 		
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
@@ -238,10 +240,23 @@ func s_pickup_cooldown_ended(pickup_name:String)->void:
 	pickups.get(pickup_name).cooldown_ended()
 
 @rpc("authority", "call_remote", "reliable")
-func s_player_died(dead_player_id:int)->void:
+func s_player_died(dead_player_id:int, killer_id:int)->void:
 	if players.has(dead_player_id):
 		players.get(dead_player_id).queue_free()
 		players[dead_player_id] = null
+		
+	get_tree().call_group(
+		"MatchInfoUi", 
+		"show_elimination_text",
+		killer_id,
+		dead_player_id,
+		player_names_and_teams.get(killer_id).display_name,
+		player_names_and_teams.get(killer_id).team,
+		player_names_and_teams.get(dead_player_id).display_name,
+		player_names_and_teams.get(dead_player_id).team
+		
+
+	)
 	
 	
 @rpc("authority", "call_remote", "reliable")
