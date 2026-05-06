@@ -2,6 +2,8 @@ extends Node3D
 class_name Lobby
 enum {IDLE, LOCKED, GAME, FINISHED}
 var status:= IDLE
+var callable_when_clients_ready : Callable
+var waiting_players_ready:= false
 # Este dicionário vai manter o estado de toda a partida ( tempo , pontuação ... )
 # dentro da chave "ps" estão os valores dos player states
 # t = timestamp do servidor	
@@ -72,8 +74,10 @@ func add_client(id:int, player_name:String)->void:
 	
 func remove_client(id:int)->void:
 	client_data.get(id).connected = false # funciona em dicionários e arrays também
-	delete_player(id)
+	check_players_ready()
 	maybe_delete_empty_lobby()
+	delete_player(id)
+	check_both_teams_are_connected()
 	
 func delete_player(client_id:int)->void:
 	if server_players.has(client_id):
@@ -93,6 +97,20 @@ func maybe_delete_empty_lobby()->void:
 		if data.connected: #pelo menos um player conectado , faz nada
 			return 
 	Server.delete_lobby(self) # não não sobrou ninguém, deleta esse lobby
+
+func check_both_teams_are_connected()->void:
+	var connected_blue_players := 0
+	var connected_red_players := 0
+	for client_id in get_connected_clients():
+		if not client_data.get(client_id).has("team"):
+			return
+		if client_data.get(client_id).team == 0 :
+			connected_blue_players +=1 
+		else: 
+			connected_red_players +=1
+	var should_end_match = not connected_blue_players or not connected_red_players
+	if  should_end_match:
+		end_match()
 	
 @rpc("any_peer", "call_remote", "reliable")
 func c_lock_client():
@@ -101,12 +119,22 @@ func c_lock_client():
 		return
 	ready_clients.append(client_id)
 	
-	for client in client_data.keys() :
-		if client not in ready_clients:
+	waiting_players_ready = true
+	check_players_ready(start_loading_map)
+
+func check_players_ready(maybe_callable = null) ->void:
+	if not waiting_players_ready:
+		return
+	for maybe_ready_client in get_connected_clients():
+		if not maybe_ready_client in ready_clients:
 			return
-	start_loading_map()
 	
+	if maybe_callable is Callable:
+		callable_when_clients_ready = maybe_callable
+	
+	callable_when_clients_ready.call()
 	ready_clients.clear()
+	waiting_players_ready = false
 
 func start_loading_map():
 	var map = load("res://maps/server_map_farm.tscn").instantiate()
@@ -143,13 +171,8 @@ func c_map_ready()->void:
 	for pickup in pickups:
 		s_spawn_pickup.rpc_id(client_id, pickup.name, pickup.pickup_type, pickup.position)
 	
-	for client in client_data.keys() :
-		if client not in ready_clients:
-			return
-	
-	for ready_client_id in ready_clients:
-		s_start_weapon_selection.rpc_id(client_id)
-	ready_clients.clear()
+	waiting_players_ready = true
+	check_players_ready(start_weapon_selection)
 	#spawn_players()
 	#await get_tree().create_timer(1).timeout
 	#
@@ -159,6 +182,8 @@ func c_map_ready()->void:
 	#ready_clients.clear()
 	#set_physics_process(true)
 
+
+		
 @rpc("authority", "call_remote", "reliable")
 func s_spawn_pickup(pickup_name:String, pickup_type:int , pos : Vector3)->void:
 	pass
@@ -256,11 +281,8 @@ func c_weapon_selected(weapon_id:int)->void:
 		return
 
 	ready_clients.append(client_id)
-	for client in client_data.keys() :
-		if client not in ready_clients:
-			return
-	
-	start_match()
+	waiting_players_ready = true
+	check_players_ready(start_match)
 	
 func start_match()->void:
 	status = GAME
@@ -269,10 +291,9 @@ func start_match()->void:
 
 	await get_tree().create_timer(1).timeout
 	
-	for ready_client_id in ready_clients:
+	for ready_client_id in get_connected_clients():
 		s_start_match.rpc_id(ready_client_id)
 		
-	ready_clients.clear()
 	set_physics_process(true)
 	match_timer.start()
 	update_match_time_left()
@@ -303,7 +324,10 @@ func respawn_player(respawn_client_id:int)->void:
 				client_data.get(respawn_client_id).weapon_id, 
 				false
 			)
-	
+
+func start_weapon_selection()->void:
+	for ready_client in get_connected_clients():
+		s_start_weapon_selection.rpc_id(ready_client)
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
 	pass

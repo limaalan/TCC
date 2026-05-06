@@ -16,6 +16,8 @@ func show_score_infos(client_data:Dictionary)->void:
 	var red_score := 0
 	print("ClientDATA:->", client_data)
 	for data in client_data.values():
+		if not data.has("team"):
+			continue
 		var player_info_row: PlayerInfoRowContainer = player_info_row_container_scene.instantiate()
 		
 		player_info_row.set_data(data.display_name, data.kills, data.deaths)
