@@ -307,4 +307,15 @@ func s_play_pickup_fx(pickup_type:int)->void:
 			
 			
 func exit_game ()->void :
+	c_client_quit_match.rpc_id(1)
 	queue_free()
+
+@rpc("any_peer", "call_remote","reliable")
+func c_client_quit_match ()->void:
+	pass
+
+@rpc("authority", "call_remote", "reliable")
+func s_delete_player(client_id:int)->void:
+	if players.has(client_id):
+		players.get(client_id).queue_free()
+		players.erase(client_id)

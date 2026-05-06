@@ -38,12 +38,10 @@ func remove_client_from_lobby(client_id:int)-> void:
 	var maybe_lobby := get_lobby_from_client_id(client_id)
 	if maybe_lobby:
 		maybe_lobby.remove_client(client_id)
-		
-		lobby_clients_updated(maybe_lobby)
-		
-	if maybe_lobby.client_data.keys().is_empty():
-		delete_lobby(maybe_lobby)
-		print("cliend %d desconectou-se do lobby" %client_id)
+		if is_instance_valid(maybe_lobby):
+			lobby_clients_updated(maybe_lobby)
+
+	print("cliend %d desconectou-se do lobby" %client_id)
 
 	
 func get_lobby_from_client_id(id:int)->Lobby:

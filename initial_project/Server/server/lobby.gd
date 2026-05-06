@@ -34,11 +34,19 @@ func _ready() -> void:
 	add_child(match_timer)
 	match_timer.timeout.connect(match_timer_sec_passed)
 
+func get_connected_clients()-> Array[int]:
+	var connected_client_ids : Array[int] = []
+	for client_id in client_data.keys():
+		if client_data.get(client_id).connected:
+			connected_client_ids.append(client_id)
+	return connected_client_ids
+	
+
 func _physics_process(delta: float) -> void:
 	if Engine.get_physics_frames()% WORLD_STATE_SEND_FRAME == 0:
 		current_world_state.t = floori(Time.get_unix_time_from_system()*1000)
 		update_grenades_in_world_state()
-		for client_id in client_data.keys():
+		for client_id in get_connected_clients():
 			s_send_world_state.rpc_id( client_id, current_world_state) 
 			
 	while previous_world_states.size() >= WORLD_STATES_TO_REMEMBER:
@@ -60,11 +68,32 @@ func s_send_world_state(new_word_state:Dictionary)->void:
 	pass
 	
 func add_client(id:int, player_name:String)->void:
-	client_data[id] ={"display_name":player_name, "kills":0, "deaths":0}
+	client_data[id] ={"display_name":player_name,"connected":true, "kills":0, "deaths":0}
 	
 func remove_client(id:int)->void:
-	client_data.erase(id) # funciona em dicionários e arrays também
-
+	client_data.get(id).connected = false # funciona em dicionários e arrays também
+	delete_player(id)
+	maybe_delete_empty_lobby()
+	
+func delete_player(client_id:int)->void:
+	if server_players.has(client_id):
+		server_players.get(client_id).real.queue_free()
+		server_players.get(client_id).dummy.queue_free()
+		server_players.erase(client_id)
+		
+		for connected_client_id in get_connected_clients():
+			s_delete_player.rpc_id(connected_client_id, client_id)
+	
+@rpc("authority", "call_remote", "reliable")
+func s_delete_player(client_id:int)->void:
+	pass
+	
+func maybe_delete_empty_lobby()->void:
+	for data in client_data.values():
+		if data.connected: #pelo menos um player conectado , faz nada
+			return 
+	Server.delete_lobby(self) # não não sobrou ninguém, deleta esse lobby
+	
 @rpc("any_peer", "call_remote", "reliable")
 func c_lock_client():
 	var client_id =  multiplayer.get_remote_sender_id()
@@ -264,7 +293,7 @@ func respawn_player(respawn_client_id:int)->void:
 	spawn_server_player(respawn_client_id, spawn_point.transform, team)
 	
 	#spawn para os jogadores
-	for client_id in client_data.keys() :
+	for client_id in get_connected_clients() :
 			s_spawn_player.rpc_id(
 				client_id,
 				respawn_client_id,
@@ -282,7 +311,7 @@ func s_start_weapon_selection()->void:
 @rpc ("any_peer", "call_remote", "unreliable")
 func c_shot_fired(time_stamp:int , player_data:Dictionary)->void:
 	var sender_id:= multiplayer.get_remote_sender_id()
-	for client_id in client_data.keys()	:
+	for client_id in get_connected_clients()	:
 		if client_id != sender_id:
 			s_play_shoot_fx.rpc_id(client_id,sender_id )
 	
@@ -374,7 +403,7 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 	
 	
 func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void: #env 0, player 1
-	for client_id in client_data.keys(): # pega os clientes do lobby
+	for client_id in get_connected_clients(): # pega os clientes do lobby
 		s_spawn_bullet_hit_fx.rpc_id(client_id, pos, normal, type)
 		
 @rpc("authority", "call_remote", "unreliable")
@@ -387,7 +416,7 @@ func s_play_shoot_fx(target_client_id:int)->void:
 	pass
 
 func update_health(target_client_id:int, current_health:int , max_health:int, changed_amount:int)->void:
-	for client_id in client_data.keys ():
+	for client_id in get_connected_clients():
 		s_update_health.rpc_id(client_id, target_client_id , current_health, max_health, changed_amount)	
 
 @rpc ("authority", "call_remote", "unreliable_ordered")
@@ -395,7 +424,7 @@ func s_update_health(target_client_id:int, current_health:int , max_health:int, 
 	pass
 
 func pickup_cooldown_started(pickup_name :String )->void:
-	for client_id in client_data.keys():
+	for client_id in get_connected_clients():
 		s_pickup_cooldown_started.rpc_id(client_id, pickup_name)
 
 @rpc("authority", "call_remote", "reliable")
@@ -403,7 +432,7 @@ func s_pickup_cooldown_started(pickup_name:String)->void:
 	pass
 
 func pickup_cooldown_ended (pickup_name :String)->void:
-	for client_id in client_data.keys():
+	for client_id in get_connected_clients():
 		s_pickup_cooldown_ended.rpc_id(client_id, pickup_name)
 
 @rpc("authority", "call_remote", "reliable")
@@ -423,7 +452,7 @@ func player_died(dead_player_id : int, killer_id:int)->void:
 	if dead_player_id != killer_id: #Não conta kill se foi suicídio por granada 
 		client_data.get(killer_id).kills +=1
 	
-	for client_id in client_data.keys():
+	for client_id in get_connected_clients():
 		s_player_died.rpc_id(client_id, dead_player_id, killer_id)
 		
 	update_game_scores()
@@ -444,7 +473,7 @@ func update_game_scores()->void:
 		else :
 			blue_team_kills+=data.deaths
 
-	for client_id in client_data.keys():
+	for client_id in get_connected_clients():
 		s_update_game_scores.rpc_id(client_id, blue_team_kills, red_team_kills)
 	
 	if blue_team_kills >= TEAM_SCORE_TO_WIN or red_team_kills >= TEAM_SCORE_TO_WIN:
@@ -461,7 +490,7 @@ func match_timer_sec_passed()->void:
 		end_match()
 
 func update_match_time_left()->void:
-	for client_id in client_data.keys():
+	for client_id in get_connected_clients():
 		s_update_match_time_left.rpc_id(client_id, match_time_left)
 	
 @rpc("authority", "call_remote", "unreliable_ordered")
@@ -473,7 +502,7 @@ func end_match()->void:
 	match_timer.stop()
 	set_physics_process(false)
 	
-	for client_id in client_data.keys():
+	for client_id in get_connected_clients():
 		s_end_match.rpc_id(client_id, client_data)
 		
 	Server.delete_lobby(self)
@@ -518,7 +547,7 @@ func grenade_exploded(grenade:Grenade)->void:
 	current_world_state.gr.erase(grenade_name)
 	grenade.queue_free()
 	
-	for client_id in client_data.keys():
+	for client_id in get_connected_clients():
 		s_explode_grenade.rpc_id(client_id, grenade_name)
 	pass
 
@@ -531,3 +560,9 @@ func play_pickup_fx(client_id: int, pickup_type:int)->void:
 @rpc("authority", "call_remote","unreliable")
 func s_play_pickup_fx(pickup_type:int)->void:
 	pass
+	
+@rpc("any_peer", "call_remote","reliable")
+func c_client_quit_match ()->void:
+	var client_id = multiplayer.get_remote_sender_id()
+	remove_client(client_id)
+	current_world_state.erase(client_id)
