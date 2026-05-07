@@ -104,7 +104,7 @@ func check_both_teams_are_connected()->void:
 	for client_id in get_connected_clients():
 		if not client_data.get(client_id).has("team"):
 			return
-		if client_data.get(client_id).team == 0 :
+		if client_data.get(client_id).team == GameEnums.Team.BLUE :
 			connected_blue_players +=1 
 		else: 
 			connected_red_players +=1
@@ -201,15 +201,15 @@ func spawn_players()->void:
 	ready_clients.shuffle() # embaralha array com os clientes prontos
 	
 	for i in ready_clients.size():
-		var team := 0 
+		var team := GameEnums.Team.BLUE
 		var spawn_tform := Transform3D.IDENTITY
 		if i%2 == 0 :
-			team = 0 
+			team = GameEnums.Team.BLUE
 			spawn_tform = blue_spawn_points[0].global_transform # utilizando o global pra garantir que vai ser pego certo independente da hierarquia
 			blue_spawn_points.pop_front()
 			
 		else :
-			team = 1
+			team = GameEnums.Team.RED
 			spawn_tform = red_spawn_points[0].global_transform
 			red_spawn_points.pop_front()
 	
@@ -302,7 +302,7 @@ func start_match()->void:
 	
 func respawn_player(respawn_client_id:int)->void:
 	var team:int = client_data.get(respawn_client_id).team
-	var team_prefix = "Blue" if team == 0 else "Red"
+	var team_prefix = "Blue" if team == GameEnums.Team.BLUE else "Red"
 	var possible_spawn_points :Array[Node3D]= []
 	for spawn_point in spawn_points:
 		if spawn_point.name.begins_with(team_prefix):
@@ -421,9 +421,9 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			hurt_server_player.change_health(damage_dealt, shooter_id)
 			
 			print (result.collider.player.name + "Foi acertado!")
-			spawn_bullet_hit_fx(result.position - global_position, result.normal, 1)
+			spawn_bullet_hit_fx(result.position - global_position, result.normal, GameEnums.HitFxType.PLAYER)
 		else :
-			spawn_bullet_hit_fx(result.position - global_position, result.normal, 0)
+			spawn_bullet_hit_fx(result.position - global_position, result.normal, GameEnums.HitFxType.ENVIRONMENT)
 	
 	
 func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void: #env 0, player 1
@@ -492,7 +492,7 @@ func update_game_scores()->void:
 	var red_team_kills := 0
 	
 	for data in client_data.values():
-		if data.team == 0 : #TODO mudar pra enum dos times
+		if data.team == GameEnums.Team.BLUE :
 			red_team_kills+= data.deaths
 		else :
 			blue_team_kills+=data.deaths

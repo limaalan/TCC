@@ -21,11 +21,11 @@ func play_shoot_fx(is_local := false )->void:
 	var sfx_key:AudioManager.SFXKeys
 	
 	match weapon_id :
-		0:
+		GameEnums.WeaponId.PISTOL:
 			sfx_key = AudioManager.SFXKeys.ShootPistol
-		1:
+		GameEnums.WeaponId.SMG:
 			sfx_key = AudioManager.SFXKeys.ShootSMG
-		2:
+		GameEnums.WeaponId.SHOTGUN:
 			sfx_key = AudioManager.SFXKeys.ShootShotgun
 			
 	var audio_position = global_position if not is_local else Vector3.ZERO

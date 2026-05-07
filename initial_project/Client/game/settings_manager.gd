@@ -5,7 +5,7 @@ var fullscreen_enabled := false
 
 func set_audio_mute (enabled :bool) ->void:
 	mute_enabled = enabled
-	AudioServer.set_bus_mute(0, enabled)
+	AudioServer.set_bus_mute(AudioServer.get_bus_index(AudioManager.MASTER_BUS), enabled)
 	
 func set_fullscreen (enabled:bool) ->void:
 	fullscreen_enabled = enabled

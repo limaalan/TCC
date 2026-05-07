@@ -24,7 +24,7 @@ func show_score_infos(client_data:Dictionary)->void:
 		
 		var target_player_info_container: VBoxContainer
 		
-		if data.team == 0 :
+		if data.team == GameEnums.Team.BLUE :
 			red_score += data.deaths
 			target_player_info_container = blue_team_player_info_container
 		else :
