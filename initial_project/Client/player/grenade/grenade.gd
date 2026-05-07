@@ -6,4 +6,4 @@ func _ready() -> void:
 
 
 func lerp_tform(old_data:Dictionary , new_data :Dictionary, lerp_weight:float)->void:
-	transform = old_data.tform.interpolate_with(new_data.tform, lerp_weight)
+	transform = old_data[NetKeys.TRANSFORM].interpolate_with(new_data[NetKeys.TRANSFORM], lerp_weight)

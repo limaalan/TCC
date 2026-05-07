@@ -43,10 +43,10 @@ func _ready() -> void:
 
 	
 func update_body_geometry(old_data: Dictionary , new_data:Dictionary, lerp_weight:float)->void:
-	position = lerp(old_data.pos, new_data.pos, lerp_weight)
-	rotation.y = lerp_angle(old_data.rot_y , new_data.rot_y , lerp_weight)
-	set_anim(new_data.anim)
-	set_rot_x_visuals(lerp_angle(old_data.rot_x, new_data.rot_x, lerp_weight))
+	position = lerp(old_data[NetKeys.POS], new_data[NetKeys.POS], lerp_weight)
+	rotation.y = lerp_angle(old_data[NetKeys.ROT_Y], new_data[NetKeys.ROT_Y], lerp_weight)
+	set_anim(new_data[NetKeys.ANIM])
+	set_rot_x_visuals(lerp_angle(old_data[NetKeys.ROT_X], new_data[NetKeys.ROT_X], lerp_weight))
 	
 func update_player_colors() -> void:
 	var team_material = BLUE_MATERIAL if team == GameEnums.Team.BLUE else RED_MATERIAL
