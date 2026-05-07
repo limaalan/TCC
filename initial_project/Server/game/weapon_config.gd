@@ -2,19 +2,19 @@ class_name WeaponConfig
 
 #Configuração das armas
 const WEAPON_DATA := {
-	0: {
+	GameEnums.WeaponId.PISTOL: {
 		"name": "Pistol",
 		"damage": 35, 
 		"accuracy": 0.9,
 		"projectiles": 1
 	},
-	1: {
+	GameEnums.WeaponId.SMG: {
 		"name": "SMG",
 		"damage": 20, 
 		"accuracy": 0.7,
 		"projectiles": 1
 	},
-	2: {
+	GameEnums.WeaponId.SHOTGUN: {
 		"name": "Shotgun",
 		"damage": 18, 
 		"accuracy": 0.4,

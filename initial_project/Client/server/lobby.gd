@@ -200,9 +200,9 @@ func s_play_shoot_fx(target_client_id:int)->void:
 func s_spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int):
 	var bullet_hit_fx :Node3D 
 	match type : 
-		0:
+		GameEnums.HitFxType.ENVIRONMENT:
 			bullet_hit_fx = preload("res://player/bullet_hit_fx/bullet_hit_fx_environment.tscn").instantiate()
-		1:
+		GameEnums.HitFxType.PLAYER:
 			bullet_hit_fx = preload("res://player/bullet_hit_fx/bullet_hit_fx_player.tscn").instantiate()
 	var spawn_tform := Transform3D.IDENTITY
 	
@@ -300,9 +300,9 @@ func explode_grenade(grenade_name :String)->void:
 @rpc("authority", "call_remote","unreliable")
 func s_play_pickup_fx(pickup_type:int)->void:
 	match pickup_type:
-		Pickup.PickupTypes.HealthPickup:
+		GameEnums.PickupType.HEALTH:
 			AudioManager.play_sfx(AudioManager.SFXKeys.PickupHealth)
-		Pickup.PickupTypes.GrenadePickup:
+		GameEnums.PickupType.GRENADE:
 			AudioManager.play_sfx(AudioManager.SFXKeys.PickupGrenade)
 			
 			

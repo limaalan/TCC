@@ -25,8 +25,8 @@ func update_match_time_left(time_left:int)->void:
 
 func show_elimination_text(killer_id :int, victim_id:int , killer_name:String , killer_team:int , victim_name :String, victim_team : int)->void:
 	var elimination_text := preload("res://ui/match_info/elimination_text.tscn").instantiate()
-	var killer_color = BLUE_TEAM_COLOR if killer_team == 0 else RED_TEAM_COLOR # dá pra melhorar isso colocando numa outra configuração
-	var victim_color = BLUE_TEAM_COLOR if victim_team == 0 else RED_TEAM_COLOR # dá pra melhorar isso colocando numa outra configuração
+	var killer_color = BLUE_TEAM_COLOR if killer_team == GameEnums.Team.BLUE else RED_TEAM_COLOR
+	var victim_color = BLUE_TEAM_COLOR if victim_team == GameEnums.Team.BLUE else RED_TEAM_COLOR
 	
 	elimination_text.text = "[color=#%s]%s[/color] eliminated [color=#%s]%s[/color]" %[
 		killer_color,

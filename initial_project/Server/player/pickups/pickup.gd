@@ -3,12 +3,7 @@ class_name Pickup
 
 @onready var cooldown_timer: Timer = $CooldownTimer
 
-enum PickupTypes {
-	HealthPickup,
-	GrenadePickup
-}
-
-@export var pickup_type :=PickupTypes.HealthPickup
+@export var pickup_type:int = GameEnums.PickupType.HEALTH
 @export var cooldown_time := 10.0
 
 var lobby:Lobby
@@ -23,12 +18,12 @@ func _on_body_entered(player: PlayerServerReal) -> void:
 		return
 	
 	match pickup_type:
-		PickupTypes.HealthPickup:
+		GameEnums.PickupType.HEALTH:
 			if player.current_health < player.MAX_HEALTH:
 				player.change_health(75)
 				picked_up(player)
 				
-		PickupTypes.GrenadePickup:
+		GameEnums.PickupType.GRENADE:
 			player.update_grenades_left(player.grenades_left+1)
 			picked_up(player)
 

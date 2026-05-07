@@ -7,15 +7,15 @@ func activate() ->void:
 	auto_select_timer.start()
 
 func _on_pistol_button_pressed() -> void:
-	weapon_selected(0)
+	weapon_selected(GameEnums.WeaponId.PISTOL)
 
 
 func _on_smg_button_pressed() -> void:
-	weapon_selected(1)
+	weapon_selected(GameEnums.WeaponId.SMG)
 
 
 func _on_shotgun_button_pressed() -> void:
-	weapon_selected(2)
+	weapon_selected(GameEnums.WeaponId.SHOTGUN)
 	
 func weapon_selected(weapon_id:int)->void:
 	auto_select_timer.stop()
@@ -24,4 +24,4 @@ func weapon_selected(weapon_id:int)->void:
 	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 
 func _on_auto_select_timer_timeout() -> void:
-	weapon_selected(0)
+	weapon_selected(GameEnums.WeaponId.PISTOL)

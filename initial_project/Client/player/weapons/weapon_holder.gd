@@ -5,11 +5,11 @@ var weapon:Weapon
 
 func instantiate_weapon(weaponId:int)->void:
 	match weaponId:
-		0: # Pistol
+		GameEnums.WeaponId.PISTOL:
 			weapon = preload("res://player/weapons/weapon_pistol.tscn").instantiate()
-		1: #SMG
+		GameEnums.WeaponId.SMG:
 			weapon = preload("res://player/weapons/weapon_smg.tscn").instantiate()
-		2: #Shotgun
+		GameEnums.WeaponId.SHOTGUN:
 			weapon = preload("res://player/weapons/weapon_shotgun.tscn").instantiate()
 		
 	weapon.weapon_id = weaponId

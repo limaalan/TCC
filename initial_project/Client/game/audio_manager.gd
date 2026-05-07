@@ -16,6 +16,9 @@ enum SFXKeys{
 	GrenadeThrow,
 	GrenadeExplode
 } # Acho que aqui daria pra colocar isso na configuração da propria arma...
+const MASTER_BUS := &"Master"
+const MUSIC_BUS := &"Music"
+const SFX_BUS := &"SFX"
 @onready var music_player: AudioStreamPlayer = $MusicPlayer
 
 var music_transition_tween :Tween
@@ -45,7 +48,7 @@ func play_music(music_key: MusicKeys)->void:
 
 	
 func set_music_volume(volume_linear:float)->void:
-	AudioServer.set_bus_volume_db(1, db_to_linear(volume_linear))
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(MUSIC_BUS), db_to_linear(volume_linear))
 	
 #Pitch random pro som não ficar repetivo ( tiro da arma )
 func play_sfx(sfx_key : SFXKeys, position:= Vector3.ZERO , pitch_rand := 0.0)->void:
@@ -80,7 +83,7 @@ func play_sfx(sfx_key : SFXKeys, position:= Vector3.ZERO , pitch_rand := 0.0)->v
 		sfx_player.position = position
 	
 	sfx_player.stream = stream
-	sfx_player.bus = "SFX"
+	sfx_player.bus = SFX_BUS
 	sfx_player.pitch_scale = 1 + randf_range(-pitch_rand , pitch_rand)
 	sfx_player.finished.connect(sfx_player.queue_free)
 	add_child(sfx_player)
