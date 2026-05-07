@@ -2,3 +2,5 @@
 .godot/
 /android/
 initial_project/Client/assets
+initial_project/Client/shared
+initial_project/Server/shared
