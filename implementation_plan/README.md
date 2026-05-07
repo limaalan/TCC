@@ -12,6 +12,8 @@ Este diretório reúne a documentação gerada a partir da análise de `TCC.md` 
 - `06_plano_de_testes_deploy_cli.md`: próximos passos para testar, exportar e hospedar o jogo via Godot CLI/headless.
 - `07_lista_de_assets_arte.md`: lista de assets low-poly reutilizáveis, metas de polígonos e prompts base para geração 3D.
 - `08_guia_importacao_assets_mapas.md`: guia Blender/Godot para importar assets, criar mapas Client/Server e configurar colisões simplificadas/exatas.
+- `09_backlog_tarefas_quebradas.md`: backlog em cards pequenos para refactors, multi-mapa, dois modos de jogo e deploy básico.
+- `10_prompt_criar_issues.md`: versão pronta para colar em outro ChatGPT e criar as issues no GitHub.
 
 ## Escopo Da Análise
 
