@@ -40,10 +40,10 @@ func send_player_state()->void:
 func create_player_data()->Dictionary:
 	var local_player := get_local_player()
 	var local_player_state := {
-		"pos":local_player.position,
-		"rot_y": local_player.rotation.y,
-		"rot_x": local_player.head.rotation.x,
-		"anim": local_player.current_anim
+		NetKeys.POS: local_player.position,
+		NetKeys.ROT_Y: local_player.rotation.y,
+		NetKeys.ROT_X: local_player.head.rotation.x,
+		NetKeys.ANIM: local_player.current_anim
 		}
 	return local_player_state
 	
@@ -55,23 +55,23 @@ func handle_world_state()->void:
 	var target_render_unix_ms :int = floori(Time.get_unix_time_from_system() * 1000) - INTERPOLATION_BUFFER_MS - Server.clock_deviation_ms
 	
 	#Remove states recebidos do server que já passaram
-	while world_state_buffer.size()>2 and target_render_unix_ms > world_state_buffer[1].t :
+	while world_state_buffer.size()>2 and target_render_unix_ms > world_state_buffer[1][NetKeys.WORLD_TIME_MS] :
 		world_state_buffer.pop_front()
 		
-	var lerp_weight = remap(target_render_unix_ms, world_state_buffer[0].t, world_state_buffer[1].t, 0, 1)
-	if (world_state_buffer[0].has("gr") and world_state_buffer[1].has("gr")):
-		handle_grenades(world_state_buffer[0].gr, world_state_buffer[1].gr , lerp_weight)
+	var lerp_weight = remap(target_render_unix_ms, world_state_buffer[0][NetKeys.WORLD_TIME_MS], world_state_buffer[1][NetKeys.WORLD_TIME_MS], 0, 1)
+	if (world_state_buffer[0].has(NetKeys.WORLD_GRENADES) and world_state_buffer[1].has(NetKeys.WORLD_GRENADES)):
+		handle_grenades(world_state_buffer[0][NetKeys.WORLD_GRENADES], world_state_buffer[1][NetKeys.WORLD_GRENADES], lerp_weight)
 	var remote_players := get_remote_players()
 	
 	#Se algum dos states está faltando player_states ps
-	if not world_state_buffer[0].has("ps") or not world_state_buffer[1 ].has("ps"):
+	if not world_state_buffer[0].has(NetKeys.WORLD_PLAYERS) or not world_state_buffer[1].has(NetKeys.WORLD_PLAYERS):
 		return
 	
-	for client_id in world_state_buffer[1].ps.keys():
+	for client_id in world_state_buffer[1][NetKeys.WORLD_PLAYERS].keys():
 		if not client_id in remote_players.keys():
 			continue
 			
-		if not client_id in world_state_buffer[0].ps.keys():
+		if not client_id in world_state_buffer[0][NetKeys.WORLD_PLAYERS].keys():
 			continue
 		
 		if not is_instance_valid(players.get(client_id)):
@@ -80,8 +80,8 @@ func handle_world_state()->void:
 		var remote_player :PlayerRemote = remote_players.get(client_id)
 		
 		remote_player.update_body_geometry(
-			world_state_buffer[0].ps.get(client_id),
-			world_state_buffer[1].ps.get(client_id),
+			world_state_buffer[0][NetKeys.WORLD_PLAYERS].get(client_id),
+			world_state_buffer[1][NetKeys.WORLD_PLAYERS].get(client_id),
 			lerp_weight
 		)
 		
@@ -92,9 +92,9 @@ func handle_grenades(old_grenade_data:Dictionary, new_grenade_data:Dictionary, l
 		# checa se precisa criar granadas
 		if not grenade_name in grenades.keys():
 			var grenade:Grenade = preload("res://player/grenade/grenade.tscn").instantiate()
-			grenades[grenade_name]= {"inst":grenade, "exploded":false} #instância da granada e indicador de explodido
+			grenades[grenade_name]= {NetKeys.INSTANCE: grenade, NetKeys.EXPLODED: false} #instância da granada e indicador de explodido
 			grenade.name = grenade_name
-			grenade.global_transform= new_grenade_data.get(grenade_name).tform
+			grenade.global_transform= new_grenade_data.get(grenade_name)[NetKeys.TRANSFORM]
 			add_child(grenade , true)
 	
 	for grenade_name in old_grenade_data.keys():
@@ -102,15 +102,15 @@ func handle_grenades(old_grenade_data:Dictionary, new_grenade_data:Dictionary, l
 		if not grenade_name in new_grenade_data.keys():
 			if not grenade_name in grenades.keys(): 
 				continue
-			if not grenades.get(grenade_name).exploded:
+			if not grenades.get(grenade_name)[NetKeys.EXPLODED]:
 				explode_grenade(grenade_name)
 			grenades.erase(grenade_name)
 			continue
 			
-		if grenades.get(grenade_name).exploded:
+		if grenades.get(grenade_name)[NetKeys.EXPLODED]:
 			continue
 		#movendo as granadas
-		var grenade:Grenade = grenades.get(grenade_name).inst
+		var grenade:Grenade = grenades.get(grenade_name)[NetKeys.INSTANCE]
 		grenade.lerp_tform(old_grenade_data.get(grenade_name), new_grenade_data.get(grenade_name), lerp_weight)
 			
 				
@@ -165,7 +165,7 @@ func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , play
 		players[client_id].queue_free()
 		
 	players[client_id] = player
-	player_names_and_teams [client_id] = {"display_name":player_name, "team": team}
+	player_names_and_teams [client_id] = {NetKeys.DISPLAY_NAME: player_name, NetKeys.TEAM: team}
 		
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
@@ -250,10 +250,10 @@ func s_player_died(dead_player_id:int, killer_id:int)->void:
 		"show_elimination_text",
 		killer_id,
 		dead_player_id,
-		player_names_and_teams.get(killer_id).display_name,
-		player_names_and_teams.get(killer_id).team,
-		player_names_and_teams.get(dead_player_id).display_name,
-		player_names_and_teams.get(dead_player_id).team
+		player_names_and_teams.get(killer_id)[NetKeys.DISPLAY_NAME],
+		player_names_and_teams.get(killer_id)[NetKeys.TEAM],
+		player_names_and_teams.get(dead_player_id)[NetKeys.DISPLAY_NAME],
+		player_names_and_teams.get(dead_player_id)[NetKeys.TEAM]
 		
 
 	)
@@ -288,14 +288,14 @@ func s_explode_grenade(grenade_name:String)->void:
 	
 func explode_grenade(grenade_name :String)->void:
 	if not grenade_name in grenades.keys(): return 
-	var grenade:Grenade = grenades.get(grenade_name).inst
+	var grenade:Grenade = grenades.get(grenade_name)[NetKeys.INSTANCE]
 	if is_instance_valid(grenade):
 		var explosion_fx :Node3D = preload("res://player/grenade/grenade_explosion_fx.tscn").instantiate()
 		explosion_fx.global_transform = grenade.global_transform
 		add_child(explosion_fx)
 		grenade.queue_free()
 		
-	grenades[grenade_name].exploded = true
+	grenades[grenade_name][NetKeys.EXPLODED] = true
 	
 @rpc("authority", "call_remote","unreliable")
 func s_play_pickup_fx(pickup_type:int)->void:

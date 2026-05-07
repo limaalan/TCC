@@ -5,10 +5,8 @@ var status:= IDLE
 var callable_when_clients_ready : Callable
 var waiting_players_ready:= false
 # Este dicionário vai manter o estado de toda a partida ( tempo , pontuação ... )
-# dentro da chave "ps" estão os valores dos player states
-# t = timestamp do servidor	
-# gr = posição das granadas
-var current_world_state := {"ps":{}, "t": 0.0, "gr":{}} 
+# dentro da chave WORLD_PLAYERS estão os valores dos player states
+var current_world_state := {NetKeys.WORLD_PLAYERS: {}, NetKeys.WORLD_TIME_MS: 0.0, NetKeys.WORLD_GRENADES: {}} 
 var previous_world_states :Array[Dictionary] = []
 var pickups :Array[Pickup] = []
 var spawn_points :Array[Node3D] = []
@@ -39,14 +37,14 @@ func _ready() -> void:
 func get_connected_clients()-> Array[int]:
 	var connected_client_ids : Array[int] = []
 	for client_id in client_data.keys():
-		if client_data.get(client_id).connected:
+		if client_data.get(client_id)[NetKeys.CONNECTED]:
 			connected_client_ids.append(client_id)
 	return connected_client_ids
 	
 
 func _physics_process(delta: float) -> void:
 	if Engine.get_physics_frames()% WORLD_STATE_SEND_FRAME == 0:
-		current_world_state.t = floori(Time.get_unix_time_from_system()*1000)
+		current_world_state[NetKeys.WORLD_TIME_MS] = floori(Time.get_unix_time_from_system()*1000)
 		update_grenades_in_world_state()
 		for client_id in get_connected_clients():
 			s_send_world_state.rpc_id( client_id, current_world_state) 
@@ -55,25 +53,30 @@ func _physics_process(delta: float) -> void:
 		previous_world_states.pop_back()
 		
 	for client_id in server_players.keys():
-		if not current_world_state.ps.has(client_id):
+		if not current_world_state[NetKeys.WORLD_PLAYERS].has(client_id):
 			continue
-		current_world_state.ps[client_id].anim_pos = server_players.get(client_id).real.animation_player.current_animation_position
+		current_world_state[NetKeys.WORLD_PLAYERS][client_id][NetKeys.ANIM_POS] = server_players.get(client_id).real.animation_player.current_animation_position
 	
 	previous_world_states.push_front(current_world_state.duplicate(true))	
 	
 func update_grenades_in_world_state()->void:
 	for grenade_name in grenades.keys():
-		current_world_state.gr[grenade_name] = {"tform":grenades.get(grenade_name).transform}
+		current_world_state[NetKeys.WORLD_GRENADES][grenade_name] = {NetKeys.TRANSFORM: grenades.get(grenade_name).transform}
 
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
 	pass
 	
 func add_client(id:int, player_name:String)->void:
-	client_data[id] ={"display_name":player_name,"connected":true, "kills":0, "deaths":0}
+	client_data[id] = {
+		NetKeys.DISPLAY_NAME: player_name,
+		NetKeys.CONNECTED: true,
+		NetKeys.KILLS: 0,
+		NetKeys.DEATHS: 0,
+	}
 	
 func remove_client(id:int)->void:
-	client_data.get(id).connected = false # funciona em dicionários e arrays também
+	client_data.get(id)[NetKeys.CONNECTED] = false # funciona em dicionários e arrays também
 	check_players_ready()
 	maybe_delete_empty_lobby()
 	delete_player(id)
@@ -94,7 +97,7 @@ func s_delete_player(client_id:int)->void:
 	
 func maybe_delete_empty_lobby()->void:
 	for data in client_data.values():
-		if data.connected: #pelo menos um player conectado , faz nada
+		if data[NetKeys.CONNECTED]: #pelo menos um player conectado , faz nada
 			return 
 	Server.delete_lobby(self) # não não sobrou ninguém, deleta esse lobby
 
@@ -102,9 +105,9 @@ func check_both_teams_are_connected()->void:
 	var connected_blue_players := 0
 	var connected_red_players := 0
 	for client_id in get_connected_clients():
-		if not client_data.get(client_id).has("team"):
+		if not client_data.get(client_id).has(NetKeys.TEAM):
 			return
-		if client_data.get(client_id).team == GameEnums.Team.BLUE :
+		if client_data.get(client_id)[NetKeys.TEAM] == GameEnums.Team.BLUE :
 			connected_blue_players +=1 
 		else: 
 			connected_red_players +=1
@@ -216,15 +219,15 @@ func spawn_players()->void:
 		spawn_server_player(ready_clients[i], spawn_tform, team)
 		
 		for ready_client_id in ready_clients :
-			s_spawn_player.rpc_id(
-				ready_client_id,
-				ready_clients[i],
-				spawn_tform,
-				team,
-				client_data.get(ready_clients[i]).display_name,
-				client_data.get(ready_clients[i]).weapon_id,
-				true
-			)
+				s_spawn_player.rpc_id(
+					ready_client_id,
+					ready_clients[i],
+					spawn_tform,
+					team,
+					client_data.get(ready_clients[i])[NetKeys.DISPLAY_NAME],
+					client_data.get(ready_clients[i])[NetKeys.WEAPON_ID],
+					true
+				)
 			
 func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)->void:
 	var server_player_real := preload("res://player/player_server_real.tscn").instantiate()
@@ -243,7 +246,7 @@ func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)-
 	server_players[client_id].real = server_player_real
 	server_players[client_id].dummy = server_player_dummy
 	
-	client_data[client_id].team = team
+	client_data[client_id][NetKeys.TEAM] = team
 
 
 @rpc ("authority", "call_remote", "reliable")
@@ -261,10 +264,10 @@ func c_send_player_state(playerState:Dictionary)->void:
 		return
 	
 	#atribuindo ao state global dos jogadores o valor recebido por RPC das posições
-	current_world_state.ps[client_id] = playerState 
-	server_players.get(client_id).real.position = playerState.pos
-	server_players.get(client_id).real.rotation.y = playerState.rot_y
-	server_players.get(client_id).real.set_anim(playerState.anim) 
+	current_world_state[NetKeys.WORLD_PLAYERS][client_id] = playerState 
+	server_players.get(client_id).real.position = playerState[NetKeys.POS]
+	server_players.get(client_id).real.rotation.y = playerState[NetKeys.ROT_Y]
+	server_players.get(client_id).real.set_anim(playerState[NetKeys.ANIM]) 
 	
 	
 	
@@ -274,7 +277,7 @@ func c_weapon_selected(weapon_id:int)->void:
 	var client_id =  multiplayer.get_remote_sender_id()
 	if !client_id in client_data.keys() or client_id in ready_clients:
 		return
-	client_data[client_id].weapon_id = weapon_id
+	client_data[client_id][NetKeys.WEAPON_ID] = weapon_id
 
 	if status == GAME:
 		respawn_player(client_id)
@@ -301,7 +304,7 @@ func start_match()->void:
 
 	
 func respawn_player(respawn_client_id:int)->void:
-	var team:int = client_data.get(respawn_client_id).team
+	var team:int = client_data.get(respawn_client_id)[NetKeys.TEAM]
 	var team_prefix = "Blue" if team == GameEnums.Team.BLUE else "Red"
 	var possible_spawn_points :Array[Node3D]= []
 	for spawn_point in spawn_points:
@@ -320,8 +323,8 @@ func respawn_player(respawn_client_id:int)->void:
 				respawn_client_id,
 				spawn_point.transform,
 				team,
-				client_data.get(respawn_client_id).display_name,
-				client_data.get(respawn_client_id).weapon_id, 
+				client_data.get(respawn_client_id)[NetKeys.DISPLAY_NAME],
+				client_data.get(respawn_client_id)[NetKeys.WEAPON_ID], 
 				false
 			)
 
@@ -347,18 +350,18 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 	var target_world_state :Dictionary
 	
 	for world_state in previous_world_states:
-		if world_state.t < target_time:
+		if world_state[NetKeys.WORLD_TIME_MS] < target_time:
 			target_world_state = world_state
 			break
 	
 	if target_world_state == null :
 		return
 	
-	for client_id in target_world_state.ps.keys():
+	for client_id in target_world_state[NetKeys.WORLD_PLAYERS].keys():
 		if not client_id in server_players.keys() :
 			continue
 
-		if not client_id in previous_world_states[0].ps.keys(): # Testa se o player está vivo 
+		if not client_id in previous_world_states[0][NetKeys.WORLD_PLAYERS].keys(): # Testa se o player está vivo 
 			continue
 			
 		if client_id == shooter_id:
@@ -366,15 +369,15 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			server_players.get(client_id).dummy.update_body_geometry(player_data)
 			continue
 		
-		if not target_world_state.ps.get(client_id).is_empty():
-			server_players.get(client_id).dummy.update_body_geometry(target_world_state.ps.get(client_id))
+		if not target_world_state[NetKeys.WORLD_PLAYERS].get(client_id).is_empty():
+			server_players.get(client_id).dummy.update_body_geometry(target_world_state[NetKeys.WORLD_PLAYERS].get(client_id))
 	
 	await get_tree().physics_frame # aguarda 1 frame do calculo de física para atualizar os modelos
 	
 	if not shooter_id in server_players.keys():
 		return
 		
-	var weapon_data := WeaponConfig.get_weapon_data(client_data.get(shooter_id).weapon_id)
+	var weapon_data := WeaponConfig.get_weapon_data(client_data.get(shooter_id)[NetKeys.WEAPON_ID])
 	# Faz o raycast a partir da cabeça do atirador
 	var space_state := get_world_3d().direct_space_state
 	var shooter_dummy: ServerPlayerDummy = server_players.get(shooter_id).dummy
@@ -402,7 +405,7 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			if not server_players.has(hurt_client_id):
 				continue
 				
-			if client_data.get(shooter_id).team == client_data.get(hurt_client_id).team:
+			if client_data.get(shooter_id)[NetKeys.TEAM] == client_data.get(hurt_client_id)[NetKeys.TEAM]:
 				continue
 			
 			#Cálculo do dano causado pela arma
@@ -470,11 +473,11 @@ func player_died(dead_player_id : int, killer_id:int)->void:
 	server_players.get(dead_player_id).real.queue_free()
 	server_players.get(dead_player_id).dummy.queue_free()
 	server_players.erase(dead_player_id)
-	current_world_state.ps.erase(dead_player_id)
+	current_world_state[NetKeys.WORLD_PLAYERS].erase(dead_player_id)
 	
-	client_data.get(dead_player_id).deaths +=1
+	client_data.get(dead_player_id)[NetKeys.DEATHS] +=1
 	if dead_player_id != killer_id: #Não conta kill se foi suicídio por granada 
-		client_data.get(killer_id).kills +=1
+		client_data.get(killer_id)[NetKeys.KILLS] +=1
 	
 	for client_id in get_connected_clients():
 		s_player_died.rpc_id(client_id, dead_player_id, killer_id)
@@ -492,10 +495,10 @@ func update_game_scores()->void:
 	var red_team_kills := 0
 	
 	for data in client_data.values():
-		if data.team == GameEnums.Team.BLUE :
-			red_team_kills+= data.deaths
+		if data[NetKeys.TEAM] == GameEnums.Team.BLUE :
+			red_team_kills+= data[NetKeys.DEATHS]
 		else :
-			blue_team_kills+=data.deaths
+			blue_team_kills+=data[NetKeys.DEATHS]
 
 	for client_id in get_connected_clients():
 		s_update_game_scores.rpc_id(client_id, blue_team_kills, red_team_kills)
@@ -548,11 +551,11 @@ func c_try_throw_grenade(player_state:Dictionary)->void:
 	
 	var grenade :Grenade = preload("res://player/grenade/grenade.tscn").instantiate()
 	var direction := Vector3.FORWARD
-	direction = direction.rotated(Vector3.RIGHT, player_state.rot_x)
-	direction = direction.rotated(Vector3.UP, player_state.rot_y)
+	direction = direction.rotated(Vector3.RIGHT, player_state[NetKeys.ROT_X])
+	direction = direction.rotated(Vector3.UP, player_state[NetKeys.ROT_Y])
 	
 	grenade.set_data(self, direction, player)
-	grenade.position = player_state.pos + Vector3.UP * 1.2
+	grenade.position = player_state[NetKeys.POS] + Vector3.UP * 1.2
 	
 	grenade.name = str(grenade.get_instance_id())
 	add_child(grenade,true)
@@ -568,7 +571,7 @@ func s_update_grenades_left(grenades_left:int)->void:
 func grenade_exploded(grenade:Grenade)->void:
 	var grenade_name = grenade.name
 	grenades.erase(grenade_name)
-	current_world_state.gr.erase(grenade_name)
+	current_world_state[NetKeys.WORLD_GRENADES].erase(grenade_name)
 	grenade.queue_free()
 	
 	for client_id in get_connected_clients():
@@ -589,4 +592,4 @@ func s_play_pickup_fx(pickup_type:int)->void:
 func c_client_quit_match ()->void:
 	var client_id = multiplayer.get_remote_sender_id()
 	remove_client(client_id)
-	current_world_state.erase(client_id)
+	current_world_state[NetKeys.WORLD_PLAYERS].erase(client_id)
