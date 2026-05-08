@@ -144,7 +144,17 @@ func s_start_match()->void:
 	set_physics_process(true)
 	
 @rpc ("authority", "call_remote", "reliable")
-func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , player_name : String, weapon_id:int, auto_freeze:bool)->void:
+func s_spawn_player(spawn_data: Dictionary)->void:
+	if not NetPayloads.is_spawn_player(spawn_data):
+		push_warning("Invalid spawn_player payload")
+		return
+
+	var client_id: int = spawn_data[NetKeys.CLIENT_ID]
+	var spawn_tform: Transform3D = spawn_data[NetKeys.SPAWN_TRANSFORM]
+	var team: int = spawn_data[NetKeys.TEAM]
+	var player_name: String = spawn_data[NetKeys.DISPLAY_NAME]
+	var weapon_id: int = spawn_data[NetKeys.WEAPON_ID]
+	var auto_freeze: bool = spawn_data[NetKeys.AUTO_FREEZE]
 	var player : PlayerCharacter
 
 	if client_id == multiplayer.get_unique_id():
@@ -267,8 +277,12 @@ func s_update_match_time_left(time_left:int)->void:
 	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_MATCH_TIME_LEFT, time_left)
 
 @rpc("authority","call_remote","reliable")
-func s_end_match(end_client_data:Dictionary)->void:
-	get_tree().call_group(ClientNames.GROUP_LOCAL_GAME_SCENE_MANAGER, ClientNames.METHOD_CHANGE_SCENE, "res://ui/match_end_info/match_end_info_ui.tscn", end_client_data)
+func s_end_match(end_match_data:Dictionary)->void:
+	if not NetPayloads.is_end_match(end_match_data):
+		push_warning("Invalid end_match payload")
+		return
+
+	get_tree().call_group(ClientNames.GROUP_LOCAL_GAME_SCENE_MANAGER, ClientNames.METHOD_CHANGE_SCENE, "res://ui/match_end_info/match_end_info_ui.tscn", end_match_data)
 	queue_free()
 
 func try_throw_grenade() ->void :
