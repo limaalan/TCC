@@ -38,4 +38,4 @@ func show_score_infos(client_data:Dictionary)->void:
 
 
 func _on_exit_button_pressed() -> void:
-	get_tree().call_group("LocalGameSceneManager", "change_scene", "res://ui/main_menu/main_menu.tscn")
+	get_tree().call_group(ClientNames.GROUP_LOCAL_GAME_SCENE_MANAGER, ClientNames.METHOD_CHANGE_SCENE, "res://ui/main_menu/main_menu.tscn")

@@ -84,7 +84,7 @@ func set_rot_x_visuals(rot_x:float)->void:
 	
 
 func set_anim (anim_name:String)->void:
-	if animation_player.assigned_animation == "Jump_Idle" and anim_name != "Jump_Idle":
+	if animation_player.assigned_animation == ClientNames.ANIM_AIR and anim_name != ClientNames.ANIM_AIR:
 		AudioManager.play_sfx(AudioManager.SFXKeys.JumpLand, global_position, 0.2)
 		
 	if animation_player.assigned_animation == anim_name:
