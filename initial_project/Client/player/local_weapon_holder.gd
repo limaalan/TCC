@@ -28,8 +28,8 @@ func shoot()->void:
 	recoil_tween.tween_property(weapon, "rotation:x", 0.0, RECOIL_TWEEN_TIME)
 	recoil_tween.tween_property(weapon, "position:z", 0.0, RECOIL_TWEEN_TIME)
 	
-	get_tree().call_group("Lobby", "local_shot_fired")
-	get_tree().call_group("CameraShakeComponent", "add_noise", 0.1)
+	get_tree().call_group(ClientNames.GROUP_LOBBY, ClientNames.METHOD_LOCAL_SHOT_FIRED)
+	get_tree().call_group(ClientNames.GROUP_CAMERA_SHAKE, ClientNames.METHOD_ADD_NOISE, 0.1)
 	
 func start_trigger_pressed()->void:
 	trigger_pressed = true

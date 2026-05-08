@@ -23,7 +23,7 @@ func get_remote_players()->Dictionary:
 	return remote_players
 
 func _ready()-> void:
-	add_to_group("Lobby")
+	add_to_group(ClientNames.GROUP_LOBBY)
 	c_lock_client.rpc_id(1)
 	set_physics_process(false)
 
@@ -127,7 +127,7 @@ func s_start_loading_map():#passar ID do mapa quando eu tiver vários mapas...
 	map.name = "Map"
 	map.ready.connect(map_ready)
 	add_child(map, true)
-	get_tree().call_group("LocalGameSceneManager","clear_scenes")
+	get_tree().call_group(ClientNames.GROUP_LOCAL_GAME_SCENE_MANAGER, ClientNames.METHOD_CLEAR_SCENES)
 	AudioManager.play_music(AudioManager.MusicKeys.BattleMusic)
 
 
@@ -140,7 +140,7 @@ func c_map_ready()->void:
 	
 @rpc("authority", "call_remote", "reliable")
 func s_start_match()->void:
-	get_tree().call_group("PlayerLocal","unfreeze")
+	get_tree().call_group(ClientNames.GROUP_PLAYER_LOCAL, ClientNames.METHOD_UNFREEZE)
 	set_physics_process(true)
 	
 @rpc ("authority", "call_remote", "reliable")
@@ -178,7 +178,7 @@ func c_weapon_selected(weapon_id:int)->void:
 
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
-	get_tree().call_group("WeaponSelectionUI", "activate")
+	get_tree().call_group(ClientNames.GROUP_WEAPON_SELECTION_UI, ClientNames.METHOD_ACTIVATE)
 
 
 func local_shot_fired()->void:
@@ -245,8 +245,8 @@ func s_player_died(dead_player_id:int, killer_id:int)->void:
 		players[dead_player_id] = null
 		
 	get_tree().call_group(
-		"MatchInfoUi", 
-		"show_elimination_text",
+		ClientNames.GROUP_MATCH_INFO_UI,
+		ClientNames.METHOD_SHOW_ELIMINATION_TEXT,
 		killer_id,
 		dead_player_id,
 		player_names_and_teams.get(killer_id)[NetKeys.DISPLAY_NAME],
@@ -260,15 +260,15 @@ func s_player_died(dead_player_id:int, killer_id:int)->void:
 	
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
-	get_tree().call_group("MatchInfoUi", "update_score", blue_score, red_score)
+	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_SCORE, blue_score, red_score)
 	
 @rpc("authority", "call_remote", "unreliable_ordered")
 func s_update_match_time_left(time_left:int)->void:
-	get_tree().call_group("MatchInfoUi", "update_match_time_left", time_left)
+	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_MATCH_TIME_LEFT, time_left)
 
 @rpc("authority","call_remote","reliable")
 func s_end_match(end_client_data:Dictionary)->void:
-	get_tree().call_group("LocalGameSceneManager", "change_scene","res://ui/match_end_info/match_end_info_ui.tscn", end_client_data)
+	get_tree().call_group(ClientNames.GROUP_LOCAL_GAME_SCENE_MANAGER, ClientNames.METHOD_CHANGE_SCENE, "res://ui/match_end_info/match_end_info_ui.tscn", end_client_data)
 	queue_free()
 
 func try_throw_grenade() ->void :

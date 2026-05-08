@@ -439,7 +439,7 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			spawn_bullet_hit_fx(result.position - global_position, result.normal, GameEnums.HitFxType.ENVIRONMENT)
 	
 	
-func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void: #env 0, player 1
+func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void:
 	for client_id in get_connected_clients(): # pega os clientes do lobby
 		s_spawn_bullet_hit_fx.rpc_id(client_id, pos, normal, type)
 		
