@@ -39,29 +39,29 @@ func _ready() -> void:
 	pause_screen.hide()
 	
 func pause()->void:
-	set_procecess(false)
+	set_processing_enabled(false)
 	is_paused = true
 	pause_screen.show()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
 func unpause()->void:
 	if not is_frozen :
-		set_procecess(true)
+		set_processing_enabled(true)
 	is_paused = false
 	pause_screen.hide()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 func freeze()->void:
-	set_procecess(false)
+	set_processing_enabled(false)
 	is_frozen = true
-	
+
 func unfreeze()->void:
 	if not is_paused :
-		set_procecess(true)
+		set_processing_enabled(true)
 	is_frozen = false
 		
 
-func set_procecess(enabled:bool)->void:
+func set_processing_enabled(enabled:bool)->void:
 	set_process(enabled)
 	set_physics_process(enabled)
 	set_process_input(enabled)
