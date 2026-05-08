@@ -262,6 +262,10 @@ func c_send_player_state(playerState:Dictionary)->void:
 	var client_id := multiplayer.get_remote_sender_id()
 	if not server_players.has(client_id):
 		return
+
+	if not NetPayloads.is_player_state(playerState):
+		push_warning("Invalid player_state payload from client %s" % client_id)
+		return
 	
 	#atribuindo ao state global dos jogadores o valor recebido por RPC das posições
 	current_world_state[NetKeys.WORLD_PLAYERS][client_id] = playerState 
