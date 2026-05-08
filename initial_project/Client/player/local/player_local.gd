@@ -1,10 +1,10 @@
 extends PlayerCharacter
 class_name PlayerLocal
 
-const IDLE_ANIM = 'Idle'
-const AIR_ANIM = 'Jump_Idle'
-const WALK_ANIM = 'Walk_Shoot'
-const RUN_ANIM = 'Run_Shoot'
+const IDLE_ANIM := ClientNames.ANIM_IDLE
+const AIR_ANIM := ClientNames.ANIM_AIR
+const WALK_ANIM := ClientNames.ANIM_WALK_SHOOT
+const RUN_ANIM := ClientNames.ANIM_RUN_SHOOT
 const FOOTSTEP_SFX_WALK_INTERVAL := 0.5
 const FOOTSTEP_SFX_RUN_INTERVAL := 0.37
 const FOOTSTEP_SFX_PITCH_RANDOM := 0.2
@@ -39,29 +39,29 @@ func _ready() -> void:
 	pause_screen.hide()
 	
 func pause()->void:
-	set_procecess(false)
+	set_processing_enabled(false)
 	is_paused = true
 	pause_screen.show()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
 func unpause()->void:
 	if not is_frozen :
-		set_procecess(true)
+		set_processing_enabled(true)
 	is_paused = false
 	pause_screen.hide()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 func freeze()->void:
-	set_procecess(false)
+	set_processing_enabled(false)
 	is_frozen = true
-	
+
 func unfreeze()->void:
 	if not is_paused :
-		set_procecess(true)
+		set_processing_enabled(true)
 	is_frozen = false
 		
 
-func set_procecess(enabled:bool)->void:
+func set_processing_enabled(enabled:bool)->void:
 	set_process(enabled)
 	set_physics_process(enabled)
 	set_process_input(enabled)
@@ -74,9 +74,9 @@ func _physics_process(delta: float) -> void:
 	show_nearby_grenades()
 	
 func check_shoot_input()->void:
-	if Input.is_action_just_pressed("shoot"):
+	if Input.is_action_just_pressed(ClientNames.INPUT_SHOOT):
 		weapon_holder.start_trigger_pressed()
-	elif Input.is_action_just_released("shoot"):
+	elif Input.is_action_just_released(ClientNames.INPUT_SHOOT):
 		weapon_holder.end_trigger_pressed()
 	
 func choose_anim()->void:
@@ -91,13 +91,13 @@ func choose_anim()->void:
 
 
 func move():
-	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
+	var input_dir := Input.get_vector(ClientNames.INPUT_MOVE_LEFT, ClientNames.INPUT_MOVE_RIGHT, ClientNames.INPUT_MOVE_FORWARD, ClientNames.INPUT_MOVE_BACKWARD)
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
 	if is_on_floor():
-		is_sprinting = Input.is_action_pressed("sprint")
+		is_sprinting = Input.is_action_pressed(ClientNames.INPUT_SPRINT)
 	
-		if Input.is_action_just_pressed("jump"):
+		if Input.is_action_just_pressed(ClientNames.INPUT_JUMP):
 			velocity.y = jump_velocity
 			
 		if not direction.is_zero_approx() and foot_step_timer.is_stopped():
@@ -129,8 +129,8 @@ func _input(event) -> void:
 		look_around(event.relative)
 
 func check_throw_grenade_input() ->void:
-	if Input.is_action_just_pressed("throw_grenade"):
-		get_tree().call_group("Lobby","try_throw_grenade")
+	if Input.is_action_just_pressed(ClientNames.INPUT_THROW_GRENADE):
+		get_tree().call_group(ClientNames.GROUP_LOBBY, ClientNames.METHOD_TRY_THROW_GRENADE)
 
 func show_nearby_grenades()-> void:
 	var grenades_data := {}
@@ -140,7 +140,7 @@ func show_nearby_grenades()-> void:
 		var grenade_pos:= Vector2(grenade.global_position.x, grenade.global_position.z)
 		grenades_data[grenade.name] = own_pos.angle_to_point(grenade_pos) + PI/2 + rotation.y
 		
-	get_tree().call_group("GrenadePromptsControl","update_grenade_prompts", grenades_data)
+	get_tree().call_group(ClientNames.GROUP_GRENADE_PROMPTS, ClientNames.METHOD_UPDATE_GRENADE_PROMPTS, grenades_data)
 
 func update_grenades_left(grenades_left:int)->void:
 	grenade_amount_label.text = str(grenades_left)
@@ -153,12 +153,12 @@ func look_around(relative:Vector2):
 func update_health_bar(current_health:int, max_health:int, changed_amount:int) ->void:
 	super(current_health, max_health, changed_amount);
 	if (changed_amount < 0):
-		get_tree().call_group("CameraShakeComponent","add_noise", absi(changed_amount) / float(max_health))
+		get_tree().call_group(ClientNames.GROUP_CAMERA_SHAKE, ClientNames.METHOD_ADD_NOISE, absi(changed_amount) / float(max_health))
 
-	get_tree().call_group("HealthChangeMask", "update_mask", current_health /float(max_health))
+	get_tree().call_group(ClientNames.GROUP_HEALTH_CHANGE_MASK, ClientNames.METHOD_UPDATE_MASK, current_health /float(max_health))
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed(ClientNames.INPUT_UI_CANCEL):
 		pause() if not is_paused else unpause()
 
 

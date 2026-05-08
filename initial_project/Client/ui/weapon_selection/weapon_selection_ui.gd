@@ -19,7 +19,7 @@ func _on_shotgun_button_pressed() -> void:
 	
 func weapon_selected(weapon_id:int)->void:
 	auto_select_timer.stop()
-	get_tree().call_group("Lobby", "weapon_selected", weapon_id)
+	get_tree().call_group(ClientNames.GROUP_LOBBY, ClientNames.METHOD_WEAPON_SELECTED, weapon_id)
 	hide()
 	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 

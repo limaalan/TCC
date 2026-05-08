@@ -23,7 +23,7 @@ func get_remote_players()->Dictionary:
 	return remote_players
 
 func _ready()-> void:
-	add_to_group("Lobby")
+	add_to_group(ClientNames.GROUP_LOBBY)
 	c_lock_client.rpc_id(1)
 	set_physics_process(false)
 
@@ -39,13 +39,12 @@ func send_player_state()->void:
 	
 func create_player_data()->Dictionary:
 	var local_player := get_local_player()
-	var local_player_state := {
-		NetKeys.POS: local_player.position,
-		NetKeys.ROT_Y: local_player.rotation.y,
-		NetKeys.ROT_X: local_player.head.rotation.x,
-		NetKeys.ANIM: local_player.current_anim
-		}
-	return local_player_state
+	return NetPayloads.make_player_state(
+		local_player.position,
+		local_player.rotation.y,
+		local_player.head.rotation.x,
+		local_player.current_anim
+	)
 	
 func handle_world_state()->void:
 	#ainda não inicializou , não tem playerState...
@@ -128,7 +127,7 @@ func s_start_loading_map():#passar ID do mapa quando eu tiver vários mapas...
 	map.name = "Map"
 	map.ready.connect(map_ready)
 	add_child(map, true)
-	get_tree().call_group("LocalGameSceneManager","clear_scenes")
+	get_tree().call_group(ClientNames.GROUP_LOCAL_GAME_SCENE_MANAGER, ClientNames.METHOD_CLEAR_SCENES)
 	AudioManager.play_music(AudioManager.MusicKeys.BattleMusic)
 
 
@@ -141,11 +140,21 @@ func c_map_ready()->void:
 	
 @rpc("authority", "call_remote", "reliable")
 func s_start_match()->void:
-	get_tree().call_group("PlayerLocal","unfreeze")
+	get_tree().call_group(ClientNames.GROUP_PLAYER_LOCAL, ClientNames.METHOD_UNFREEZE)
 	set_physics_process(true)
 	
 @rpc ("authority", "call_remote", "reliable")
-func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int , player_name : String, weapon_id:int, auto_freeze:bool)->void:
+func s_spawn_player(spawn_data: Dictionary)->void:
+	if not NetPayloads.is_spawn_player(spawn_data):
+		push_warning("Invalid spawn_player payload")
+		return
+
+	var client_id: int = spawn_data[NetKeys.CLIENT_ID]
+	var spawn_tform: Transform3D = spawn_data[NetKeys.SPAWN_TRANSFORM]
+	var team: int = spawn_data[NetKeys.TEAM]
+	var player_name: String = spawn_data[NetKeys.DISPLAY_NAME]
+	var weapon_id: int = spawn_data[NetKeys.WEAPON_ID]
+	var auto_freeze: bool = spawn_data[NetKeys.AUTO_FREEZE]
 	var player : PlayerCharacter
 
 	if client_id == multiplayer.get_unique_id():
@@ -179,7 +188,7 @@ func c_weapon_selected(weapon_id:int)->void:
 
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
-	get_tree().call_group("WeaponSelectionUI", "activate")
+	get_tree().call_group(ClientNames.GROUP_WEAPON_SELECTION_UI, ClientNames.METHOD_ACTIVATE)
 
 
 func local_shot_fired()->void:
@@ -246,8 +255,8 @@ func s_player_died(dead_player_id:int, killer_id:int)->void:
 		players[dead_player_id] = null
 		
 	get_tree().call_group(
-		"MatchInfoUi", 
-		"show_elimination_text",
+		ClientNames.GROUP_MATCH_INFO_UI,
+		ClientNames.METHOD_SHOW_ELIMINATION_TEXT,
 		killer_id,
 		dead_player_id,
 		player_names_and_teams.get(killer_id)[NetKeys.DISPLAY_NAME],
@@ -261,15 +270,19 @@ func s_player_died(dead_player_id:int, killer_id:int)->void:
 	
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
-	get_tree().call_group("MatchInfoUi", "update_score", blue_score, red_score)
+	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_SCORE, blue_score, red_score)
 	
 @rpc("authority", "call_remote", "unreliable_ordered")
 func s_update_match_time_left(time_left:int)->void:
-	get_tree().call_group("MatchInfoUi", "update_match_time_left", time_left)
+	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_MATCH_TIME_LEFT, time_left)
 
 @rpc("authority","call_remote","reliable")
-func s_end_match(end_client_data:Dictionary)->void:
-	get_tree().call_group("LocalGameSceneManager", "change_scene","res://ui/match_end_info/match_end_info_ui.tscn", end_client_data)
+func s_end_match(end_match_data:Dictionary)->void:
+	if not NetPayloads.is_end_match(end_match_data):
+		push_warning("Invalid end_match payload")
+		return
+
+	get_tree().call_group(ClientNames.GROUP_LOCAL_GAME_SCENE_MANAGER, ClientNames.METHOD_CHANGE_SCENE, "res://ui/match_end_info/match_end_info_ui.tscn", end_match_data)
 	queue_free()
 
 func try_throw_grenade() ->void :

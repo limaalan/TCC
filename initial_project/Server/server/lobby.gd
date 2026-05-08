@@ -217,17 +217,10 @@ func spawn_players()->void:
 			red_spawn_points.pop_front()
 	
 		spawn_server_player(ready_clients[i], spawn_tform, team)
+		var spawn_payload := make_spawn_player_payload(ready_clients[i], spawn_tform, team, true)
 		
 		for ready_client_id in ready_clients :
-				s_spawn_player.rpc_id(
-					ready_client_id,
-					ready_clients[i],
-					spawn_tform,
-					team,
-					client_data.get(ready_clients[i])[NetKeys.DISPLAY_NAME],
-					client_data.get(ready_clients[i])[NetKeys.WEAPON_ID],
-					true
-				)
+				s_spawn_player.rpc_id(ready_client_id, spawn_payload)
 			
 func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)->void:
 	var server_player_real := preload("res://player/player_server_real.tscn").instantiate()
@@ -250,8 +243,19 @@ func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)-
 
 
 @rpc ("authority", "call_remote", "reliable")
-func s_spawn_player(client_id : int , spawn_tform :Transform3D , team:int, player_name : String, weapon_id :int, auto_freeze:bool)->void:
+func s_spawn_player(spawn_data: Dictionary)->void:
 	pass
+
+
+func make_spawn_player_payload(client_id: int, spawn_tform: Transform3D, team: int, auto_freeze: bool) -> Dictionary:
+	return NetPayloads.make_spawn_player(
+		client_id,
+		spawn_tform,
+		team,
+		client_data.get(client_id)[NetKeys.DISPLAY_NAME],
+		client_data.get(client_id)[NetKeys.WEAPON_ID],
+		auto_freeze
+	)
 		 
 @rpc("authority", "call_remote", "reliable")
 func s_start_match()->void:
@@ -261,6 +265,10 @@ func s_start_match()->void:
 func c_send_player_state(playerState:Dictionary)->void:
 	var client_id := multiplayer.get_remote_sender_id()
 	if not server_players.has(client_id):
+		return
+
+	if not NetPayloads.is_player_state(playerState):
+		push_warning("Invalid player_state payload from client %s" % client_id)
 		return
 	
 	#atribuindo ao state global dos jogadores o valor recebido por RPC das posições
@@ -315,18 +323,11 @@ func respawn_player(respawn_client_id:int)->void:
 	
 	#spawn para o server
 	spawn_server_player(respawn_client_id, spawn_point.transform, team)
+	var spawn_payload := make_spawn_player_payload(respawn_client_id, spawn_point.transform, team, false)
 	
 	#spawn para os jogadores
 	for client_id in get_connected_clients() :
-			s_spawn_player.rpc_id(
-				client_id,
-				respawn_client_id,
-				spawn_point.transform,
-				team,
-				client_data.get(respawn_client_id)[NetKeys.DISPLAY_NAME],
-				client_data.get(respawn_client_id)[NetKeys.WEAPON_ID], 
-				false
-			)
+			s_spawn_player.rpc_id(client_id, spawn_payload)
 
 func start_weapon_selection()->void:
 	for ready_client in get_connected_clients():
@@ -338,12 +339,18 @@ func s_start_weapon_selection()->void:
 @rpc ("any_peer", "call_remote", "unreliable")
 func c_shot_fired(time_stamp:int , player_data:Dictionary)->void:
 	var sender_id:= multiplayer.get_remote_sender_id()
+	if not server_players.has(sender_id):
+		return
+
+	if not NetPayloads.is_player_state(player_data):
+		push_warning("Invalid shot payload from client %s" % sender_id)
+		return
+
 	for client_id in get_connected_clients()	:
 		if client_id != sender_id:
 			s_play_shoot_fx.rpc_id(client_id,sender_id )
-	
-	if sender_id in server_players.keys():
-		calculate_shot_results(sender_id, time_stamp, player_data)
+
+	calculate_shot_results(sender_id, time_stamp, player_data)
 		
 func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dictionary)->void:
 	var target_time := time_stamp - 100 # 100 ms é o delay de buffer , está setado no cliente também
@@ -429,7 +436,7 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			spawn_bullet_hit_fx(result.position - global_position, result.normal, GameEnums.HitFxType.ENVIRONMENT)
 	
 	
-func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void: #env 0, player 1
+func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void:
 	for client_id in get_connected_clients(): # pega os clientes do lobby
 		s_spawn_bullet_hit_fx.rpc_id(client_id, pos, normal, type)
 		
@@ -528,20 +535,52 @@ func end_match()->void:
 	status = FINISHED
 	match_timer.stop()
 	set_physics_process(false)
+	var end_match_payload := make_end_match_payload()
 	
 	for client_id in get_connected_clients():
-		s_end_match.rpc_id(client_id, client_data)
+		s_end_match.rpc_id(client_id, end_match_payload)
 		
 	Server.delete_lobby(self)
 	
 @rpc("authority","call_remote","reliable")
-func s_end_match(end_client_data:Dictionary)->void:
+func s_end_match(end_match_data:Dictionary)->void:
 	pass
+
+
+func make_end_match_payload() -> Dictionary:
+	var blue_score := 0
+	var red_score := 0
+	var players: Array[Dictionary] = []
+
+	for client_id in client_data.keys():
+		var data: Dictionary = client_data[client_id]
+		if not data.has(NetKeys.TEAM):
+			continue
+
+		if data[NetKeys.TEAM] == GameEnums.Team.BLUE:
+			red_score += data[NetKeys.DEATHS]
+		else:
+			blue_score += data[NetKeys.DEATHS]
+
+		players.append({
+			NetKeys.CLIENT_ID: client_id,
+			NetKeys.DISPLAY_NAME: data[NetKeys.DISPLAY_NAME],
+			NetKeys.TEAM: data[NetKeys.TEAM],
+			NetKeys.KILLS: data[NetKeys.KILLS],
+			NetKeys.DEATHS: data[NetKeys.DEATHS],
+		})
+
+	return NetPayloads.make_end_match(blue_score, red_score, players)
 
 @rpc("any_peer", 'call_remote', 'reliable')
 func c_try_throw_grenade(player_state:Dictionary)->void:
 	var client_id := multiplayer.get_remote_sender_id()
-	if not server_players.has(client_id): return
+	if not server_players.has(client_id):
+		return
+
+	if not NetPayloads.is_player_state(player_state):
+		push_warning("Invalid grenade payload from client %s" % client_id)
+		return
 	
 	var player :PlayerServerReal = server_players.get(client_id).real
 	
