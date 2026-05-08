@@ -39,13 +39,12 @@ func send_player_state()->void:
 	
 func create_player_data()->Dictionary:
 	var local_player := get_local_player()
-	var local_player_state := {
-		NetKeys.POS: local_player.position,
-		NetKeys.ROT_Y: local_player.rotation.y,
-		NetKeys.ROT_X: local_player.head.rotation.x,
-		NetKeys.ANIM: local_player.current_anim
-		}
-	return local_player_state
+	return NetPayloads.make_player_state(
+		local_player.position,
+		local_player.rotation.y,
+		local_player.head.rotation.x,
+		local_player.current_anim
+	)
 	
 func handle_world_state()->void:
 	#ainda não inicializou , não tem playerState...
