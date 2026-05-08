@@ -342,12 +342,18 @@ func s_start_weapon_selection()->void:
 @rpc ("any_peer", "call_remote", "unreliable")
 func c_shot_fired(time_stamp:int , player_data:Dictionary)->void:
 	var sender_id:= multiplayer.get_remote_sender_id()
+	if not server_players.has(sender_id):
+		return
+
+	if not NetPayloads.is_player_state(player_data):
+		push_warning("Invalid shot payload from client %s" % sender_id)
+		return
+
 	for client_id in get_connected_clients()	:
 		if client_id != sender_id:
 			s_play_shoot_fx.rpc_id(client_id,sender_id )
-	
-	if sender_id in server_players.keys():
-		calculate_shot_results(sender_id, time_stamp, player_data)
+
+	calculate_shot_results(sender_id, time_stamp, player_data)
 		
 func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dictionary)->void:
 	var target_time := time_stamp - 100 # 100 ms é o delay de buffer , está setado no cliente também
@@ -545,7 +551,12 @@ func s_end_match(end_client_data:Dictionary)->void:
 @rpc("any_peer", 'call_remote', 'reliable')
 func c_try_throw_grenade(player_state:Dictionary)->void:
 	var client_id := multiplayer.get_remote_sender_id()
-	if not server_players.has(client_id): return
+	if not server_players.has(client_id):
+		return
+
+	if not NetPayloads.is_player_state(player_state):
+		push_warning("Invalid grenade payload from client %s" % client_id)
+		return
 	
 	var player :PlayerServerReal = server_players.get(client_id).real
 	
