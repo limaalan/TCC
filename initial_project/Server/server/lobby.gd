@@ -37,6 +37,23 @@ func _ready() -> void:
 	add_child(match_timer)
 	match_timer.timeout.connect(match_timer_sec_passed)
 
+func queue_free_child(node: Node) -> void:
+	if node == null:
+		return
+	if node.get_parent() != null:
+		node.get_parent().remove_child(node)
+	node.queue_free()
+
+func get_match_map_scene() -> PackedScene:
+	return MapRegistry.get_map_scene(match_config.map_id)
+
+func clear_loaded_map() -> void:
+	spawn_points.clear()
+	pickups.clear()
+	var loaded_map := get_node_or_null("Map")
+	if loaded_map != null:
+		queue_free_child(loaded_map)
+
 func get_connected_clients()-> Array[int]:
 	var connected_client_ids : Array[int] = []
 	for client_id in client_data.keys():
@@ -143,22 +160,24 @@ func check_players_ready(maybe_callable = null) ->void:
 	waiting_players_ready = false
 
 func start_loading_map():
-	var map_scene := MapRegistry.get_map_scene(match_config.map_id)
+	var map_scene := get_match_map_scene()
 	if map_scene == null:
-		push_error("Unknown server map_id: %s" % match_config.map_id)
+		push_error("Failed to load server map for map_id '%s'. Match loading aborted." % String(match_config.map_id))
 		return
+
+	clear_loaded_map()
 
 	var map = map_scene.instantiate()
 	map.name="Map"
 	add_child(map, true)  #força nome 
 	
-	var spawn_point_holder = map.get_node("SpawnPoints")
+	var spawn_point_holder = map.get_node_or_null("SpawnPoints")
 	if spawn_point_holder != null :
 		for spawn_point in spawn_point_holder.get_children() :
 			spawn_points.append(spawn_point)
 	
 	
-	var pickup_holder = map.get_node("Pickups")
+	var pickup_holder = map.get_node_or_null("Pickups")
 	if pickup_holder != null :
 		for maybe_pickup in pickup_holder.get_children() :
 			if maybe_pickup is Pickup:
