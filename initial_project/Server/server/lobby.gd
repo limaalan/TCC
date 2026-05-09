@@ -9,7 +9,7 @@ var waiting_players_ready:= false
 var current_world_state := {NetKeys.WORLD_PLAYERS: {}, NetKeys.WORLD_TIME_MS: 0.0, NetKeys.WORLD_GRENADES: {}} 
 var previous_world_states :Array[Dictionary] = []
 var pickups :Array[Pickup] = []
-var spawn_points :Array[Node3D] = []
+var spawn_points :Array[PlayerSpawnPoint] = []
 var grenades:= {} # chave : id granada , valor ela mesmo
 
 const WORLD_STATE_SEND_FRAME :=3
@@ -172,9 +172,18 @@ func start_loading_map():
 	add_child(map, true)  #força nome 
 	
 	var spawn_point_holder = map.get_node_or_null("SpawnPoints")
-	if spawn_point_holder != null :
-		for spawn_point in spawn_point_holder.get_children() :
-			spawn_points.append(spawn_point)
+	if spawn_point_holder == null:
+		push_warning("Loaded map '%s' is missing SpawnPoints node." % map.name)
+	else:
+		for maybe_spawn_point in spawn_point_holder.get_children() :
+			if maybe_spawn_point is PlayerSpawnPoint:
+				var spawn_point: PlayerSpawnPoint = maybe_spawn_point
+				spawn_points.append(spawn_point)
+			else:
+				push_warning("Ignoring non-PlayerSpawnPoint in SpawnPoints: %s" % maybe_spawn_point.name)
+
+	if spawn_points.is_empty():
+		push_warning("Loaded map '%s' does not have any valid PlayerSpawnPoint nodes." % map.name)
 	
 	
 	var pickup_holder = map.get_node_or_null("Pickups")
@@ -218,15 +227,37 @@ func c_map_ready()->void:
 func s_spawn_pickup(pickup_name:String, pickup_type:int , pos : Vector3)->void:
 	pass
 
-func spawn_players()->void:
-	var blue_spawn_points :Array[Node3D] = []
-	var red_spawn_points :Array[Node3D] = []
-	
+func get_spawn_points_for_team(team: int) -> Array[PlayerSpawnPoint]:
+	var result: Array[PlayerSpawnPoint] = []
+
 	for spawn_point in spawn_points:
-		if spawn_point.name.begins_with("Blue"):
-			blue_spawn_points.append(spawn_point)
-		elif  spawn_point.name.begins_with("Red"):
-			red_spawn_points.append(spawn_point)
+		if spawn_point.team == team:
+			result.append(spawn_point)
+
+	return result
+
+func spawn_players()->void:
+	var blue_spawn_points := get_spawn_points_for_team(GameEnums.Team.BLUE)
+	var red_spawn_points := get_spawn_points_for_team(GameEnums.Team.RED)
+
+	if blue_spawn_points.is_empty() or red_spawn_points.is_empty():
+		push_error("Cannot spawn players: missing blue or red spawn points.")
+		return
+
+	var required_blue_spawn_points := 0
+	var required_red_spawn_points := 0
+	for i in ready_clients.size():
+		if i % 2 == 0:
+			required_blue_spawn_points += 1
+		else:
+			required_red_spawn_points += 1
+
+	if blue_spawn_points.size() < required_blue_spawn_points or red_spawn_points.size() < required_red_spawn_points:
+		push_error(
+			"Cannot spawn players: expected %s blue and %s red spawn points, found %s blue and %s red."
+			% [required_blue_spawn_points, required_red_spawn_points, blue_spawn_points.size(), red_spawn_points.size()]
+		)
+		return
 			
 	ready_clients.shuffle() # embaralha array com os clientes prontos
 	
@@ -341,17 +372,18 @@ func start_match()->void:
 	
 func respawn_player(respawn_client_id:int)->void:
 	var team:int = client_data.get(respawn_client_id)[NetKeys.TEAM]
-	var team_prefix = "Blue" if team == GameEnums.Team.BLUE else "Red"
-	var possible_spawn_points :Array[Node3D]= []
-	for spawn_point in spawn_points:
-		if spawn_point.name.begins_with(team_prefix):
-			possible_spawn_points.append(spawn_point) 
+	var possible_spawn_points := get_spawn_points_for_team(team)
+
+	if possible_spawn_points.is_empty():
+		push_error("Cannot respawn player %s: no spawn points for team %s." % [respawn_client_id, team])
+		return
 	
-	var spawn_point :Node3D =  possible_spawn_points.pick_random()
+	var spawn_point = possible_spawn_points.pick_random()
+	var spawn_tform: Transform3D = spawn_point.global_transform
 	
 	#spawn para o server
-	spawn_server_player(respawn_client_id, spawn_point.transform, team)
-	var spawn_payload := make_spawn_player_payload(respawn_client_id, spawn_point.transform, team, false)
+	spawn_server_player(respawn_client_id, spawn_tform, team)
+	var spawn_payload := make_spawn_player_payload(respawn_client_id, spawn_tform, team, false)
 	
 	#spawn para os jogadores
 	for client_id in get_connected_clients() :
