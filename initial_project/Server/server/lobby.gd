@@ -19,18 +19,21 @@ const PHYSICS_LAYER_EXACT = 16
 const PHYSICS_LAYER_HITBOX = 4 
 const MAX_SHOT_RANDOM_DEGREES = 5
 const DEATH_COOLDOWN_LENGTH := 5
-const MATCH_LENGTH_SEC :=300 #5min
-const TEAM_SCORE_TO_WIN :=2
+
+@export var match_config: MatchConfig
 
 var client_data : Dictionary = {}
 var ready_clients: Array[int] =[]
 var server_players := {}
-var match_time_left = MATCH_LENGTH_SEC
+var match_time_left := 0
 
 var match_timer := Timer.new()
 
 func _ready() -> void:
 	set_physics_process(false)
+	if match_config == null:
+		match_config = MatchConfig.new()
+	match_time_left = match_config.time_limit_sec
 	add_child(match_timer)
 	match_timer.timeout.connect(match_timer_sec_passed)
 
@@ -140,7 +143,12 @@ func check_players_ready(maybe_callable = null) ->void:
 	waiting_players_ready = false
 
 func start_loading_map():
-	var map = load("res://maps/server_map_farm.tscn").instantiate()
+	var map_scene := MapRegistry.get_map_scene(match_config.map_id)
+	if map_scene == null:
+		push_error("Unknown server map_id: %s" % match_config.map_id)
+		return
+
+	var map = map_scene.instantiate()
 	map.name="Map"
 	add_child(map, true)  #força nome 
 	
@@ -158,10 +166,10 @@ func start_loading_map():
 				pickups.append(maybe_pickup)
 	
 	for ready_client in ready_clients:
-		s_start_loading_map.rpc_id(ready_client)
+		s_start_loading_map.rpc_id(ready_client, match_config.map_id)
 		
 @rpc('authority', "call_remote", "reliable")
-func s_start_loading_map():#passar ID do mapa quando eu tiver vários mapas...
+func s_start_loading_map(map_id: StringName):
 	pass
 	
 @rpc ("any_peer", "call_local", "reliable")
@@ -297,6 +305,7 @@ func c_weapon_selected(weapon_id:int)->void:
 	
 func start_match()->void:
 	status = GAME
+	match_time_left = match_config.time_limit_sec
 	spawn_players()
 	
 
@@ -510,7 +519,8 @@ func update_game_scores()->void:
 	for client_id in get_connected_clients():
 		s_update_game_scores.rpc_id(client_id, blue_team_kills, red_team_kills)
 	
-	if blue_team_kills >= TEAM_SCORE_TO_WIN or red_team_kills >= TEAM_SCORE_TO_WIN:
+	var score_limit_reached := blue_team_kills >= match_config.score_to_win or red_team_kills >= match_config.score_to_win
+	if match_config.mode == GameEnums.GameMode.TEAM_DEATHMATCH and score_limit_reached:
 		end_match()
  
 @rpc("authority", "call_remote", "reliable")

@@ -122,8 +122,13 @@ func c_lock_client():
 	pass
 
 @rpc("authority", "call_remote", "reliable")
-func s_start_loading_map():#passar ID do mapa quando eu tiver vários mapas...
-	var map = load("res://maps/map_farm.tscn").instantiate()
+func s_start_loading_map(map_id: StringName):
+	var map_scene := MapRegistry.get_map_scene(map_id)
+	if map_scene == null:
+		push_warning("Unknown client map_id: %s" % map_id)
+		return
+
+	var map = map_scene.instantiate()
 	map.name = "Map"
 	map.ready.connect(map_ready)
 	add_child(map, true)
