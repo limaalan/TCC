@@ -1867,21 +1867,25 @@ metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 [node name="RedPlayerSpawnPoint5" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.3250001, 0, -30)
 script = ExtResource("30_038ih")
+team = 1
 metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 
 [node name="RedPlayerSpawnPoint6" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.325, 0, -30)
 script = ExtResource("30_038ih")
+team = 1
 metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 
 [node name="RedPlayerSpawnPoint7" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.6749998, 0, -30)
 script = ExtResource("30_038ih")
+team = 1
 metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 
 [node name="RedPlayerSpawnPoint8" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 3.675, 0, -30)
 script = ExtResource("30_038ih")
+team = 1
 metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 
 [node name="Meshes" type="Node3D" parent="."]
