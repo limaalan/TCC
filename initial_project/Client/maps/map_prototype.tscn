@@ -1,9 +1,9 @@
-[gd_scene load_steps=54 format=3]
+[gd_scene load_steps=54 format=3 uid="uid://c0diy2dv1xsdu"]
 
-[ext_resource type="Script" path="res://shared/game_map.gd" id="1_kx5n2"]
-[ext_resource type="Script" path="res://player/spawn_point/player_spawn_point.gd" id="2_uck4p"]
-[ext_resource type="PackedScene" path="res://ui/weapon_selection/weapon_selection_ui.tscn" id="3_wdk2m"]
-[ext_resource type="PackedScene" path="res://ui/match_info/match_info_ui.tscn" id="4_6dda7"]
+[ext_resource type="Script" uid="uid://d4js4ps8hh8uw" path="res://shared/game_map.gd" id="1_kx5n2"]
+[ext_resource type="Script" uid="uid://ipn7xeoq3v0c" path="res://player/spawn_point/player_spawn_point.gd" id="2_uck4p"]
+[ext_resource type="PackedScene" uid="uid://r1fsrv56vckp" path="res://ui/weapon_selection/weapon_selection_ui.tscn" id="3_wdk2m"]
+[ext_resource type="PackedScene" uid="uid://o6acxrwqfn0x" path="res://ui/match_info/match_info_ui.tscn" id="4_6dda7"]
 
 [sub_resource type="Environment" id="Environment_83w8i"]
 background_mode = 1

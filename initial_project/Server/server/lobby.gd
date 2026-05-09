@@ -20,6 +20,8 @@ const PHYSICS_LAYER_HITBOX = 4
 const MAX_SHOT_RANDOM_DEGREES = 5
 const DEATH_COOLDOWN_LENGTH := 5
 const FINISHED_LOBBY_DELETE_DELAY_SEC := 0.5
+const BaseGameMode = preload("res://game_modes/base_game_mode.gd")
+const TeamDeathmatchMode = preload("res://game_modes/team_deathmatch_mode.gd")
 
 @export var match_config: MatchConfig
 
@@ -28,6 +30,7 @@ var ready_clients: Array[int] =[]
 var server_players := {}
 var match_time_left := 0
 var is_pending_delete := false
+var current_game_mode: BaseGameMode
 
 var match_timer := Timer.new()
 
@@ -124,17 +127,13 @@ func maybe_delete_empty_lobby()->void:
 	Server.delete_lobby(self) # não não sobrou ninguém, deleta esse lobby
 
 func check_both_teams_are_connected()->void:
-	var connected_blue_players := 0
-	var connected_red_players := 0
-	for client_id in get_connected_clients():
-		if not client_data.get(client_id).has(NetKeys.TEAM):
-			return
-		if client_data.get(client_id)[NetKeys.TEAM] == GameEnums.Team.BLUE :
-			connected_blue_players +=1 
-		else: 
-			connected_red_players +=1
-	var should_end_match = not connected_blue_players or not connected_red_players
-	if  should_end_match:
+	if status != GAME:
+		return
+
+	if not has_current_game_mode():
+		return
+
+	if current_game_mode.should_end_after_disconnect():
 		end_match()
 	
 @rpc("any_peer", "call_remote", "reliable")
@@ -358,10 +357,18 @@ func c_weapon_selected(weapon_id:int)->void:
 func start_match()->void:
 	status = GAME
 	match_time_left = match_config.time_limit_sec
-	spawn_players()
+
+	if not setup_game_mode():
+		end_match()
+		return
+
+	current_game_mode.start_match()
 	
 
 	await get_tree().create_timer(1).timeout
+
+	if status != GAME:
+		return
 	
 	for ready_client_id in get_connected_clients():
 		s_start_match.rpc_id(ready_client_id)
@@ -369,6 +376,34 @@ func start_match()->void:
 	set_physics_process(true)
 	match_timer.start()
 	update_match_time_left()
+
+func setup_game_mode() -> bool:
+	current_game_mode = null
+
+	match match_config.mode:
+		GameEnums.GameMode.TEAM_DEATHMATCH:
+			current_game_mode = TeamDeathmatchMode.new(self)
+			return true
+
+		GameEnums.GameMode.KING_OF_THE_HILL:
+			push_error("KING_OF_THE_HILL is not implemented yet.")
+			return false
+
+		GameEnums.GameMode.CAPTURE_THE_FLAG:
+			push_error("CAPTURE_THE_FLAG is out of scope.")
+			return false
+
+		_:
+			push_error("Unsupported game mode: %s" % match_config.mode)
+			return false
+
+
+func has_current_game_mode() -> bool:
+	if current_game_mode == null:
+		push_error("Current game mode is not initialized.")
+		return false
+
+	return true
 	
 
 	
@@ -550,15 +585,20 @@ func player_died(dead_player_id : int, killer_id:int)->void:
 	server_players.erase(dead_player_id)
 	current_world_state[NetKeys.WORLD_PLAYERS].erase(dead_player_id)
 	
-	client_data.get(dead_player_id)[NetKeys.DEATHS] +=1
-	if dead_player_id != killer_id: #Não conta kill se foi suicídio por granada 
-		client_data.get(killer_id)[NetKeys.KILLS] +=1
-	
 	for client_id in get_connected_clients():
 		s_player_died.rpc_id(client_id, dead_player_id, killer_id)
+
+	if has_current_game_mode():
+		current_game_mode.handle_player_death(dead_player_id, killer_id)
+
+	if status != GAME:
+		return
 		
-	update_game_scores()
 	await get_tree().create_timer(DEATH_COOLDOWN_LENGTH).timeout
+
+	if status != GAME:
+		return
+
 	s_start_weapon_selection.rpc_id(dead_player_id)
 		
 @rpc("authority", "call_remote", "reliable")
@@ -566,21 +606,10 @@ func s_player_died(dead_player_id:int, killer_id:int)->void:
 	pass
 
 func update_game_scores()->void:
-	var blue_team_kills := 0
-	var red_team_kills := 0
-	
-	for data in client_data.values():
-		if data[NetKeys.TEAM] == GameEnums.Team.BLUE :
-			red_team_kills+= data[NetKeys.DEATHS]
-		else :
-			blue_team_kills+=data[NetKeys.DEATHS]
+	if not has_current_game_mode():
+		return
 
-	for client_id in get_connected_clients():
-		s_update_game_scores.rpc_id(client_id, blue_team_kills, red_team_kills)
-	
-	var score_limit_reached := blue_team_kills >= match_config.score_to_win or red_team_kills >= match_config.score_to_win
-	if match_config.mode == GameEnums.GameMode.TEAM_DEATHMATCH and score_limit_reached:
-		end_match()
+	current_game_mode.update_scores()
  
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
@@ -590,7 +619,10 @@ func match_timer_sec_passed()->void:
 	match_time_left -= 1
 	update_match_time_left()
 	if match_time_left <= 0:
-		end_match()
+		if has_current_game_mode():
+			current_game_mode.on_match_timer_finished()
+		else:
+			end_match()
 
 func update_match_time_left()->void:
 	for client_id in get_connected_clients():
@@ -620,19 +652,18 @@ func s_end_match(end_match_data:Dictionary)->void:
 
 
 func make_end_match_payload() -> Dictionary:
-	var blue_score := 0
-	var red_score := 0
+	if not has_current_game_mode():
+		return NetPayloads.make_end_match(0, 0, [])
+
+	return current_game_mode.make_end_match_payload()
+
+func make_end_match_players_payload() -> Array[Dictionary]:
 	var players: Array[Dictionary] = []
 
 	for client_id in client_data.keys():
 		var data: Dictionary = client_data[client_id]
 		if not data.has(NetKeys.TEAM):
 			continue
-
-		if data[NetKeys.TEAM] == GameEnums.Team.BLUE:
-			red_score += data[NetKeys.DEATHS]
-		else:
-			blue_score += data[NetKeys.DEATHS]
 
 		players.append({
 			NetKeys.CLIENT_ID: client_id,
@@ -642,7 +673,7 @@ func make_end_match_payload() -> Dictionary:
 			NetKeys.DEATHS: data[NetKeys.DEATHS],
 		})
 
-	return NetPayloads.make_end_match(blue_score, red_score, players)
+	return players
 
 @rpc("any_peer", 'call_remote', 'reliable')
 func c_try_throw_grenade(player_state:Dictionary)->void:
