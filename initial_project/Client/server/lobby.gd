@@ -27,6 +27,29 @@ func _ready()-> void:
 	c_lock_client.rpc_id(1)
 	set_physics_process(false)
 
+func queue_free_child(node: Node) -> void:
+	if node == null:
+		return
+	if node.get_parent() != null:
+		node.get_parent().remove_child(node)
+	node.queue_free()
+
+func clear_loaded_map_runtime_state() -> void:
+	var loaded_map := get_node_or_null("Map")
+	if loaded_map != null:
+		queue_free_child(loaded_map)
+
+	for pickup in pickups.values():
+		if is_instance_valid(pickup):
+			queue_free_child(pickup)
+	pickups.clear()
+
+	for grenade_data in grenades.values():
+		if grenade_data is Dictionary and is_instance_valid(grenade_data.get(NetKeys.INSTANCE)):
+			queue_free_child(grenade_data.get(NetKeys.INSTANCE))
+	grenades.clear()
+	world_state_buffer.clear()
+
 	
 func _physics_process(delta: float) -> void:
 	send_player_state()
@@ -125,18 +148,23 @@ func c_lock_client():
 func s_start_loading_map(map_id: StringName):
 	var map_scene := MapRegistry.get_map_scene(map_id)
 	if map_scene == null:
-		push_warning("Unknown client map_id: %s" % map_id)
+		push_warning("Failed to load client map for map_id '%s'. Skipping c_map_ready." % String(map_id))
 		return
+
+	clear_loaded_map_runtime_state()
 
 	var map = map_scene.instantiate()
 	map.name = "Map"
-	map.ready.connect(map_ready)
+	map.ready.connect(map_ready.bind(map, map_id), CONNECT_ONE_SHOT)
 	add_child(map, true)
 	get_tree().call_group(ClientNames.GROUP_LOCAL_GAME_SCENE_MANAGER, ClientNames.METHOD_CLEAR_SCENES)
 	AudioManager.play_music(AudioManager.MusicKeys.BattleMusic)
 
 
-func map_ready()->void:
+func map_ready(loaded_map: Node, map_id: StringName)->void:
+	if loaded_map != get_node_or_null("Map"):
+		push_warning("Ignoring stale ready signal for client map_id '%s'." % String(map_id))
+		return
 	c_map_ready.rpc_id(1) # manda pro server map ready
 	
 @rpc ("any_peer", "call_local", "reliable")

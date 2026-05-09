@@ -10,7 +10,7 @@ static func get_map_data(map_id: StringName) -> MapData:
 	if not MAP_SCENE_PATHS.has(map_id):
 		return null
 
-	return MapData.new(map_id, MAP_SCENE_PATHS[map_id])
+	return MapData.new(map_id, "Farm", MAP_SCENE_PATHS[map_id])
 
 
 static func get_map_scene(map_id: StringName) -> PackedScene:
