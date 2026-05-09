@@ -6,7 +6,7 @@ const PROTOTYPE_MAP_ID := &"prototype"
 
 const MAP_SCENE_PATHS := {
 	FARM_MAP_ID: "res://maps/map_farm.tscn",
-	PROTOTYPE_MAP_ID: "res://maps/map_farm.tscn",
+	PROTOTYPE_MAP_ID: "res://maps/map_prototype.tscn",
 }
 
 const MAP_DISPLAY_NAMES := {

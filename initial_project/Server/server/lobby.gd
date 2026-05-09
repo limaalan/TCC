@@ -19,6 +19,7 @@ const PHYSICS_LAYER_EXACT = 16
 const PHYSICS_LAYER_HITBOX = 4 
 const MAX_SHOT_RANDOM_DEGREES = 5
 const DEATH_COOLDOWN_LENGTH := 5
+const FINISHED_LOBBY_DELETE_DELAY_SEC := 0.5
 
 @export var match_config: MatchConfig
 
@@ -26,6 +27,7 @@ var client_data : Dictionary = {}
 var ready_clients: Array[int] =[]
 var server_players := {}
 var match_time_left := 0
+var is_pending_delete := false
 
 var match_timer := Timer.new()
 
@@ -599,6 +601,9 @@ func s_update_match_time_left(time_left:int)->void:
 	pass 
 
 func end_match()->void:
+	if status == FINISHED:
+		return
+
 	status = FINISHED
 	match_timer.stop()
 	set_physics_process(false)
@@ -606,8 +611,8 @@ func end_match()->void:
 	
 	for client_id in get_connected_clients():
 		s_end_match.rpc_id(client_id, end_match_payload)
-		
-	Server.delete_lobby(self)
+
+	delete_lobby_after_delay()
 	
 @rpc("authority","call_remote","reliable")
 func s_end_match(end_match_data:Dictionary)->void:
@@ -699,3 +704,13 @@ func c_client_quit_match ()->void:
 	var client_id = multiplayer.get_remote_sender_id()
 	remove_client(client_id)
 	current_world_state[NetKeys.WORLD_PLAYERS].erase(client_id)
+
+
+func delete_lobby_after_delay() -> void:
+	if is_pending_delete:
+		return
+
+	is_pending_delete = true
+	await get_tree().create_timer(FINISHED_LOBBY_DELETE_DELAY_SEC).timeout
+	if is_inside_tree():
+		Server.delete_lobby(self)
