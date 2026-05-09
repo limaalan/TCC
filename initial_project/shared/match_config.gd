@@ -2,7 +2,7 @@ class_name MatchConfig
 extends Resource
 
 const DEFAULT_MODE := GameEnums.GameMode.TEAM_DEATHMATCH
-const DEFAULT_MAP_ID := &"farm"
+const DEFAULT_MAP_ID := &"prototype"
 const DEFAULT_TIME_LIMIT_SEC := 300
 const DEFAULT_SCORE_TO_WIN := 2
 const DEFAULT_LIVES_PER_PLAYER := 0

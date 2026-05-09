@@ -2,15 +2,27 @@ class_name MapRegistry
 extends RefCounted
 
 const FARM_MAP_ID := &"farm"
+const PROTOTYPE_MAP_ID := &"prototype"
+
 const MAP_SCENE_PATHS := {
 	FARM_MAP_ID: "res://maps/map_farm.tscn",
+	PROTOTYPE_MAP_ID: "res://maps/map_prototype.tscn",
+}
+
+const MAP_DISPLAY_NAMES := {
+	FARM_MAP_ID: "Farm",
+	PROTOTYPE_MAP_ID: "Prototype",
 }
 
 static func get_map_data(map_id: StringName) -> MapData:
 	if not MAP_SCENE_PATHS.has(map_id):
 		return null
 
-	return MapData.new(map_id, "Farm", MAP_SCENE_PATHS[map_id])
+	return MapData.new(
+		map_id,
+		MAP_DISPLAY_NAMES.get(map_id, String(map_id)),
+		MAP_SCENE_PATHS[map_id]
+	)
 
 
 static func get_map_scene(map_id: StringName) -> PackedScene:

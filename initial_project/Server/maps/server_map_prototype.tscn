@@ -1,0 +1,305 @@
+[gd_scene load_steps=28 format=3 uid="uid://deoejkbmubydh"]
+
+[ext_resource type="Script" uid="uid://d4js4ps8hh8uw" path="res://shared/game_map.gd" id="1_deaxk"]
+[ext_resource type="Script" uid="uid://c0n716rjuk4r2" path="res://player/spawn_point/player_spawn_point.gd" id="2_8bduy"]
+[ext_resource type="PackedScene" uid="uid://bmfk1ivn60vy7" path="res://player/pickups/pickup.tscn" id="3_omsuw"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fqf3o"]
+size = Vector3(36, 1, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sw85v"]
+size = Vector3(36, 4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oniia"]
+size = Vector3(36, 4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6i1fn"]
+size = Vector3(1, 4, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c80tp"]
+size = Vector3(1, 4, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hy7mh"]
+size = Vector3(8, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1l4fi"]
+size = Vector3(4, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fdy4t"]
+size = Vector3(4, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ikcuu"]
+size = Vector3(4, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1572p"]
+size = Vector3(4, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_f00dh"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dgbon"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mooxp"]
+size = Vector3(36, 1, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mirty"]
+size = Vector3(36, 4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_i7oth"]
+size = Vector3(36, 4, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4ixrp"]
+size = Vector3(1, 4, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ctv01"]
+size = Vector3(1, 4, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l2dxf"]
+size = Vector3(8, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8i5hg"]
+size = Vector3(4, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ux463"]
+size = Vector3(4, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_00a6i"]
+size = Vector3(4, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lpnbq"]
+size = Vector3(4, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7im1e"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_s1lus"]
+size = Vector3(2, 2, 2)
+
+[node name="Map" type="Node3D" node_paths=PackedStringArray("spawn_points_root", "pickups_root", "objectives_root", "special_platforms_root")]
+script = ExtResource("1_deaxk")
+spawn_points_root = NodePath("SpawnPoints")
+pickups_root = NodePath("Pickups")
+objectives_root = NodePath("Objectives")
+special_platforms_root = NodePath("SpecialPlatforms")
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+
+[node name="BluePlayerSpawnPoint" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 8.5)
+script = ExtResource("2_8bduy")
+
+[node name="BluePlayerSpawnPoint2" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 8.5)
+script = ExtResource("2_8bduy")
+
+[node name="RedPlayerSpawnPoint" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -4, 0, -8.5)
+script = ExtResource("2_8bduy")
+team = 1
+
+[node name="RedPlayerSpawnPoint2" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 4, 0, -8.5)
+script = ExtResource("2_8bduy")
+team = 1
+
+[node name="PlayerBoundaries" type="Node3D" parent="."]
+
+[node name="Ground" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/Ground"]
+shape = SubResource("BoxShape3D_fqf3o")
+
+[node name="NorthWall" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12.5)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/NorthWall"]
+shape = SubResource("BoxShape3D_sw85v")
+
+[node name="SouthWall" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12.5)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/SouthWall"]
+shape = SubResource("BoxShape3D_oniia")
+
+[node name="EastWall" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 2, 0)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/EastWall"]
+shape = SubResource("BoxShape3D_6i1fn")
+
+[node name="WestWall" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 2, 0)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/WestWall"]
+shape = SubResource("BoxShape3D_c80tp")
+
+[node name="CenterCover" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/CenterCover"]
+shape = SubResource("BoxShape3D_hy7mh")
+
+[node name="BlueLaneCoverLeft" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, 4)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/BlueLaneCoverLeft"]
+shape = SubResource("BoxShape3D_1l4fi")
+
+[node name="BlueLaneCoverRight" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 4)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/BlueLaneCoverRight"]
+shape = SubResource("BoxShape3D_fdy4t")
+
+[node name="RedLaneCoverLeft" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, -4)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/RedLaneCoverLeft"]
+shape = SubResource("BoxShape3D_ikcuu")
+
+[node name="RedLaneCoverRight" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -4)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/RedLaneCoverRight"]
+shape = SubResource("BoxShape3D_1572p")
+
+[node name="MidCoverLeft" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1, 0)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/MidCoverLeft"]
+shape = SubResource("BoxShape3D_f00dh")
+
+[node name="MidCoverRight" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1, 0)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/MidCoverRight"]
+shape = SubResource("BoxShape3D_dgbon")
+
+[node name="ExactCollisions" type="Node3D" parent="."]
+
+[node name="Ground" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/Ground"]
+shape = SubResource("BoxShape3D_mooxp")
+
+[node name="NorthWall" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12.5)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/NorthWall"]
+shape = SubResource("BoxShape3D_mirty")
+
+[node name="SouthWall" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12.5)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/SouthWall"]
+shape = SubResource("BoxShape3D_i7oth")
+
+[node name="EastWall" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 2, 0)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/EastWall"]
+shape = SubResource("BoxShape3D_4ixrp")
+
+[node name="WestWall" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 2, 0)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/WestWall"]
+shape = SubResource("BoxShape3D_ctv01")
+
+[node name="CenterCover" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/CenterCover"]
+shape = SubResource("BoxShape3D_l2dxf")
+
+[node name="BlueLaneCoverLeft" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, 4)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/BlueLaneCoverLeft"]
+shape = SubResource("BoxShape3D_8i5hg")
+
+[node name="BlueLaneCoverRight" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 4)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/BlueLaneCoverRight"]
+shape = SubResource("BoxShape3D_ux463")
+
+[node name="RedLaneCoverLeft" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, -4)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/RedLaneCoverLeft"]
+shape = SubResource("BoxShape3D_00a6i")
+
+[node name="RedLaneCoverRight" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -4)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/RedLaneCoverRight"]
+shape = SubResource("BoxShape3D_lpnbq")
+
+[node name="MidCoverLeft" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1, 0)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/MidCoverLeft"]
+shape = SubResource("BoxShape3D_7im1e")
+
+[node name="MidCoverRight" type="StaticBody3D" parent="ExactCollisions"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 1, 0)
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/MidCoverRight"]
+shape = SubResource("BoxShape3D_s1lus")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-4.371139e-08, -0.57598835, 0.8174579, 0, 0.8174579, 0.57598835, -1, 2.517725e-08, -3.573222e-08, 21.735882, 15.3153, 0)
+current = true
+
+[node name="Pickups" type="Node3D" parent="."]
+
+[node name="HealthPickup" parent="Pickups" instance=ExtResource("3_omsuw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.5)
+
+[node name="GrenadePickup" parent="Pickups" instance=ExtResource("3_omsuw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+pickup_type = 1
+
+[node name="Objectives" type="Node3D" parent="."]
+
+[node name="SpecialPlatforms" type="Node3D" parent="."]
