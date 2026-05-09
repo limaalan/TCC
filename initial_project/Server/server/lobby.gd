@@ -124,18 +124,21 @@ func maybe_delete_empty_lobby()->void:
 	Server.delete_lobby(self) # não não sobrou ninguém, deleta esse lobby
 
 func check_both_teams_are_connected()->void:
+	if match_config.mode == GameEnums.GameMode.TEAM_DEATHMATCH:
+		if should_end_team_deathmatch_after_disconnect():
+			end_match()
+
+func should_end_team_deathmatch_after_disconnect() -> bool:
 	var connected_blue_players := 0
 	var connected_red_players := 0
 	for client_id in get_connected_clients():
 		if not client_data.get(client_id).has(NetKeys.TEAM):
-			return
+			return false
 		if client_data.get(client_id)[NetKeys.TEAM] == GameEnums.Team.BLUE :
 			connected_blue_players +=1 
 		else: 
 			connected_red_players +=1
-	var should_end_match = not connected_blue_players or not connected_red_players
-	if  should_end_match:
-		end_match()
+	return not connected_blue_players or not connected_red_players
 	
 @rpc("any_peer", "call_remote", "reliable")
 func c_lock_client():
@@ -358,7 +361,12 @@ func c_weapon_selected(weapon_id:int)->void:
 func start_match()->void:
 	status = GAME
 	match_time_left = match_config.time_limit_sec
-	spawn_players()
+
+	if match_config.mode == GameEnums.GameMode.TEAM_DEATHMATCH:
+		start_team_deathmatch()
+	else:
+		push_error("Unsupported game mode: %s" % match_config.mode)
+		return
 	
 
 	await get_tree().create_timer(1).timeout
@@ -369,6 +377,9 @@ func start_match()->void:
 	set_physics_process(true)
 	match_timer.start()
 	update_match_time_left()
+
+func start_team_deathmatch() -> void:
+	spawn_players()
 	
 
 	
@@ -550,37 +561,64 @@ func player_died(dead_player_id : int, killer_id:int)->void:
 	server_players.erase(dead_player_id)
 	current_world_state[NetKeys.WORLD_PLAYERS].erase(dead_player_id)
 	
+	for client_id in get_connected_clients():
+		s_player_died.rpc_id(client_id, dead_player_id, killer_id)
+
+	if match_config.mode == GameEnums.GameMode.TEAM_DEATHMATCH:
+		handle_team_deathmatch_player_death(dead_player_id, killer_id)
+		
+	await get_tree().create_timer(DEATH_COOLDOWN_LENGTH).timeout
+	s_start_weapon_selection.rpc_id(dead_player_id)
+
+func handle_team_deathmatch_player_death(dead_player_id: int, killer_id: int) -> void:
 	client_data.get(dead_player_id)[NetKeys.DEATHS] +=1
 	if dead_player_id != killer_id: #Não conta kill se foi suicídio por granada 
 		client_data.get(killer_id)[NetKeys.KILLS] +=1
-	
-	for client_id in get_connected_clients():
-		s_player_died.rpc_id(client_id, dead_player_id, killer_id)
-		
-	update_game_scores()
-	await get_tree().create_timer(DEATH_COOLDOWN_LENGTH).timeout
-	s_start_weapon_selection.rpc_id(dead_player_id)
+
+	update_team_deathmatch_scores()
+
+	if has_team_deathmatch_score_limit_been_reached():
+		end_match()
 		
 @rpc("authority", "call_remote", "reliable")
 func s_player_died(dead_player_id:int, killer_id:int)->void:
 	pass
 
 func update_game_scores()->void:
-	var blue_team_kills := 0
-	var red_team_kills := 0
-	
+	if match_config.mode == GameEnums.GameMode.TEAM_DEATHMATCH:
+		update_team_deathmatch_scores()
+
+func calculate_team_deathmatch_scores() -> Dictionary:
+	var scores := {
+		GameEnums.Team.BLUE: 0,
+		GameEnums.Team.RED: 0,
+	}
+
 	for data in client_data.values():
-		if data[NetKeys.TEAM] == GameEnums.Team.BLUE :
-			red_team_kills+= data[NetKeys.DEATHS]
-		else :
-			blue_team_kills+=data[NetKeys.DEATHS]
+		if not data.has(NetKeys.TEAM):
+			continue
+
+		if data[NetKeys.TEAM] == GameEnums.Team.BLUE:
+			scores[GameEnums.Team.RED] += data[NetKeys.DEATHS]
+		else:
+			scores[GameEnums.Team.BLUE] += data[NetKeys.DEATHS]
+
+	return scores
+
+func update_team_deathmatch_scores() -> void:
+	var scores := calculate_team_deathmatch_scores()
+	var blue_score: int = scores[GameEnums.Team.BLUE]
+	var red_score: int = scores[GameEnums.Team.RED]
 
 	for client_id in get_connected_clients():
-		s_update_game_scores.rpc_id(client_id, blue_team_kills, red_team_kills)
-	
-	var score_limit_reached := blue_team_kills >= match_config.score_to_win or red_team_kills >= match_config.score_to_win
-	if match_config.mode == GameEnums.GameMode.TEAM_DEATHMATCH and score_limit_reached:
-		end_match()
+		s_update_game_scores.rpc_id(client_id, blue_score, red_score)
+
+func has_team_deathmatch_score_limit_been_reached() -> bool:
+	var scores := calculate_team_deathmatch_scores()
+	return (
+		scores[GameEnums.Team.BLUE] >= match_config.score_to_win
+		or scores[GameEnums.Team.RED] >= match_config.score_to_win
+	)
  
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
@@ -620,19 +658,29 @@ func s_end_match(end_match_data:Dictionary)->void:
 
 
 func make_end_match_payload() -> Dictionary:
-	var blue_score := 0
-	var red_score := 0
+	if match_config.mode == GameEnums.GameMode.TEAM_DEATHMATCH:
+		return make_team_deathmatch_end_match_payload()
+
+	push_error("Unsupported end match payload for game mode: %s" % match_config.mode)
+	return NetPayloads.make_end_match(0, 0, [])
+
+func make_team_deathmatch_end_match_payload() -> Dictionary:
+	var scores := calculate_team_deathmatch_scores()
+	var players := make_end_match_players_payload()
+
+	return NetPayloads.make_end_match(
+		scores[GameEnums.Team.BLUE],
+		scores[GameEnums.Team.RED],
+		players
+	)
+
+func make_end_match_players_payload() -> Array[Dictionary]:
 	var players: Array[Dictionary] = []
 
 	for client_id in client_data.keys():
 		var data: Dictionary = client_data[client_id]
 		if not data.has(NetKeys.TEAM):
 			continue
-
-		if data[NetKeys.TEAM] == GameEnums.Team.BLUE:
-			red_score += data[NetKeys.DEATHS]
-		else:
-			blue_score += data[NetKeys.DEATHS]
 
 		players.append({
 			NetKeys.CLIENT_ID: client_id,
@@ -642,7 +690,7 @@ func make_end_match_payload() -> Dictionary:
 			NetKeys.DEATHS: data[NetKeys.DEATHS],
 		})
 
-	return NetPayloads.make_end_match(blue_score, red_score, players)
+	return players
 
 @rpc("any_peer", 'call_remote', 'reliable')
 func c_try_throw_grenade(player_state:Dictionary)->void:
