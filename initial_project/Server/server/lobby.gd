@@ -363,21 +363,26 @@ func c_shot_fired(time_stamp:int , player_data:Dictionary)->void:
 		
 func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dictionary)->void:
 	var target_time := time_stamp - 100 # 100 ms é o delay de buffer , está setado no cliente também
-	var target_world_state :Dictionary
+	var target_world_state: Dictionary = {}
 	
 	for world_state in previous_world_states:
-		if world_state[NetKeys.WORLD_TIME_MS] < target_time:
+		if world_state.get(NetKeys.WORLD_TIME_MS, 0) < target_time:
 			target_world_state = world_state
 			break
 	
-	if target_world_state == null :
+	if target_world_state.is_empty() or previous_world_states.is_empty():
+		return
+
+	var target_world_players: Dictionary = target_world_state.get(NetKeys.WORLD_PLAYERS, {})
+	var current_world_players: Dictionary = previous_world_states[0].get(NetKeys.WORLD_PLAYERS, {})
+	if target_world_players.is_empty() or current_world_players.is_empty():
 		return
 	
-	for client_id in target_world_state[NetKeys.WORLD_PLAYERS].keys():
+	for client_id in target_world_players.keys():
 		if not client_id in server_players.keys() :
 			continue
 
-		if not client_id in previous_world_states[0][NetKeys.WORLD_PLAYERS].keys(): # Testa se o player está vivo 
+		if not client_id in current_world_players.keys(): # Testa se o player está vivo 
 			continue
 			
 		if client_id == shooter_id:
@@ -385,8 +390,9 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			server_players.get(client_id).dummy.update_body_geometry(player_data)
 			continue
 		
-		if not target_world_state[NetKeys.WORLD_PLAYERS].get(client_id).is_empty():
-			server_players.get(client_id).dummy.update_body_geometry(target_world_state[NetKeys.WORLD_PLAYERS].get(client_id))
+		var target_player_state: Dictionary = target_world_players.get(client_id, {})
+		if not target_player_state.is_empty():
+			server_players.get(client_id).dummy.update_body_geometry(target_player_state)
 	
 	await get_tree().physics_frame # aguarda 1 frame do calculo de física para atualizar os modelos
 	
