@@ -1,4 +1,4 @@
-[gd_scene load_steps=264 format=4 uid="uid://bcvkqs2vjyu2g"]
+[gd_scene load_steps=265 format=4 uid="uid://bcvkqs2vjyu2g"]
 
 [ext_resource type="Texture2D" uid="uid://eeb52qhocefr" path="res://assets/textures/kloofendal_48d_partly_cloudy_puresky_4k.hdr" id="1_7qr5j"]
 [ext_resource type="PackedScene" uid="uid://diskf01bp2a51" path="res://assets/meshes/buildings/silo.glb" id="1_sd11y"]
@@ -31,6 +31,7 @@
 [ext_resource type="Script" uid="uid://ipn7xeoq3v0c" path="res://player/spawn_point/player_spawn_point.gd" id="30_038ih"]
 [ext_resource type="PackedScene" uid="uid://r1fsrv56vckp" path="res://ui/weapon_selection/weapon_selection_ui.tscn" id="30_sx166"]
 [ext_resource type="PackedScene" uid="uid://o6acxrwqfn0x" path="res://ui/match_info/match_info_ui.tscn" id="31_sx166"]
+[ext_resource type="Script" uid="uid://d4js4ps8hh8uw" path="res://shared/game_map.gd" id="32_gmap"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_posn1"]
 panorama = ExtResource("1_7qr5j")
@@ -1824,7 +1825,11 @@ data = PackedVector3Array(0.8713, 0.7999, -0.0026, 1.0208, 0.9489, -0.0026, 1.02
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_uwt8e"]
 
-[node name="Map" type="Node3D"]
+[node name="Map" type="Node3D" node_paths=PackedStringArray("spawn_points_root", "objectives_root", "special_platforms_root")]
+script = ExtResource("32_gmap")
+spawn_points_root = NodePath("SpawnPoints")
+objectives_root = NodePath("Objectives")
+special_platforms_root = NodePath("SpecialPlatforms")
 
 [node name="WorldSettings" type="Node" parent="."]
 
@@ -1862,21 +1867,25 @@ metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 [node name="RedPlayerSpawnPoint5" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.3250001, 0, -30)
 script = ExtResource("30_038ih")
+team = 1
 metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 
 [node name="RedPlayerSpawnPoint6" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.325, 0, -30)
 script = ExtResource("30_038ih")
+team = 1
 metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 
 [node name="RedPlayerSpawnPoint7" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.6749998, 0, -30)
 script = ExtResource("30_038ih")
+team = 1
 metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 
 [node name="RedPlayerSpawnPoint8" type="Node3D" parent="SpawnPoints"]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 3.675, 0, -30)
 script = ExtResource("30_038ih")
+team = 1
 metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
 
 [node name="Meshes" type="Node3D" parent="."]
@@ -3604,6 +3613,10 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/StaticBody3D123"]
 shape = SubResource("WorldBoundaryShape3D_uwt8e")
+
+[node name="Objectives" type="Node3D" parent="."]
+
+[node name="SpecialPlatforms" type="Node3D" parent="."]
 
 [node name="WeaponSelectionUI" parent="." instance=ExtResource("30_sx166")]
 

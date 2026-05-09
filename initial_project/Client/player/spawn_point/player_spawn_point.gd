@@ -2,6 +2,8 @@
 extends Node3D
 class_name PlayerSpawnPoint
 
+@export var team: GameEnums.Team = GameEnums.Team.BLUE
+
 func _ready()->void:
 	if Engine.is_editor_hint():
 		if get_child_count()>0 : 
