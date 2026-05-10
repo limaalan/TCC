@@ -12,6 +12,10 @@ func start_match() -> void:
 	push_error("start_match() not implemented for this game mode.")
 
 
+func physics_process(_delta: float) -> void:
+	pass
+
+
 func handle_player_death(dead_player_id: int, killer_id: int) -> void:
 	push_error("handle_player_death() not implemented for this game mode.")
 

@@ -24,6 +24,7 @@ const DEATH_COOLDOWN_LENGTH := 5
 const FINISHED_LOBBY_DELETE_DELAY_SEC := 0.5
 const BaseGameMode = preload("res://game_modes/base_game_mode.gd")
 const HillZone = preload("res://game_modes/objectives/hill_zone.gd")
+const KingOfTheHillMode = preload("res://game_modes/king_of_the_hill_mode.gd")
 const TeamDeathmatchMode = preload("res://game_modes/team_deathmatch_mode.gd")
 
 @export var match_config: MatchConfig
@@ -128,7 +129,10 @@ func _physics_process(delta: float) -> void:
 			continue
 		current_world_state[NetKeys.WORLD_PLAYERS][client_id][NetKeys.ANIM_POS] = server_players.get(client_id).real.animation_player.current_animation_position
 	
-	previous_world_states.push_front(current_world_state.duplicate(true))	
+	previous_world_states.push_front(current_world_state.duplicate(true))
+
+	if status == GAME and current_game_mode != null:
+		current_game_mode.physics_process(delta)
 	
 func update_grenades_in_world_state()->void:
 	for grenade_name in grenades.keys():
@@ -436,8 +440,8 @@ func setup_game_mode() -> bool:
 			return true
 
 		GameEnums.GameMode.KING_OF_THE_HILL:
-			push_error("KING_OF_THE_HILL is not implemented yet.")
-			return false
+			current_game_mode = KingOfTheHillMode.new(self)
+			return true
 
 		GameEnums.GameMode.CAPTURE_THE_FLAG:
 			push_error("CAPTURE_THE_FLAG is out of scope.")
