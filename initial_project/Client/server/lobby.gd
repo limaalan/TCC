@@ -309,6 +309,15 @@ func s_update_game_scores(blue_score:int , red_score : int):
 func s_update_match_time_left(time_left:int)->void:
 	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_MATCH_TIME_LEFT, time_left)
 
+
+@rpc("authority", "call_remote", "unreliable_ordered")
+func s_update_hill_state(hill_state: Dictionary) -> void:
+	if not NetPayloads.is_hill_state(hill_state):
+		push_warning("Invalid hill_state payload")
+		return
+
+	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_HILL_STATE, hill_state)
+
 @rpc("authority","call_remote","reliable")
 func s_end_match(end_match_data:Dictionary)->void:
 	if not NetPayloads.is_end_match(end_match_data):

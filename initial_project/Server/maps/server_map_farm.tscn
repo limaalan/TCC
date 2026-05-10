@@ -1,8 +1,9 @@
-[gd_scene load_steps=163 format=3 uid="uid://di0a3qbam82tj"]
+[gd_scene load_steps=164 format=3 uid="uid://di0a3qbam82tj"]
 
 [ext_resource type="PackedScene" uid="uid://bmfk1ivn60vy7" path="res://player/pickups/pickup.tscn" id="1_qkapt"]
 [ext_resource type="Script" path="res://shared/game_map.gd" id="2_gmap"]
 [ext_resource type="Script" uid="uid://c0n716rjuk4r2" path="res://player/spawn_point/player_spawn_point.gd" id="3_6v2mg"]
+[ext_resource type="PackedScene" path="res://game_modes/objectives/hill_zone.tscn" id="4_tq4vs"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qkapt"]
 size = Vector3(100, 1, 100)
@@ -1861,5 +1862,8 @@ pickup_type = 1
 cooldown_time = 8.0
 
 [node name="Objectives" type="Node3D" parent="."]
+
+[node name="HillZone" parent="Objectives" instance=ExtResource("4_tq4vs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -1)
 
 [node name="SpecialPlatforms" type="Node3D" parent="."]

@@ -10,6 +10,8 @@ var current_world_state := {NetKeys.WORLD_PLAYERS: {}, NetKeys.WORLD_TIME_MS: 0.
 var previous_world_states :Array[Dictionary] = []
 var pickups :Array[Pickup] = []
 var spawn_points :Array[PlayerSpawnPoint] = []
+var objectives: Array[Node3D] = []
+var hill_zones: Array[HillZone] = []
 var grenades:= {} # chave : id granada , valor ela mesmo
 
 const WORLD_STATE_SEND_FRAME :=3
@@ -21,6 +23,8 @@ const MAX_SHOT_RANDOM_DEGREES = 5
 const DEATH_COOLDOWN_LENGTH := 5
 const FINISHED_LOBBY_DELETE_DELAY_SEC := 0.5
 const BaseGameMode = preload("res://game_modes/base_game_mode.gd")
+const HillZone = preload("res://game_modes/objectives/hill_zone.gd")
+const KingOfTheHillMode = preload("res://game_modes/king_of_the_hill_mode.gd")
 const TeamDeathmatchMode = preload("res://game_modes/team_deathmatch_mode.gd")
 
 @export var match_config: MatchConfig
@@ -55,9 +59,52 @@ func get_match_map_scene() -> PackedScene:
 func clear_loaded_map() -> void:
 	spawn_points.clear()
 	pickups.clear()
+	objectives.clear()
+	hill_zones.clear()
 	var loaded_map := get_node_or_null("Map")
 	if loaded_map != null:
 		queue_free_child(loaded_map)
+
+
+func collect_map_objectives(map: Node) -> void:
+	objectives.clear()
+	hill_zones.clear()
+
+	if not map is GameMap:
+		push_warning("Loaded map '%s' is not a GameMap. Objectives will not be collected." % map.name)
+		return
+
+	var game_map: GameMap = map
+	for objective in game_map.get_objectives():
+		objectives.append(objective)
+
+		if objective is HillZone:
+			var hill_zone: HillZone = objective
+			hill_zone.setup(self)
+			hill_zones.append(hill_zone)
+
+	if match_config.mode == GameEnums.GameMode.KING_OF_THE_HILL and hill_zones.is_empty():
+		push_warning("Loaded map '%s' does not have any HillZone objectives." % map.name)
+
+
+func get_objectives() -> Array[Node3D]:
+	return objectives
+
+
+func get_hill_zones() -> Array[HillZone]:
+	return hill_zones
+
+
+func get_primary_hill_zone() -> HillZone:
+	if hill_zones.is_empty():
+		return null
+
+	return hill_zones[0]
+
+
+func remove_player_from_objectives(client_id: int) -> void:
+	for hill_zone in hill_zones:
+		hill_zone.clear_player(client_id)
 
 func get_connected_clients()-> Array[int]:
 	var connected_client_ids : Array[int] = []
@@ -82,7 +129,10 @@ func _physics_process(delta: float) -> void:
 			continue
 		current_world_state[NetKeys.WORLD_PLAYERS][client_id][NetKeys.ANIM_POS] = server_players.get(client_id).real.animation_player.current_animation_position
 	
-	previous_world_states.push_front(current_world_state.duplicate(true))	
+	previous_world_states.push_front(current_world_state.duplicate(true))
+
+	if status == GAME and current_game_mode != null:
+		current_game_mode.physics_process(delta)
 	
 func update_grenades_in_world_state()->void:
 	for grenade_name in grenades.keys():
@@ -108,6 +158,8 @@ func remove_client(id:int)->void:
 	check_both_teams_are_connected()
 	
 func delete_player(client_id:int)->void:
+	remove_player_from_objectives(client_id)
+
 	if server_players.has(client_id):
 		server_players.get(client_id).real.queue_free()
 		server_players.get(client_id).dummy.queue_free()
@@ -193,6 +245,8 @@ func start_loading_map():
 			if maybe_pickup is Pickup:
 				maybe_pickup.lobby = self
 				pickups.append(maybe_pickup)
+
+	collect_map_objectives(map)
 	
 	for ready_client in ready_clients:
 		s_start_loading_map.rpc_id(ready_client, match_config.map_id)
@@ -386,8 +440,8 @@ func setup_game_mode() -> bool:
 			return true
 
 		GameEnums.GameMode.KING_OF_THE_HILL:
-			push_error("KING_OF_THE_HILL is not implemented yet.")
-			return false
+			current_game_mode = KingOfTheHillMode.new(self)
+			return true
 
 		GameEnums.GameMode.CAPTURE_THE_FLAG:
 			push_error("CAPTURE_THE_FLAG is out of scope.")
@@ -579,6 +633,8 @@ func s_pickup_cooldown_ended(pickup_name:String)->void:
 func player_died(dead_player_id : int, killer_id:int)->void:
 	if not server_players.has(dead_player_id):
 		return
+
+	remove_player_from_objectives(dead_player_id)
 		
 	server_players.get(dead_player_id).real.queue_free()
 	server_players.get(dead_player_id).dummy.queue_free()
@@ -610,9 +666,19 @@ func update_game_scores()->void:
 		return
 
 	current_game_mode.update_scores()
+
+
+func update_hill_state(hill_state: Dictionary) -> void:
+	for client_id in get_connected_clients():
+		s_update_hill_state.rpc_id(client_id, hill_state)
  
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
+	pass
+
+
+@rpc("authority", "call_remote", "unreliable_ordered")
+func s_update_hill_state(hill_state: Dictionary) -> void:
 	pass
 
 func match_timer_sec_passed()->void:
