@@ -1,10 +1,8 @@
 extends Node
+const NetworkConfig = preload("res://shared/network_config.gd")
 signal on_lobby_clients_updated(connected_clients:int, max_clients:int)
 signal on_cant_connect_to_lobby()
 signal on_lobby_locked
-
-const PORT := 7777
-const ADDRESS :="127.0.0.1"
 
 @onready var clock_sync_timer: Timer = $ClockSyncTimer
 var clock_deviation_ms:= 0
@@ -13,10 +11,13 @@ const CLOCK_DEVIATION_CALC_WEIGHT= 0.5
 var peer := ENetMultiplayerPeer.new()
 
 func _ready() -> void:
-	var error := peer.create_client(ADDRESS, PORT)
+	var server_address := NetworkConfig.get_server_address()
+	var server_port := NetworkConfig.get_server_port()
+	var error := peer.create_client(server_address, server_port)
 	if error != OK:
-		print("Cliente falhou ao se conectar ao servidor")
+		print("Cliente falhou ao conectar em %s:%s" % [server_address, server_port])
 		return
+	print("Cliente tentando conectar em %s:%s" % [server_address, server_port])
 		
 	multiplayer.multiplayer_peer  = peer;
 	multiplayer.connected_to_server.connect(_on_connected_to_server)

@@ -1,5 +1,5 @@
 extends Node
-const PORT := 7777
+const NetworkConfig = preload("res://shared/network_config.gd")
 const MAX_CLIENTS :=64
 const MAX_LOBBIES:= 1 
 const MAX_PLAYERS_PER_LOBBY :=2
@@ -11,11 +11,12 @@ var lobby_spots : Array[Lobby] = []
 var peer := ENetMultiplayerPeer.new()
 
 func _ready() -> void: 
-	var error := peer.create_server(PORT,MAX_CLIENTS)
+	var port := NetworkConfig.get_server_port()
+	var error := peer.create_server(port,MAX_CLIENTS)
 	if error != OK:
-		print("Falha ao iniciar server.")
+		print("Falha ao iniciar server na porta %s." % port)
 		return
-	print("Servidor iniciado.")
+	print("Servidor iniciado na porta %s." % port)
 	
 	multiplayer.multiplayer_peer = peer
 	peer.peer_connected.connect(_on_peer_connected)
