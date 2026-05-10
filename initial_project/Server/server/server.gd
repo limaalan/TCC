@@ -112,7 +112,7 @@ func get_non_full_lobby()->Lobby: #get or create
 	return null
 	
 func lobby_clients_updated(lobby: Lobby)->void:
-	for client_id in lobby.client_data.keys():
+	for client_id in lobby.get_connected_clients():
 		s_lobby_clients_updated.rpc_id(client_id, lobby.client_data.keys().size(), MAX_PLAYERS_PER_LOBBY)
 
 @rpc("authority", "call_remote", "reliable")
