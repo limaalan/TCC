@@ -4,6 +4,7 @@ extends RefCounted
 const PLAYER_STATE_VERSION := 1
 const SPAWN_PLAYER_VERSION := 1
 const END_MATCH_VERSION := 1
+const HILL_STATE_VERSION := 1
 
 
 static func make_player_state(pos: Vector3, rot_y: float, rot_x: float, anim: Variant) -> Dictionary:
@@ -106,6 +107,39 @@ static func is_end_match(data: Dictionary) -> bool:
 
 	for player_data in data[NetKeys.PLAYERS]:
 		if not is_end_match_player(player_data):
+			return false
+
+	return true
+
+
+static func make_hill_state(
+	control_state: int,
+	controlling_team: int,
+	players_inside: Array[int]
+) -> Dictionary:
+	return {
+		NetKeys.VERSION: HILL_STATE_VERSION,
+		NetKeys.HILL_CONTROL_STATE: control_state,
+		NetKeys.HILL_CONTROLLING_TEAM: controlling_team,
+		NetKeys.HILL_PLAYERS_INSIDE: players_inside,
+	}
+
+
+static func is_hill_state(data: Dictionary) -> bool:
+	if not _has_exact_version(data, HILL_STATE_VERSION):
+		return false
+
+	if not data.has(NetKeys.HILL_CONTROL_STATE) or not data[NetKeys.HILL_CONTROL_STATE] is int:
+		return false
+
+	if not data.has(NetKeys.HILL_CONTROLLING_TEAM) or not data[NetKeys.HILL_CONTROLLING_TEAM] is int:
+		return false
+
+	if not data.has(NetKeys.HILL_PLAYERS_INSIDE) or not data[NetKeys.HILL_PLAYERS_INSIDE] is Array:
+		return false
+
+	for client_id in data[NetKeys.HILL_PLAYERS_INSIDE]:
+		if not (client_id is int):
 			return false
 
 	return true

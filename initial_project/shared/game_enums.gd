@@ -6,6 +6,14 @@ enum Team {
 	RED = 1,
 }
 
+const NO_TEAM := -1
+
+enum HillControlState {
+	EMPTY = 0,
+	CONTROLLED = 1,
+	CONTESTED = 2,
+}
+
 enum WeaponId {
 	PISTOL = 0,
 	SMG = 1,

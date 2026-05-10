@@ -3,6 +3,7 @@ extends "res://game_modes/base_game_mode.gd"
 
 const SCORE_PER_SECOND := 1.0
 const SCORE_BROADCAST_INTERVAL_SEC := 0.25
+const HILL_STATE_BROADCAST_INTERVAL_SEC := 0.25
 const HillZone = preload("res://game_modes/objectives/hill_zone.gd")
 
 var hill_zone: HillZone
@@ -11,6 +12,7 @@ var scores := {
 	GameEnums.Team.RED: 0.0,
 }
 var score_broadcast_accumulator := 0.0
+var hill_state_broadcast_accumulator := 0.0
 
 
 func start_match() -> void:
@@ -24,12 +26,14 @@ func start_match() -> void:
 	reset_scores()
 	lobby.spawn_players()
 	update_scores()
+	update_hill_state()
 
 
 func reset_scores() -> void:
 	scores[GameEnums.Team.BLUE] = 0.0
 	scores[GameEnums.Team.RED] = 0.0
 	score_broadcast_accumulator = 0.0
+	hill_state_broadcast_accumulator = 0.0
 
 
 func physics_process(delta: float) -> void:
@@ -37,7 +41,7 @@ func physics_process(delta: float) -> void:
 		return
 
 	var controlling_team: int = hill_zone.get_controlling_team()
-	if controlling_team != HillZone.NO_TEAM:
+	if controlling_team != GameEnums.NO_TEAM:
 		add_score(controlling_team, delta)
 
 	score_broadcast_accumulator += delta
@@ -45,8 +49,14 @@ func physics_process(delta: float) -> void:
 		score_broadcast_accumulator = 0.0
 		update_scores()
 
+	hill_state_broadcast_accumulator += delta
+	if hill_state_broadcast_accumulator >= HILL_STATE_BROADCAST_INTERVAL_SEC:
+		hill_state_broadcast_accumulator = 0.0
+		update_hill_state()
+
 	if has_score_limit_been_reached():
 		update_scores()
+		update_hill_state()
 		lobby.end_match()
 
 
@@ -71,6 +81,25 @@ func update_scores() -> void:
 			get_blue_score_for_display(),
 			get_red_score_for_display()
 		)
+
+
+func update_hill_state() -> void:
+	lobby.update_hill_state(make_hill_state_payload())
+
+
+func make_hill_state_payload() -> Dictionary:
+	if hill_zone == null:
+		return NetPayloads.make_hill_state(
+			GameEnums.HillControlState.EMPTY,
+			GameEnums.NO_TEAM,
+			[]
+		)
+
+	return NetPayloads.make_hill_state(
+		hill_zone.get_control_state(),
+		hill_zone.get_controlling_team(),
+		hill_zone.get_players_inside()
+	)
 
 
 func has_score_limit_been_reached() -> bool:

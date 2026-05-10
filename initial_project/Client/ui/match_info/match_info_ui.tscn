@@ -90,10 +90,15 @@ theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 6
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="TimeRow" type="HBoxContainer" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="MinutesLeftLabel" type="Label" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer/HBoxContainer"]
+[node name="MinutesLeftLabel" type="Label" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer/VBoxContainer/TimeRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -101,18 +106,26 @@ theme_override_font_sizes/font_size = 40
 text = "12"
 horizontal_alignment = 2
 
-[node name="ColonLabel" type="Label" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer/HBoxContainer"]
+[node name="ColonLabel" type="Label" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer/VBoxContainer/TimeRow"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = ":"
 horizontal_alignment = 1
 
-[node name="SecondsLeftLabel" type="Label" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer/HBoxContainer"]
+[node name="SecondsLeftLabel" type="Label" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer/VBoxContainer/TimeRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 40
 text = "12"
+
+[node name="HillStateLabel" type="Label" parent="MarginContainer/TopContainer/MatchTimeLeftPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Hill: contested"
+horizontal_alignment = 1
 
 [node name="RedTeamScorePanel" type="Panel" parent="MarginContainer/TopContainer"]
 custom_minimum_size = Vector2(96, 48)

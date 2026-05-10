@@ -1,14 +1,6 @@
 class_name HillZone
 extends Area3D
 
-enum ControlState {
-	EMPTY,
-	CONTROLLED,
-	CONTESTED,
-}
-
-const NO_TEAM := -1
-
 var lobby
 var players_inside: Dictionary = {}
 
@@ -88,18 +80,18 @@ func get_teams_inside() -> Array[int]:
 func get_control_state() -> int:
 	var teams := get_teams_inside()
 	if teams.is_empty():
-		return ControlState.EMPTY
+		return GameEnums.HillControlState.EMPTY
 
 	if teams.size() > 1:
-		return ControlState.CONTESTED
+		return GameEnums.HillControlState.CONTESTED
 
-	return ControlState.CONTROLLED
+	return GameEnums.HillControlState.CONTROLLED
 
 
 func get_controlling_team() -> int:
 	var teams := get_teams_inside()
 	if teams.size() != 1:
-		return NO_TEAM
+		return GameEnums.NO_TEAM
 
 	return teams[0]
 

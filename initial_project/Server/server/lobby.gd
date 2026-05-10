@@ -666,9 +666,19 @@ func update_game_scores()->void:
 		return
 
 	current_game_mode.update_scores()
+
+
+func update_hill_state(hill_state: Dictionary) -> void:
+	for client_id in get_connected_clients():
+		s_update_hill_state.rpc_id(client_id, hill_state)
  
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
+	pass
+
+
+@rpc("authority", "call_remote", "unreliable_ordered")
+func s_update_hill_state(hill_state: Dictionary) -> void:
 	pass
 
 func match_timer_sec_passed()->void:
