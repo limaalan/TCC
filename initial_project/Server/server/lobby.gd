@@ -26,6 +26,7 @@ const BaseGameMode = preload("res://game_modes/base_game_mode.gd")
 const HillZone = preload("res://game_modes/objectives/hill_zone.gd")
 const KingOfTheHillMode = preload("res://game_modes/king_of_the_hill_mode.gd")
 const TeamDeathmatchMode = preload("res://game_modes/team_deathmatch_mode.gd")
+const WeaponGameplayData = preload("res://game/weapon_gameplay_data.gd")
 
 @export var match_config: MatchConfig
 
@@ -541,7 +542,8 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 	if not shooter_id in server_players.keys():
 		return
 		
-	var weapon_data := WeaponConfig.get_weapon_data(client_data.get(shooter_id)[NetKeys.WEAPON_ID])
+	var weapon_id: int = client_data.get(shooter_id)[NetKeys.WEAPON_ID]
+	var weapon_data: WeaponGameplayData = WeaponConfig.get_weapon_data(weapon_id)
 	# Faz o raycast a partir da cabeça do atirador
 	var space_state := get_world_3d().direct_space_state
 	var shooter_dummy: ServerPlayerDummy = server_players.get(shooter_id).dummy
