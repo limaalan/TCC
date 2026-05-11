@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponPresentationData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://player/weapons/weapon_presentation_data.gd" id="1_l6r2j"]
+[ext_resource type="PackedScene" uid="uid://crw1w07cj23o6" path="res://player/weapons/weapon_smg.tscn" id="2_qj71r"]
+
+[resource]
+script = ExtResource("1_l6r2j")
+id = 1
+display_name = &"SMG"
+weapon_scene = ExtResource("2_qj71r")
+shoot_sfx = 4
+shot_cooldown = 0.1
+is_automatic = true
+recoil_rotation_degrees = 15.0
+recoil_position_z = 0.05
+camera_shake_amount = 0.1
+pitch_randomness = 0.1

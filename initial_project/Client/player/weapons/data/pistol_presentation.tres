@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponPresentationData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://player/weapons/weapon_presentation_data.gd" id="1_0gpt5"]
+[ext_resource type="PackedScene" uid="uid://bjyftj4k583c1" path="res://player/weapons/weapon_pistol.tscn" id="2_7n0wj"]
+
+[resource]
+script = ExtResource("1_0gpt5")
+id = 0
+display_name = &"Pistol"
+weapon_scene = ExtResource("2_7n0wj")
+shoot_sfx = 3
+shot_cooldown = 0.3
+is_automatic = false
+recoil_rotation_degrees = 15.0
+recoil_position_z = 0.05
+camera_shake_amount = 0.1
+pitch_randomness = 0.1
