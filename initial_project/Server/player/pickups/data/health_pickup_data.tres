@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PickupData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://player/pickups/pickup_data.gd" id="1_kg0xq"]
+
+[resource]
+script = ExtResource("1_kg0xq")
+pickup_type = 0
+amount = 75
+cooldown_time = 10.0

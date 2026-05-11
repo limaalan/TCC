@@ -1,10 +1,12 @@
-[gd_scene load_steps=30 format=3 uid="uid://deoejkbmubydh"]
+[gd_scene load_steps=32 format=3 uid="uid://deoejkbmubydh"]
 
 [ext_resource type="Script" uid="uid://d4js4ps8hh8uw" path="res://shared/game_map.gd" id="1_deaxk"]
 [ext_resource type="Script" uid="uid://c0n716rjuk4r2" path="res://player/spawn_point/player_spawn_point.gd" id="2_8bduy"]
 [ext_resource type="PackedScene" uid="uid://bmfk1ivn60vy7" path="res://player/pickups/pickup.tscn" id="3_omsuw"]
 [ext_resource type="PackedScene" path="res://game_modes/objectives/hill_zone.tscn" id="4_o7xdx"]
 [ext_resource type="PackedScene" uid="uid://ccb4lse76if73" path="res://platforms/jump_pad.tscn" id="5_3xj57"]
+[ext_resource type="Resource" path="res://player/pickups/data/health_pickup_data.tres" id="6_hpdata"]
+[ext_resource type="Resource" path="res://player/pickups/data/grenade_pickup_data.tres" id="7_gpdata"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fqf3o"]
 size = Vector3(36, 1, 24)
@@ -297,12 +299,13 @@ current = true
 
 [node name="HealthPickup" parent="Pickups" instance=ExtResource("3_omsuw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.5)
+data = ExtResource("6_hpdata")
 network_id = &"prototype_health_pickup_01"
 
 [node name="GrenadePickup" parent="Pickups" instance=ExtResource("3_omsuw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+data = ExtResource("7_gpdata")
 network_id = &"prototype_grenade_pickup_01"
-pickup_type = 1
 
 [node name="Objectives" type="Node3D" parent="."]
 

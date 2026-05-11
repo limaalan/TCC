@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PickupPresentationData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://player/pickups/pickup_presentation_data.gd" id="1_1xvrj"]
+[ext_resource type="PackedScene" path="res://assets/meshes/items/health.tscn" id="2_x6suh"]
+[ext_resource type="Material" path="res://assets/materials/pickup_ready_material.tres" id="3_hc4cb"]
+[ext_resource type="Material" path="res://assets/materials/pickup_not_ready_material.tres" id="4_3phv1"]
+
+[resource]
+script = ExtResource("1_1xvrj")
+pickup_type = 0
+mesh_scene = ExtResource("2_x6suh")
+ready_material = ExtResource("3_hc4cb")
+not_ready_material = ExtResource("4_3phv1")
+pickup_sfx = 1

@@ -1,5 +1,7 @@
 extends Node3D
 class_name Lobby
+const PickupPresentationRegistry = preload("res://player/pickups/pickup_presentation_registry.gd")
+
 const INTERPOLATION_BUFFER_MS := 100 
 
 var players:= {} # Dicionário dos jogadores chave:valor =  { id: PlayerScene } 
@@ -370,11 +372,8 @@ func explode_grenade(grenade_id :String)->void:
 	
 @rpc("authority", "call_remote","unreliable")
 func s_play_pickup_fx(pickup_type:int)->void:
-	match pickup_type:
-		GameEnums.PickupType.HEALTH:
-			AudioManager.play_sfx(AudioManager.SFXKeys.PickupHealth)
-		GameEnums.PickupType.GRENADE:
-			AudioManager.play_sfx(AudioManager.SFXKeys.PickupGrenade)
+	var pickup_data = PickupPresentationRegistry.get_pickup_data(pickup_type)
+	AudioManager.play_sfx(pickup_data.pickup_sfx)
 			
 			
 func exit_game ()->void :

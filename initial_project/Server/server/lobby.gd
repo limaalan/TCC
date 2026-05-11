@@ -283,7 +283,7 @@ func c_map_ready()->void:
 	ready_clients.append(client_id)
 	
 	for pickup in pickups:
-		s_spawn_pickup.rpc_id(client_id, pickup.get_network_id(), pickup.pickup_type, pickup.position)
+		s_spawn_pickup.rpc_id(client_id, pickup.get_network_id(), pickup.get_pickup_type(), pickup.position)
 	
 	waiting_players_ready = true
 	check_players_ready(start_weapon_selection)

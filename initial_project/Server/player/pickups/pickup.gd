@@ -2,18 +2,22 @@ extends Node3D
 class_name Pickup
 
 const NetworkEntity = preload("res://shared/network_entity.gd")
+const DEFAULT_HEALTH_PICKUP_DATA := preload("res://player/pickups/data/health_pickup_data.tres")
 
 @onready var cooldown_timer: Timer = $CooldownTimer
 
-@export var pickup_type:int = GameEnums.PickupType.HEALTH
-@export var cooldown_time := 10.0
+@export var data = DEFAULT_HEALTH_PICKUP_DATA
 @export var network_id: StringName
 
 var lobby:Lobby
 var is_picked := false
 
 func _ready() -> void:
-	cooldown_timer.wait_time = cooldown_time
+	if data == null:
+		push_warning("Pickup '%s' has no PickupData. Falling back to health pickup." % name)
+		data = DEFAULT_HEALTH_PICKUP_DATA
+
+	cooldown_timer.wait_time = data.cooldown_time
 
 
 func has_network_id() -> bool:
@@ -27,25 +31,38 @@ func get_network_id() -> String:
 	return NetworkEntity.to_wire(network_id)
 
 
+func get_pickup_type() -> int:
+	if data == null:
+		return GameEnums.PickupType.HEALTH
+
+	return data.pickup_type
+
+
 func _on_body_entered(player: PlayerServerReal) -> void:
 	if is_picked :
 		return
+
+	if data == null:
+		return
 	
-	match pickup_type:
+	match data.pickup_type:
 		GameEnums.PickupType.HEALTH:
 			if player.current_health < player.MAX_HEALTH:
-				player.change_health(75)
+				player.change_health(data.amount)
 				picked_up(player)
 				
 		GameEnums.PickupType.GRENADE:
-			player.update_grenades_left(player.grenades_left+1)
+			player.update_grenades_left(player.grenades_left + data.amount)
 			picked_up(player)
+
+		_:
+			push_warning("Unsupported pickup_type '%s' on pickup '%s'." % [data.pickup_type, name])
 
 func picked_up(player:PlayerServerReal)->void:
 	is_picked = true
 	cooldown_timer.start()
 	lobby.pickup_cooldown_started(get_network_id())
-	lobby.play_pickup_fx(player.name.to_int(), pickup_type)
+	lobby.play_pickup_fx(player.name.to_int(), data.pickup_type)
 
 func _on_cooldown_timer_timeout() -> void:
 	is_picked = false
