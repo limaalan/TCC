@@ -1,13 +1,15 @@
 extends Node3D
 class_name Weapon
 
-@export var is_automatic := false
-@export var shot_cooldown := 0.3
+const WeaponPresentationData = preload("res://player/weapons/weapon_presentation_data.gd")
 
 @onready var shoot_particles: GPUParticles3D = $Muzzle/ShootParticles
 @onready var shoot_light: OmniLight3D = $Muzzle/ShootLight
-const weapon_sfx_pitch_randomness = 0.1
-var weapon_id : int
+var data: WeaponPresentationData
+
+
+func setup(p_data: WeaponPresentationData) -> void:
+	data = p_data
 
 func _ready()->void:
 	shoot_light.hide()
@@ -15,18 +17,17 @@ func _ready()->void:
 	#Quando a animação do flash terminar, também desliga a luz
 
 func play_shoot_fx(is_local := false )->void:
+	if data == null:
+		push_warning("Weapon has no presentation data.")
+		return
+
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager == null:
+		push_warning("AudioManager not found.")
+		return
+
 	shoot_light.show()
 	shoot_particles.emitting = true
-	
-	var sfx_key:AudioManager.SFXKeys
-	
-	match weapon_id :
-		GameEnums.WeaponId.PISTOL:
-			sfx_key = AudioManager.SFXKeys.ShootPistol
-		GameEnums.WeaponId.SMG:
-			sfx_key = AudioManager.SFXKeys.ShootSMG
-		GameEnums.WeaponId.SHOTGUN:
-			sfx_key = AudioManager.SFXKeys.ShootShotgun
 			
 	var audio_position = global_position if not is_local else Vector3.ZERO
-	AudioManager.play_sfx(sfx_key , audio_position, weapon_sfx_pitch_randomness)
+	audio_manager.play_sfx(data.shoot_sfx , audio_position, data.pitch_randomness)

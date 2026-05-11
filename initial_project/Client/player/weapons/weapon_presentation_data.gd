@@ -6,6 +6,7 @@ const AudioManagerScript = preload("res://game/audio_manager.gd")
 @export var id: GameEnums.WeaponId = GameEnums.WeaponId.PISTOL
 @export var display_name: StringName = &"Pistol"
 @export var weapon_scene: PackedScene
+@export var selection_icon: Texture2D
 @export var shoot_sfx: int = AudioManagerScript.SFXKeys.ShootPistol
 
 @export var shot_cooldown := 0.3
