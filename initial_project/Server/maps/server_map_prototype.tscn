@@ -297,9 +297,11 @@ current = true
 
 [node name="HealthPickup" parent="Pickups" instance=ExtResource("3_omsuw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.5)
+network_id = &"prototype_health_pickup_01"
 
 [node name="GrenadePickup" parent="Pickups" instance=ExtResource("3_omsuw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+network_id = &"prototype_grenade_pickup_01"
 pickup_type = 1
 
 [node name="Objectives" type="Node3D" parent="."]

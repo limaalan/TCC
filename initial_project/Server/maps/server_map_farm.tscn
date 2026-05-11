@@ -1847,17 +1847,21 @@ transform = Transform3D(0.009656906, -0.6436696, 0.76524246, 0.008122081, 0.7653
 
 [node name="HealthPickup" parent="Pickups" instance=ExtResource("1_qkapt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.3618374)
+network_id = &"farm_health_pickup_01"
 
 [node name="HealthPickup2" parent="Pickups" instance=ExtResource("1_qkapt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.3851156)
+network_id = &"farm_health_pickup_02"
 
 [node name="GrenadePickup" parent="Pickups" instance=ExtResource("1_qkapt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.3618374)
+network_id = &"farm_grenade_pickup_01"
 pickup_type = 1
 cooldown_time = 8.0
 
 [node name="GrenadePickup2" parent="Pickups" instance=ExtResource("1_qkapt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.3851156)
+network_id = &"farm_grenade_pickup_02"
 pickup_type = 1
 cooldown_time = 8.0
 

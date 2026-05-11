@@ -110,30 +110,31 @@ func handle_world_state()->void:
 		
 	
 func handle_grenades(old_grenade_data:Dictionary, new_grenade_data:Dictionary, lerp_weight:float)->void:
-	for grenade_name in new_grenade_data.keys():
+	for grenade_id in new_grenade_data.keys():
 		# checa se precisa criar granadas
-		if not grenade_name in grenades.keys():
+		if not grenade_id in grenades.keys():
 			var grenade:Grenade = preload("res://player/grenade/grenade.tscn").instantiate()
-			grenades[grenade_name]= {NetKeys.INSTANCE: grenade, NetKeys.EXPLODED: false} #instância da granada e indicador de explodido
-			grenade.name = grenade_name
-			grenade.global_transform= new_grenade_data.get(grenade_name)[NetKeys.TRANSFORM]
+			grenade.set_network_id(grenade_id)
+			grenade.name = "Grenade_%s" % grenade_id
+			grenades[grenade_id] = {NetKeys.INSTANCE: grenade, NetKeys.EXPLODED: false} #instância da granada e indicador de explodido
+			grenade.global_transform = new_grenade_data.get(grenade_id)[NetKeys.TRANSFORM]
 			add_child(grenade , true)
 	
-	for grenade_name in old_grenade_data.keys():
+	for grenade_id in old_grenade_data.keys():
 		#explodindo a granada se não existe mais no buffer e não foi explodido ainda
-		if not grenade_name in new_grenade_data.keys():
-			if not grenade_name in grenades.keys(): 
+		if not grenade_id in new_grenade_data.keys():
+			if not grenade_id in grenades.keys(): 
 				continue
-			if not grenades.get(grenade_name)[NetKeys.EXPLODED]:
-				explode_grenade(grenade_name)
-			grenades.erase(grenade_name)
+			if not grenades.get(grenade_id)[NetKeys.EXPLODED]:
+				explode_grenade(grenade_id)
+			grenades.erase(grenade_id)
 			continue
 			
-		if grenades.get(grenade_name)[NetKeys.EXPLODED]:
+		if grenades.get(grenade_id)[NetKeys.EXPLODED]:
 			continue
 		#movendo as granadas
-		var grenade:Grenade = grenades.get(grenade_name)[NetKeys.INSTANCE]
-		grenade.lerp_tform(old_grenade_data.get(grenade_name), new_grenade_data.get(grenade_name), lerp_weight)
+		var grenade:Grenade = grenades.get(grenade_id)[NetKeys.INSTANCE]
+		grenade.lerp_tform(old_grenade_data.get(grenade_id), new_grenade_data.get(grenade_id), lerp_weight)
 			
 				
 @rpc("any_peer", "call_remote", "unreliable_ordered")
@@ -264,22 +265,37 @@ func s_update_health(target_client_id:int, current_health:int , max_health:int, 
 
 
 @rpc("authority", "call_remote", "reliable")
-func s_spawn_pickup(pickup_name:String, pickup_type:int , pos : Vector3)->void:
+func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3)->void:
+	if network_id.is_empty():
+		push_warning("Ignoring pickup spawn with empty network_id.")
+		return
+
 	var pickup :Pickup = preload("res://player/pickups/pickup.tscn").instantiate()
-	pickup.name = pickup_name
+	pickup.set_network_id(network_id)
+	pickup.name = "Pickup_%s" % network_id
 	pickup.position = pos
 	pickup.pickup_type = pickup_type
-	add_child(pickup, true) # força o nome , pra garantir que é o que foi setado no pickup,nome, importate pois o nome deve bater entre server e cliente
-	pickups[pickup_name] = pickup
+	add_child(pickup, true)
+	pickups[network_id] = pickup
 
 @rpc("authority", "call_remote", "reliable")
-func s_pickup_cooldown_started(pickup_name:String)->void:
-	pickups.get(pickup_name).cooldown_started()
+func s_pickup_cooldown_started(network_id:String)->void:
+	var pickup: Pickup = pickups.get(network_id)
+	if not is_instance_valid(pickup):
+		push_warning("Unknown pickup network_id '%s' on cooldown_started." % network_id)
+		return
+
+	pickup.cooldown_started()
 	
 
 @rpc("authority", "call_remote", "reliable")
-func s_pickup_cooldown_ended(pickup_name:String)->void:
-	pickups.get(pickup_name).cooldown_ended()
+func s_pickup_cooldown_ended(network_id:String)->void:
+	var pickup: Pickup = pickups.get(network_id)
+	if not is_instance_valid(pickup):
+		push_warning("Unknown pickup network_id '%s' on cooldown_ended." % network_id)
+		return
+
+	pickup.cooldown_ended()
 
 @rpc("authority", "call_remote", "reliable")
 func s_player_died(dead_player_id:int, killer_id:int)->void:
@@ -338,19 +354,19 @@ func s_update_grenades_left(grenades_left:int)->void:
 	get_local_player().update_grenades_left(grenades_left)
 	
 @rpc("authority", "call_remote","reliable")
-func s_explode_grenade(grenade_name:String)->void:
+func s_explode_grenade(grenade_id:String)->void:
 	pass
 	
-func explode_grenade(grenade_name :String)->void:
-	if not grenade_name in grenades.keys(): return 
-	var grenade:Grenade = grenades.get(grenade_name)[NetKeys.INSTANCE]
+func explode_grenade(grenade_id :String)->void:
+	if not grenade_id in grenades.keys(): return 
+	var grenade:Grenade = grenades.get(grenade_id)[NetKeys.INSTANCE]
 	if is_instance_valid(grenade):
 		var explosion_fx :Node3D = preload("res://player/grenade/grenade_explosion_fx.tscn").instantiate()
 		explosion_fx.global_transform = grenade.global_transform
 		add_child(explosion_fx)
 		grenade.queue_free()
 		
-	grenades[grenade_name][NetKeys.EXPLODED] = true
+	grenades[grenade_id][NetKeys.EXPLODED] = true
 	
 @rpc("authority", "call_remote","unreliable")
 func s_play_pickup_fx(pickup_type:int)->void:
