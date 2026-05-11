@@ -101,6 +101,18 @@ func jump() -> void:
 	jumps_used += 1
 
 
+func apply_jump_pad_impulse(vertical_velocity: float, horizontal_velocity: float = 0.0, direction: Vector3 = Vector3.ZERO) -> void:
+	velocity.y = vertical_velocity
+
+	var horizontal_direction := Vector3(direction.x, 0.0, direction.z).normalized()
+	if not horizontal_direction.is_zero_approx():
+		velocity.x = horizontal_direction.x * horizontal_velocity
+		velocity.z = horizontal_direction.z * horizontal_velocity
+
+	is_grounded = false
+	reset_jumps()
+
+
 func reset_jumps() -> void:
 	jumps_used = 0
 

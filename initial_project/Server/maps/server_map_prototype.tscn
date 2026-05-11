@@ -1,9 +1,10 @@
-[gd_scene load_steps=29 format=3 uid="uid://deoejkbmubydh"]
+[gd_scene load_steps=30 format=3 uid="uid://deoejkbmubydh"]
 
 [ext_resource type="Script" uid="uid://d4js4ps8hh8uw" path="res://shared/game_map.gd" id="1_deaxk"]
 [ext_resource type="Script" uid="uid://c0n716rjuk4r2" path="res://player/spawn_point/player_spawn_point.gd" id="2_8bduy"]
 [ext_resource type="PackedScene" uid="uid://bmfk1ivn60vy7" path="res://player/pickups/pickup.tscn" id="3_omsuw"]
 [ext_resource type="PackedScene" path="res://game_modes/objectives/hill_zone.tscn" id="4_o7xdx"]
+[ext_resource type="PackedScene" path="res://platforms/jump_pad.tscn" id="5_3xj57"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fqf3o"]
 size = Vector3(36, 1, 24)
@@ -307,3 +308,9 @@ pickup_type = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 
 [node name="SpecialPlatforms" type="Node3D" parent="."]
+
+[node name="BlueSideJumpPad" parent="SpecialPlatforms" instance=ExtResource("5_3xj57")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.5)
+
+[node name="RedSideJumpPad" parent="SpecialPlatforms" instance=ExtResource("5_3xj57")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
