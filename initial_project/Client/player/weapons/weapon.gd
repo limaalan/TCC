@@ -21,13 +21,8 @@ func play_shoot_fx(is_local := false )->void:
 		push_warning("Weapon has no presentation data.")
 		return
 
-	var audio_manager := get_node_or_null("/root/AudioManager")
-	if audio_manager == null:
-		push_warning("AudioManager not found.")
-		return
-
 	shoot_light.show()
 	shoot_particles.emitting = true
 			
 	var audio_position = global_position if not is_local else Vector3.ZERO
-	audio_manager.play_sfx(data.shoot_sfx , audio_position, data.pitch_randomness)
+	AudioManager.play_sfx(data.shoot_sfx , audio_position, data.pitch_randomness)

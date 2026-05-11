@@ -42,9 +42,7 @@ func weapon_selected(weapon_id:int)->void:
 	auto_select_timer.stop()
 	get_tree().call_group(ClientNames.GROUP_LOBBY, ClientNames.METHOD_WEAPON_SELECTED, weapon_id)
 	hide()
-	var audio_manager := get_node_or_null("/root/AudioManager")
-	if audio_manager != null:
-		audio_manager.play_sfx(audio_manager.SFXKeys.UIClick)
+	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 
 func _on_auto_select_timer_timeout() -> void:
 	weapon_selected(GameEnums.WeaponId.PISTOL)
