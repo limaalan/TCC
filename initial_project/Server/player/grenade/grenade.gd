@@ -1,6 +1,8 @@
 extends RigidBody3D
 class_name Grenade
 
+const NetworkEntity = preload("res://shared/network_entity.gd")
+
 @export var lifetime:= 2.0
 @export var throw_impulse_strength := 20.0
 @export var max_damage:= 150
@@ -17,11 +19,23 @@ var lobby : Lobby
 
 var direction:Vector3
 var thrower: PlayerServerReal
+var network_id: StringName
 
 func set_data(_lobby:Lobby , _direction:Vector3 , _thrower:PlayerServerReal)->void:
 	lobby = _lobby
 	direction= _direction
 	thrower = _thrower
+
+
+func set_network_id(value: StringName) -> void:
+	network_id = value
+
+
+func get_network_id() -> String:
+	if not NetworkEntity.require_id(network_id, "Grenade '%s'" % name):
+		return ""
+
+	return NetworkEntity.to_wire(network_id)
 
 func _ready() -> void:
 	add_collision_exception_with(thrower) #evita que a granada colida imediatamente com o próprio jogador que jogou 

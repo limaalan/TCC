@@ -13,6 +13,7 @@ var spawn_points :Array[PlayerSpawnPoint] = []
 var objectives: Array[Node3D] = []
 var hill_zones: Array[HillZone] = []
 var grenades:= {} # chave : id granada , valor ela mesmo
+var next_grenade_network_sequence := 0
 
 const WORLD_STATE_SEND_FRAME :=3
 const WORLD_STATES_TO_REMEMBER := 60
@@ -25,6 +26,7 @@ const FINISHED_LOBBY_DELETE_DELAY_SEC := 0.5
 const BaseGameMode = preload("res://game_modes/base_game_mode.gd")
 const HillZone = preload("res://game_modes/objectives/hill_zone.gd")
 const KingOfTheHillMode = preload("res://game_modes/king_of_the_hill_mode.gd")
+const NetworkEntity = preload("res://shared/network_entity.gd")
 const TeamDeathmatchMode = preload("res://game_modes/team_deathmatch_mode.gd")
 const WeaponGameplayData = preload("res://game/weapon_gameplay_data.gd")
 
@@ -136,8 +138,13 @@ func _physics_process(delta: float) -> void:
 		current_game_mode.physics_process(delta)
 	
 func update_grenades_in_world_state()->void:
-	for grenade_name in grenades.keys():
-		current_world_state[NetKeys.WORLD_GRENADES][grenade_name] = {NetKeys.TRANSFORM: grenades.get(grenade_name).transform}
+	for grenade_id in grenades.keys():
+		current_world_state[NetKeys.WORLD_GRENADES][grenade_id] = {NetKeys.TRANSFORM: grenades.get(grenade_id).transform}
+
+
+func make_grenade_network_id(owner_id: int) -> StringName:
+	next_grenade_network_sequence += 1
+	return NetworkEntity.make_dynamic_id(NetworkEntity.GRENADE_PREFIX, owner_id, next_grenade_network_sequence)
 
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
@@ -240,12 +247,24 @@ func start_loading_map():
 		push_warning("Loaded map '%s' does not have any valid PlayerSpawnPoint nodes." % map.name)
 	
 	
+	var pickup_ids := {}
 	var pickup_holder = map.get_node_or_null("Pickups")
 	if pickup_holder != null :
 		for maybe_pickup in pickup_holder.get_children() :
 			if maybe_pickup is Pickup:
-				maybe_pickup.lobby = self
-				pickups.append(maybe_pickup)
+				var pickup: Pickup = maybe_pickup
+				if not pickup.has_network_id():
+					push_error("Ignoring pickup '%s': missing network_id." % pickup.name)
+					continue
+
+				var pickup_id := pickup.get_network_id()
+				if pickup_ids.has(pickup_id):
+					push_error("Ignoring pickup '%s': duplicate network_id '%s'." % [pickup.name, pickup_id])
+					continue
+
+				pickup_ids[pickup_id] = true
+				pickup.lobby = self
+				pickups.append(pickup)
 
 	collect_map_objectives(map)
 	
@@ -264,7 +283,7 @@ func c_map_ready()->void:
 	ready_clients.append(client_id)
 	
 	for pickup in pickups:
-		s_spawn_pickup.rpc_id(client_id, pickup.name, pickup.pickup_type, pickup.position)
+		s_spawn_pickup.rpc_id(client_id, pickup.get_network_id(), pickup.pickup_type, pickup.position)
 	
 	waiting_players_ready = true
 	check_players_ready(start_weapon_selection)
@@ -280,7 +299,7 @@ func c_map_ready()->void:
 
 		
 @rpc("authority", "call_remote", "reliable")
-func s_spawn_pickup(pickup_name:String, pickup_type:int , pos : Vector3)->void:
+func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3)->void:
 	pass
 
 func get_spawn_points_for_team(team: int) -> Array[PlayerSpawnPoint]:
@@ -616,20 +635,26 @@ func update_health(target_client_id:int, current_health:int , max_health:int, ch
 func s_update_health(target_client_id:int, current_health:int , max_health:int, changed_amount:int)->void:
 	pass
 
-func pickup_cooldown_started(pickup_name :String )->void:
+func pickup_cooldown_started(network_id :String )->void:
+	if network_id.is_empty():
+		return
+
 	for client_id in get_connected_clients():
-		s_pickup_cooldown_started.rpc_id(client_id, pickup_name)
+		s_pickup_cooldown_started.rpc_id(client_id, network_id)
 
 @rpc("authority", "call_remote", "reliable")
-func s_pickup_cooldown_started(pickup_name:String)->void:
+func s_pickup_cooldown_started(network_id:String)->void:
 	pass
 
-func pickup_cooldown_ended (pickup_name :String)->void:
+func pickup_cooldown_ended (network_id :String)->void:
+	if network_id.is_empty():
+		return
+
 	for client_id in get_connected_clients():
-		s_pickup_cooldown_ended.rpc_id(client_id, pickup_name)
+		s_pickup_cooldown_ended.rpc_id(client_id, network_id)
 
 @rpc("authority", "call_remote", "reliable")
-func s_pickup_cooldown_ended(pickup_name:String)->void:
+func s_pickup_cooldown_ended(network_id:String)->void:
 	pass
 
 func player_died(dead_player_id : int, killer_id:int)->void:
@@ -767,9 +792,11 @@ func c_try_throw_grenade(player_state:Dictionary)->void:
 	grenade.set_data(self, direction, player)
 	grenade.position = player_state[NetKeys.POS] + Vector3.UP * 1.2
 	
-	grenade.name = str(grenade.get_instance_id())
+	var grenade_network_id := make_grenade_network_id(client_id)
+	grenade.set_network_id(grenade_network_id)
+	grenade.name = "Grenade_%s" % NetworkEntity.to_wire(grenade_network_id)
 	add_child(grenade,true)
-	grenades[grenade.name]=grenade
+	grenades[NetworkEntity.to_wire(grenade_network_id)] = grenade
 
 func update_grenades_left(client_id:int , amount:int)->void:
 	s_update_grenades_left.rpc_id(client_id, amount)
@@ -779,17 +806,20 @@ func s_update_grenades_left(grenades_left:int)->void:
 	pass
 
 func grenade_exploded(grenade:Grenade)->void:
-	var grenade_name = grenade.name
-	grenades.erase(grenade_name)
-	current_world_state[NetKeys.WORLD_GRENADES].erase(grenade_name)
+	var grenade_id := grenade.get_network_id()
+	if grenade_id.is_empty():
+		return
+
+	grenades.erase(grenade_id)
+	current_world_state[NetKeys.WORLD_GRENADES].erase(grenade_id)
 	grenade.queue_free()
 	
 	for client_id in get_connected_clients():
-		s_explode_grenade.rpc_id(client_id, grenade_name)
+		s_explode_grenade.rpc_id(client_id, grenade_id)
 	pass
 
 @rpc("authority", "call_remote","reliable")
-func s_explode_grenade(grenade_name:String)->void:
+func s_explode_grenade(grenade_id:String)->void:
 	pass
 
 func play_pickup_fx(client_id: int, pickup_type:int)->void:
