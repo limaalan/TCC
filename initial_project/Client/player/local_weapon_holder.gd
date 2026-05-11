@@ -12,24 +12,29 @@ func _physics_process(delta: float) -> void:
 		shoot()
 		
 func shoot()->void:
-	if not weapon.is_automatic :
+	if weapon == null or weapon.data == null:
+		return
+
+	var weapon_data: WeaponPresentationData = weapon.data
+
+	if not weapon_data.is_automatic :
 		trigger_pressed = false
 	
 	is_on_cooldown = true
-	get_tree().create_timer(weapon.shot_cooldown).timeout.connect(on_cooldown_timer_timeout)
+	get_tree().create_timer(weapon_data.shot_cooldown).timeout.connect(on_cooldown_timer_timeout)
 	weapon.play_shoot_fx(true)
 	if recoil_tween != null:
 		recoil_tween.kill() # faz voltar pro começo
 		
-	weapon.rotation_degrees.x = 15
-	weapon.position.z = 0.05
+	weapon.rotation_degrees.x = weapon_data.recoil_rotation_degrees
+	weapon.position.z = weapon_data.recoil_position_z
 	
 	recoil_tween = create_tween().set_parallel()
 	recoil_tween.tween_property(weapon, "rotation:x", 0.0, RECOIL_TWEEN_TIME)
 	recoil_tween.tween_property(weapon, "position:z", 0.0, RECOIL_TWEEN_TIME)
 	
 	get_tree().call_group(ClientNames.GROUP_LOBBY, ClientNames.METHOD_LOCAL_SHOT_FIRED)
-	get_tree().call_group(ClientNames.GROUP_CAMERA_SHAKE, ClientNames.METHOD_ADD_NOISE, 0.1)
+	get_tree().call_group(ClientNames.GROUP_CAMERA_SHAKE, ClientNames.METHOD_ADD_NOISE, weapon_data.camera_shake_amount)
 	
 func start_trigger_pressed()->void:
 	trigger_pressed = true

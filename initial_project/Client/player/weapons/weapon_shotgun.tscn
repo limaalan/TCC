@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://c8mx0g5eyss55" path="res://assets/meshes/items/shotgun_mesh.tscn" id="2_ubbhc"]
 
 [node name="WeaponShotgun" instance=ExtResource("1_efq3t")]
-shot_cooldown = 0.7
 
 [node name="Muzzle" parent="." index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08767229, -1.0544438)

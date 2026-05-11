@@ -13,6 +13,7 @@ const FOOTSTEP_SFX_PITCH_RANDOM := 0.2
 @export var normal_speed := 3.0
 @export var sprint_speed := 5.0
 @export var jump_velocity := 4.0
+@export var max_jumps := 2
 @export var gravity := 0.2
 @export var mouse_sensitivity := 0.005
 
@@ -25,6 +26,7 @@ var is_frozen := false
 var is_paused := false
 var is_grounded := true
 var is_sprinting := false
+var jumps_used := 0
 var current_anim : String
 var nearby_grenades: Array[Grenade] =[]
 
@@ -90,24 +92,59 @@ func choose_anim()->void:
 	current_anim = IDLE_ANIM
 
 
-func move():
+func can_jump() -> bool:
+	return jumps_used < max_jumps
+
+
+func jump() -> void:
+	velocity.y = jump_velocity
+	jumps_used += 1
+
+
+func apply_jump_pad_impulse(vertical_velocity: float, horizontal_velocity: float = 0.0, direction: Vector3 = Vector3.ZERO) -> void:
+	velocity.y = vertical_velocity
+
+	var horizontal_direction := Vector3(direction.x, 0.0, direction.z).normalized()
+	if not horizontal_direction.is_zero_approx():
+		velocity.x = horizontal_direction.x * horizontal_velocity
+		velocity.z = horizontal_direction.z * horizontal_velocity
+
+	is_grounded = false
+	reset_jumps()
+
+
+func reset_jumps() -> void:
+	jumps_used = 0
+
+
+func handle_footsteps(direction: Vector3) -> void:
+	if direction.is_zero_approx():
+		return
+
+	if not foot_step_timer.is_stopped():
+		return
+
+	AudioManager.play_sfx(AudioManager.SFXKeys.Footstep, Vector3.ZERO, FOOTSTEP_SFX_PITCH_RANDOM)
+
+	var audio_interval := FOOTSTEP_SFX_RUN_INTERVAL if is_sprinting else FOOTSTEP_SFX_WALK_INTERVAL
+	foot_step_timer.start(audio_interval)
+
+
+func move() -> void:
 	var input_dir := Input.get_vector(ClientNames.INPUT_MOVE_LEFT, ClientNames.INPUT_MOVE_RIGHT, ClientNames.INPUT_MOVE_FORWARD, ClientNames.INPUT_MOVE_BACKWARD)
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
 	if is_on_floor():
 		is_sprinting = Input.is_action_pressed(ClientNames.INPUT_SPRINT)
-	
-		if Input.is_action_just_pressed(ClientNames.INPUT_JUMP):
-			velocity.y = jump_velocity
-			
-		if not direction.is_zero_approx() and foot_step_timer.is_stopped():
-			AudioManager.play_sfx(AudioManager.SFXKeys.Footstep, Vector3.ZERO, FOOTSTEP_SFX_PITCH_RANDOM)
-			var audio_interval = FOOTSTEP_SFX_RUN_INTERVAL if not is_sprinting else FOOTSTEP_SFX_RUN_INTERVAL
-			foot_step_timer.start(audio_interval)
 		
 		if not is_grounded:
 			is_grounded = true
+			reset_jumps()
 			AudioManager.play_sfx(AudioManager.SFXKeys.JumpLand, Vector3.ZERO, FOOTSTEP_SFX_PITCH_RANDOM)
+		else:
+			reset_jumps()
+
+		handle_footsteps(direction)
 
 	
 	else:
@@ -115,6 +152,9 @@ func move():
 	
 		if is_grounded:
 			is_grounded = false
+
+	if Input.is_action_just_pressed(ClientNames.INPUT_JUMP) and can_jump():
+		jump()
 	
 	var speed := normal_speed if not is_sprinting else sprint_speed
 	
