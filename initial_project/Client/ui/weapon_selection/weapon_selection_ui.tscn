@@ -1,10 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://r1fsrv56vckp"]
+[gd_scene load_steps=7 format=3 uid="uid://r1fsrv56vckp"]
 
 [ext_resource type="Script" uid="uid://oyvp1biiawlo" path="res://ui/weapon_selection/weapon_selection_ui.gd" id="1_an783"]
 [ext_resource type="Texture2D" uid="uid://byukgpq4ekqs4" path="res://assets/textures/bg_black_and_white.png" id="1_wmw8t"]
-[ext_resource type="Texture2D" uid="uid://s58vmrup64sq" path="res://assets/textures/icon_pistol.png" id="2_oqgpd"]
-[ext_resource type="Texture2D" uid="uid://g8m2gqpblh63" path="res://assets/textures/icon_smg.png" id="3_utipj"]
-[ext_resource type="Texture2D" uid="uid://dardw6x0uvg7j" path="res://assets/textures/icon_shotgun.png" id="4_an783"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wmw8t"]
 bg_color = Color(0.39215687, 0.39215687, 0.39215687, 0.74509805)
@@ -80,17 +77,17 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="TextureRect" type="TextureRect" parent="BackGroundTexture/HBoxContainer/PistolPanel/VBoxContainer"]
+[node name="PistolIcon" type="TextureRect" parent="BackGroundTexture/HBoxContainer/PistolPanel/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-texture = ExtResource("2_oqgpd")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="BackGroundTexture/HBoxContainer/PistolPanel/VBoxContainer"]
+[node name="PistolLabel" type="Label" parent="BackGroundTexture/HBoxContainer/PistolPanel/VBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-text = "Pistol"
 horizontal_alignment = 1
 
 [node name="PistolButton" type="Button" parent="BackGroundTexture/HBoxContainer/PistolPanel"]
@@ -119,17 +116,17 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="TextureRect" type="TextureRect" parent="BackGroundTexture/HBoxContainer/SMGPanel/VBoxContainer"]
+[node name="SMGIcon" type="TextureRect" parent="BackGroundTexture/HBoxContainer/SMGPanel/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-texture = ExtResource("3_utipj")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="BackGroundTexture/HBoxContainer/SMGPanel/VBoxContainer"]
+[node name="SMGLabel" type="Label" parent="BackGroundTexture/HBoxContainer/SMGPanel/VBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-text = "SMG"
 horizontal_alignment = 1
 
 [node name="SMGButton" type="Button" parent="BackGroundTexture/HBoxContainer/SMGPanel"]
@@ -158,17 +155,17 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="TextureRect" type="TextureRect" parent="BackGroundTexture/HBoxContainer/ShotgunPanel/VBoxContainer"]
+[node name="ShotgunIcon" type="TextureRect" parent="BackGroundTexture/HBoxContainer/ShotgunPanel/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-texture = ExtResource("4_an783")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="BackGroundTexture/HBoxContainer/ShotgunPanel/VBoxContainer"]
+[node name="ShotgunLabel" type="Label" parent="BackGroundTexture/HBoxContainer/ShotgunPanel/VBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-text = "Shotgun"
 horizontal_alignment = 1
 
 [node name="ShotgunButton" type="Button" parent="BackGroundTexture/HBoxContainer/ShotgunPanel"]

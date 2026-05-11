@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="WeaponPresentationData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://player/weapons/weapon_presentation_data.gd" id="1_axrjc"]
+[ext_resource type="PackedScene" uid="uid://bn1a6lm6p04hb" path="res://player/weapons/weapon_shotgun.tscn" id="2_x0cpu"]
+[ext_resource type="Texture2D" uid="uid://dardw6x0uvg7j" path="res://assets/textures/icon_shotgun.png" id="3_ykcqt"]
+
+[resource]
+script = ExtResource("1_axrjc")
+id = 2
+display_name = &"Shotgun"
+weapon_scene = ExtResource("2_x0cpu")
+selection_icon = ExtResource("3_ykcqt")
+shoot_sfx = 5
+shot_cooldown = 0.7
+is_automatic = false
+recoil_rotation_degrees = 15.0
+recoil_position_z = 0.05
+camera_shake_amount = 0.1
+pitch_randomness = 0.1
