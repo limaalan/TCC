@@ -1,10 +1,11 @@
-[gd_scene load_steps=55 format=3 uid="uid://c0diy2dv1xsdu"]
+[gd_scene load_steps=47 format=3 uid="uid://c0diy2dv1xsdu"]
 
 [ext_resource type="Script" uid="uid://d4js4ps8hh8uw" path="res://shared/game_map.gd" id="1_kx5n2"]
 [ext_resource type="Script" uid="uid://ipn7xeoq3v0c" path="res://player/spawn_point/player_spawn_point.gd" id="2_uck4p"]
+[ext_resource type="PackedScene" uid="uid://cwnx3stpmqul" path="res://assets/meshes/buildings/container.glb" id="3_6dda7"]
 [ext_resource type="PackedScene" uid="uid://r1fsrv56vckp" path="res://ui/weapon_selection/weapon_selection_ui.tscn" id="3_wdk2m"]
 [ext_resource type="PackedScene" uid="uid://o6acxrwqfn0x" path="res://ui/match_info/match_info_ui.tscn" id="4_6dda7"]
-[ext_resource type="PackedScene" path="res://platforms/jump_pad.tscn" id="5_gm0j8"]
+[ext_resource type="PackedScene" uid="uid://cviqfokw5wq2h" path="res://platforms/jump_pad.tscn" id="5_gm0j8"]
 
 [sub_resource type="Environment" id="Environment_83w8i"]
 background_mode = 1
@@ -19,13 +20,6 @@ roughness = 0.95
 
 [sub_resource type="BoxMesh" id="BoxMesh_wv075"]
 size = Vector3(36, 0.2, 24)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e7pkv"]
-albedo_color = Color(0.27, 0.29, 0.33, 1)
-roughness = 0.95
-
-[sub_resource type="BoxMesh" id="BoxMesh_jjomr"]
-size = Vector3(36, 4, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_52gu4"]
 albedo_color = Color(0.27, 0.29, 0.33, 1)
@@ -55,13 +49,6 @@ roughness = 0.95
 [sub_resource type="BoxMesh" id="BoxMesh_i8e5t"]
 size = Vector3(8, 2, 2)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iqdri"]
-albedo_color = Color(0.18, 0.32, 0.52, 1)
-roughness = 0.95
-
-[sub_resource type="BoxMesh" id="BoxMesh_2il7j"]
-size = Vector3(4, 2, 2)
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4m77l"]
 albedo_color = Color(0.18, 0.32, 0.52, 1)
 roughness = 0.95
@@ -80,9 +67,6 @@ size = Vector3(4, 2, 2)
 albedo_color = Color(0.52, 0.2, 0.2, 1)
 roughness = 0.95
 
-[sub_resource type="BoxMesh" id="BoxMesh_dqf2x"]
-size = Vector3(4, 2, 2)
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5pv8i"]
 albedo_color = Color(0.42, 0.45, 0.5, 1)
 roughness = 0.95
@@ -100,9 +84,6 @@ size = Vector3(2, 2, 2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_j2kus"]
 size = Vector3(36, 1, 24)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_7r5yi"]
-size = Vector3(36, 4, 1)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_17gjf"]
 size = Vector3(36, 4, 1)
 
@@ -115,9 +96,6 @@ size = Vector3(1, 4, 24)
 [sub_resource type="BoxShape3D" id="BoxShape3D_e1u4v"]
 size = Vector3(8, 2, 2)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_wgpq6"]
-size = Vector3(4, 2, 2)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_ejirx"]
 size = Vector3(4, 2, 2)
 
@@ -125,7 +103,7 @@ size = Vector3(4, 2, 2)
 size = Vector3(4, 2, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_avvpe"]
-size = Vector3(4, 2, 2)
+size = Vector3(6.0062866, 2.371521, 2.1845703)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_y5stl"]
 size = Vector3(2, 2, 2)
@@ -135,9 +113,6 @@ size = Vector3(2, 2, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_52gwu"]
 size = Vector3(36, 1, 24)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_s0nk2"]
-size = Vector3(36, 4, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2o0x0"]
 size = Vector3(36, 4, 1)
@@ -150,9 +125,6 @@ size = Vector3(1, 4, 24)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_imfld"]
 size = Vector3(8, 2, 2)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_76fvs"]
-size = Vector3(4, 2, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_6ux4v"]
 size = Vector3(4, 2, 2)
@@ -217,11 +189,6 @@ mesh = SubResource("BoxMesh_wv075")
 
 [node name="Walls" type="Node3D" parent="Meshes"]
 
-[node name="NorthWall" type="MeshInstance3D" parent="Meshes/Walls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12.5)
-material_override = SubResource("StandardMaterial3D_e7pkv")
-mesh = SubResource("BoxMesh_jjomr")
-
 [node name="SouthWall" type="MeshInstance3D" parent="Meshes/Walls"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12.5)
 material_override = SubResource("StandardMaterial3D_52gu4")
@@ -244,11 +211,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 material_override = SubResource("StandardMaterial3D_7rfis")
 mesh = SubResource("BoxMesh_i8e5t")
 
-[node name="BlueLaneCoverLeft" type="MeshInstance3D" parent="Meshes/Covers"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, 4)
-material_override = SubResource("StandardMaterial3D_iqdri")
-mesh = SubResource("BoxMesh_2il7j")
-
 [node name="BlueLaneCoverRight" type="MeshInstance3D" parent="Meshes/Covers"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 4)
 material_override = SubResource("StandardMaterial3D_4m77l")
@@ -262,7 +224,6 @@ mesh = SubResource("BoxMesh_l2ejd")
 [node name="RedLaneCoverRight" type="MeshInstance3D" parent="Meshes/Covers"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -4)
 material_override = SubResource("StandardMaterial3D_3ce5n")
-mesh = SubResource("BoxMesh_dqf2x")
 
 [node name="MidCoverLeft" type="MeshInstance3D" parent="Meshes/Covers"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1, 0)
@@ -286,9 +247,6 @@ shape = SubResource("BoxShape3D_j2kus")
 [node name="NorthWall" type="StaticBody3D" parent="PlayerBoundaries"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12.5)
 collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/NorthWall"]
-shape = SubResource("BoxShape3D_7r5yi")
 
 [node name="SouthWall" type="StaticBody3D" parent="PlayerBoundaries"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12.5)
@@ -318,13 +276,6 @@ collision_mask = 0
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/CenterCover"]
 shape = SubResource("BoxShape3D_e1u4v")
 
-[node name="BlueLaneCoverLeft" type="StaticBody3D" parent="PlayerBoundaries"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, 4)
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/BlueLaneCoverLeft"]
-shape = SubResource("BoxShape3D_wgpq6")
-
 [node name="BlueLaneCoverRight" type="StaticBody3D" parent="PlayerBoundaries"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 4)
 collision_mask = 0
@@ -340,11 +291,26 @@ collision_mask = 0
 shape = SubResource("BoxShape3D_4lhr7")
 
 [node name="RedLaneCoverRight" type="StaticBody3D" parent="PlayerBoundaries"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.872381, 1.1468184, -4)
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/RedLaneCoverRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.02670288, 0.005918145, 0.092285156)
 shape = SubResource("BoxShape3D_avvpe")
+
+[node name="container2" parent="PlayerBoundaries/RedLaneCoverRight" instance=ExtResource("3_6dda7")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
+
+[node name="BlueLaneCoverLeft" type="StaticBody3D" parent="PlayerBoundaries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.175281, 1.1468184, 4.109333)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/BlueLaneCoverLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.02670288, 0.005918145, 0.092285156)
+shape = SubResource("BoxShape3D_avvpe")
+
+[node name="container2" parent="PlayerBoundaries/BlueLaneCoverLeft" instance=ExtResource("3_6dda7")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
 
 [node name="MidCoverLeft" type="StaticBody3D" parent="PlayerBoundaries"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1, 0)
@@ -369,14 +335,6 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/Ground"]
 shape = SubResource("BoxShape3D_52gwu")
-
-[node name="NorthWall" type="StaticBody3D" parent="ExactCollisions"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12.5)
-collision_layer = 16
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/NorthWall"]
-shape = SubResource("BoxShape3D_s0nk2")
 
 [node name="SouthWall" type="StaticBody3D" parent="ExactCollisions"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12.5)
@@ -415,9 +373,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, 4)
 collision_layer = 16
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/BlueLaneCoverLeft"]
-shape = SubResource("BoxShape3D_76fvs")
-
 [node name="BlueLaneCoverRight" type="StaticBody3D" parent="ExactCollisions"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 4)
 collision_layer = 16
@@ -435,11 +390,12 @@ collision_mask = 0
 shape = SubResource("BoxShape3D_fontv")
 
 [node name="RedLaneCoverRight" type="StaticBody3D" parent="ExactCollisions"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.597541, 2.537497, -3.6177297)
 collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/RedLaneCoverRight"]
+visible = false
 shape = SubResource("BoxShape3D_emanf")
 
 [node name="MidCoverLeft" type="StaticBody3D" parent="ExactCollisions"]
