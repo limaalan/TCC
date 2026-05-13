@@ -14,6 +14,7 @@ Este diretório reúne a documentação gerada a partir da análise de `TCC.md` 
 - `08_guia_importacao_assets_mapas.md`: guia Blender/Godot para importar assets, criar mapas Client/Server e configurar colisões simplificadas/exatas.
 - `09_backlog_tarefas_quebradas.md`: backlog em cards pequenos para refactors, multi-mapa, dois modos de jogo e deploy básico.
 - `10_prompt_criar_issues.md`: versão pronta para colar em outro ChatGPT e criar as issues no GitHub.
+- `11_prompt_planejar_task.md`: prompt reutilizável para pedir análise e plano de implementação de uma task, sem editar código.
 
 ## Escopo Da Análise
 
