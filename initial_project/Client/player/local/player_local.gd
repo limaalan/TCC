@@ -177,8 +177,12 @@ func show_nearby_grenades()-> void:
 	var own_pos:=Vector2(global_position.x, global_position.z)
 	
 	for grenade in nearby_grenades:
+		var grenade_id := grenade.get_network_id()
+		if grenade_id.is_empty():
+			continue
+
 		var grenade_pos:= Vector2(grenade.global_position.x, grenade.global_position.z)
-		grenades_data[grenade.name] = own_pos.angle_to_point(grenade_pos) + PI/2 + rotation.y
+		grenades_data[grenade_id] = own_pos.angle_to_point(grenade_pos) + PI/2 + rotation.y
 		
 	get_tree().call_group(ClientNames.GROUP_GRENADE_PROMPTS, ClientNames.METHOD_UPDATE_GRENADE_PROMPTS, grenades_data)
 

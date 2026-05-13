@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://platforms/death_zone.gd" id="1_kgpni"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x1r6n"]
+size = Vector3(80, 5, 80)
+
+[node name="DeathZone" type="Area3D"]
+collision_layer = 0
+collision_mask = 2
+monitoring = true
+monitorable = false
+script = ExtResource("1_kgpni")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_x1r6n")

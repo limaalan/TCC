@@ -1,9 +1,11 @@
-[gd_scene load_steps=164 format=3 uid="uid://di0a3qbam82tj"]
+[gd_scene load_steps=166 format=3 uid="uid://di0a3qbam82tj"]
 
 [ext_resource type="PackedScene" uid="uid://bmfk1ivn60vy7" path="res://player/pickups/pickup.tscn" id="1_qkapt"]
 [ext_resource type="Script" path="res://shared/game_map.gd" id="2_gmap"]
 [ext_resource type="Script" uid="uid://c0n716rjuk4r2" path="res://player/spawn_point/player_spawn_point.gd" id="3_6v2mg"]
 [ext_resource type="PackedScene" path="res://game_modes/objectives/hill_zone.tscn" id="4_tq4vs"]
+[ext_resource type="Resource" path="res://player/pickups/data/health_pickup_data.tres" id="5_hpdata"]
+[ext_resource type="Resource" path="res://player/pickups/data/grenade_pickup_data.tres" id="6_gpdata"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qkapt"]
 size = Vector3(100, 1, 100)
@@ -1847,19 +1849,23 @@ transform = Transform3D(0.009656906, -0.6436696, 0.76524246, 0.008122081, 0.7653
 
 [node name="HealthPickup" parent="Pickups" instance=ExtResource("1_qkapt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.3618374)
+data = ExtResource("5_hpdata")
+network_id = &"farm_health_pickup_01"
 
 [node name="HealthPickup2" parent="Pickups" instance=ExtResource("1_qkapt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.3851156)
+data = ExtResource("5_hpdata")
+network_id = &"farm_health_pickup_02"
 
 [node name="GrenadePickup" parent="Pickups" instance=ExtResource("1_qkapt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.3618374)
-pickup_type = 1
-cooldown_time = 8.0
+data = ExtResource("6_gpdata")
+network_id = &"farm_grenade_pickup_01"
 
 [node name="GrenadePickup2" parent="Pickups" instance=ExtResource("1_qkapt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.3851156)
-pickup_type = 1
-cooldown_time = 8.0
+data = ExtResource("6_gpdata")
+network_id = &"farm_grenade_pickup_02"
 
 [node name="Objectives" type="Node3D" parent="."]
 

@@ -5,12 +5,11 @@
 [ext_resource type="PackedScene" uid="uid://bmfk1ivn60vy7" path="res://player/pickups/pickup.tscn" id="3_omsuw"]
 [ext_resource type="PackedScene" path="res://game_modes/objectives/hill_zone.tscn" id="4_o7xdx"]
 [ext_resource type="PackedScene" uid="uid://ccb4lse76if73" path="res://platforms/jump_pad.tscn" id="5_3xj57"]
+[ext_resource type="PackedScene" path="res://platforms/death_zone.tscn" id="6_i1sjg"]
+[ext_resource type="Resource" uid="uid://8jq8kvp628o7" path="res://player/pickups/data/grenade_pickup_data.tres" id="7_gpdata"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fqf3o"]
 size = Vector3(36, 1, 24)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_sw85v"]
-size = Vector3(36, 4, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_oniia"]
 size = Vector3(36, 4, 1)
@@ -44,9 +43,6 @@ size = Vector3(2, 2, 2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mooxp"]
 size = Vector3(36, 1, 24)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_mirty"]
-size = Vector3(36, 4, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_i7oth"]
 size = Vector3(36, 4, 1)
@@ -113,13 +109,6 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/Ground"]
 shape = SubResource("BoxShape3D_fqf3o")
-
-[node name="NorthWall" type="StaticBody3D" parent="PlayerBoundaries"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12.5)
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerBoundaries/NorthWall"]
-shape = SubResource("BoxShape3D_sw85v")
 
 [node name="SouthWall" type="StaticBody3D" parent="PlayerBoundaries"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12.5)
@@ -200,14 +189,6 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/Ground"]
 shape = SubResource("BoxShape3D_mooxp")
-
-[node name="NorthWall" type="StaticBody3D" parent="ExactCollisions"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12.5)
-collision_layer = 16
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ExactCollisions/NorthWall"]
-shape = SubResource("BoxShape3D_mirty")
 
 [node name="SouthWall" type="StaticBody3D" parent="ExactCollisions"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12.5)
@@ -297,10 +278,12 @@ current = true
 
 [node name="HealthPickup" parent="Pickups" instance=ExtResource("3_omsuw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.5)
+network_id = &"prototype_health_pickup_01"
 
 [node name="GrenadePickup" parent="Pickups" instance=ExtResource("3_omsuw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
-pickup_type = 1
+data = ExtResource("7_gpdata")
+network_id = &"prototype_grenade_pickup_01"
 
 [node name="Objectives" type="Node3D" parent="."]
 
@@ -314,3 +297,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.5)
 
 [node name="RedSideJumpPad" parent="SpecialPlatforms" instance=ExtResource("5_3xj57")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
+
+[node name="MainDeathZone" parent="SpecialPlatforms" instance=ExtResource("6_i1sjg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -20, 0)
