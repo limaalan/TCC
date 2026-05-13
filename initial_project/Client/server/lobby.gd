@@ -254,7 +254,7 @@ func s_spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int):
 	if not normal.is_equal_approx(Vector3.UP) and not normal.is_equal_approx(Vector3.DOWN):
 		spawn_tform = spawn_tform.looking_at(normal)
 		spawn_tform = spawn_tform.rotated_local(Vector3.RIGHT , -PI / 2) #rotacionado 90° direita
-	spawn_tform.origin = pos
+	spawn_tform.origin = pos + normal * 0.01
 	bullet_hit_fx.global_transform = spawn_tform
 	add_child(bullet_hit_fx)
 #Verificar porque não marca o chão com o sprite da bala
