@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://bnjefatp8xg37"]
+
+[ext_resource type="Script" uid="uid://c5mesalwos2vt" path="res://_debug/preview_runner.gd" id="1_runner"]
+[ext_resource type="PackedScene" uid="uid://c0diy2dv1xsdu" path="res://maps/map_prototype.tscn" id="2_map"]
+
+[node name="PreviewPrototype" type="Node" groups=["LocalGameSceneManager"]]
+script = ExtResource("1_runner")
+map_scene = ExtResource("2_map")
