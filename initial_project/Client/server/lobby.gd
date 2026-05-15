@@ -1,6 +1,7 @@
 extends Node3D
 class_name Lobby
 const PickupPresentationRegistry = preload("res://player/pickups/pickup_presentation_registry.gd")
+const ServerLocator = preload("res://server/server_locator.gd")
 
 const INTERPOLATION_BUFFER_MS := 100 
 
@@ -76,7 +77,9 @@ func handle_world_state()->void:
 	if world_state_buffer.size()<2:
 		return
 		
-	var target_render_unix_ms :int = floori(Time.get_unix_time_from_system() * 1000) - INTERPOLATION_BUFFER_MS - Server.clock_deviation_ms
+	var server := ServerLocator.get_server(get_tree())
+	var clock_deviation_ms: int = server.clock_deviation_ms if server != null else 0
+	var target_render_unix_ms :int = floori(Time.get_unix_time_from_system() * 1000) - INTERPOLATION_BUFFER_MS - clock_deviation_ms
 	
 	#Remove states recebidos do server que já passaram
 	while world_state_buffer.size()>2 and target_render_unix_ms > world_state_buffer[1][NetKeys.WORLD_TIME_MS] :
@@ -228,7 +231,9 @@ func s_start_weapon_selection()->void:
 
 
 func local_shot_fired()->void:
-	c_shot_fired.rpc_id(1, floori(Time.get_unix_time_from_system()*1000) - Server.clock_deviation_ms, create_player_data())
+	var server := ServerLocator.get_server(get_tree())
+	var clock_deviation_ms: int = server.clock_deviation_ms if server != null else 0
+	c_shot_fired.rpc_id(1, floori(Time.get_unix_time_from_system()*1000) - clock_deviation_ms, create_player_data())
 
 @rpc ("any_peer", "call_remote", "unreliable")
 func c_shot_fired(time_stamp:int , player_data:Dictionary)->void:
