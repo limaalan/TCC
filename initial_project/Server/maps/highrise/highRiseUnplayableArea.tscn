@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://niwaw0ilssci"]
+[gd_scene load_steps=10 format=3 uid="uid://niwaw0ilssci"]
 
-[ext_resource type="PackedScene" uid="uid://6dm7mvxbh6m1" path="res://maps/highrise/source/base_floor.tscn" id="1_24gkl"]
-[ext_resource type="PackedScene" uid="uid://bvt0xo8j21inb" path="res://maps/highrise/pilar.tscn" id="5_fl4sq"]
+[ext_resource type="PackedScene" path="res://maps/highrise/source/base_floor.tscn" id="1_24gkl"]
+[ext_resource type="Texture2D" path="res://assets/meshes/props/construction_mesh_green_transparent.png" id="3_3n7us"]
+[ext_resource type="PackedScene" path="res://maps/highrise/pilar.tscn" id="5_fl4sq"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xe2mt"]
 size = Vector3(5.7998047, 27.408752, 16.17743)
@@ -14,6 +15,16 @@ size = Vector3(15.628937, 27.408752, 5.3411255)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_24gkl"]
 size = Vector3(10.040527, 27.408752, 5.7562256)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nsfaj"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0.66015625, 0.66015625, 0.66015625, 1)
+albedo_texture = ExtResource("3_3n7us")
+uv1_scale = Vector3(1, 3, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_t4pox"]
+material = SubResource("StandardMaterial3D_nsfaj")
 
 [node name="HighRiseUnplayableArea" type="Node3D"]
 
@@ -153,3 +164,60 @@ shape = SubResource("BoxShape3D_xali5")
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="StaticBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18139648, -13.526825, 4.9166408)
 shape = SubResource("BoxShape3D_24gkl")
+
+[node name="Telas" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(2.18, 0, 0, 0, -8.567432e-08, -13.205, 0, 1.96, -5.772089e-07, -2.995696, -13.257927, -2.5043359)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(-9.529083e-08, -1.9599999, 5.772089e-07, 0, -8.5674316e-08, -13.205, 2.18, -8.5674316e-08, 2.5230601e-14, -0.7580342, -13.257927, -0.27292353)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(-2.1800003, 2.9595176e-07, -8.715612e-14, 0, -8.5674316e-08, -13.205, -3.291709e-07, -1.9599999, 5.772089e-07, -2.9143527, -13.257927, 1.9800048)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(1.6458543e-07, 1.9599999, -5.772089e-07, 0, -8.5674316e-08, -13.205, -2.18, 1.4797588e-07, -4.357806e-14, -5.1351333, -13.257927, -0.19665575)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(-7.891, -2.959518e-07, 8.715612e-14, 0, -8.567432e-08, -13.205, 1.1915079e-06, -1.96, 5.772089e-07, -3.1061535, -13.257927, 7.8033442)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(7.98, 0, 0, 0, -8.567432e-08, -13.205, 0, 1.96, -5.772089e-07, -3.065239, -13.257927, -8.361355)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(5.29, 0, 0, 0, -8.567432e-08, -13.205, 0, 1.96, -5.772089e-07, 9.893754, -13.257927, -8.328972)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(-2.441281e-07, -1.96, 5.772089e-07, 0, -8.567432e-08, -13.205, 5.585, -8.567432e-08, 2.5230601e-14, 15.144636, -13.257927, -2.7303257)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D10" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(-5.165, 2.959518e-07, -8.715612e-14, 0, -8.567432e-08, -13.205, -7.798933e-07, -1.96, 5.772089e-07, 10.024397, -13.257927, 2.84167)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D11" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(-4.0893093e-07, -1.96, 5.772089e-07, 0, -8.567432e-08, -13.205, 2.51, -3.1932456e-07, 9.403927e-14, 4.8465166, -13.257927, 5.3087354)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="Telas"]
+transform = Transform3D(-3.5318803e-07, 1.96, -5.772089e-07, 0, -8.567432e-08, -13.205, -8.08, -8.567432e-08, 2.5230601e-14, -11.0219, -13.257927, -0.19665575)
+mesh = SubResource("PlaneMesh_t4pox")
+skeleton = NodePath("")

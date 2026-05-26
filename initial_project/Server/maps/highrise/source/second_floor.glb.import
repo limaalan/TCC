@@ -3,7 +3,7 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://di4l7uq4cablr"
+uid="uid://dusocbraq6ygk"
 path="res://.godot/imported/second_floor.glb-0c8f6d9e03af82b948d18eb6072f3f68.scn"
 
 [deps]
@@ -34,7 +34,7 @@ animation/trimming=false
 animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
 import_script/path=""
-materials/extract=1
+materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
 _subresources={}
