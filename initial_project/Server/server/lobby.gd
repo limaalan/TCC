@@ -436,6 +436,7 @@ func start_match()->void:
 		end_match()
 		return
 
+	update_match_meta(make_match_meta_payload())
 	current_game_mode.start_match()
 	
 
@@ -470,6 +471,24 @@ func setup_game_mode() -> bool:
 		_:
 			push_error("Unsupported game mode: %s" % match_config.mode)
 			return false
+
+
+func make_match_meta_payload() -> Dictionary:
+	return NetPayloads.make_match_meta(match_config.mode, match_config.score_to_win)
+
+
+func update_match_meta(match_meta: Dictionary) -> void:
+	if not NetPayloads.is_match_meta(match_meta):
+		push_warning("Invalid match_meta payload")
+		return
+
+	for client_id in get_connected_clients():
+		s_update_match_meta.rpc_id(client_id, match_meta)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_update_match_meta(match_meta: Dictionary) -> void:
+	pass
 
 
 func has_current_game_mode() -> bool:

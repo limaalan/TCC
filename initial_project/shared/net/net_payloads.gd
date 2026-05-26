@@ -5,6 +5,7 @@ const PLAYER_STATE_VERSION := 1
 const SPAWN_PLAYER_VERSION := 1
 const END_MATCH_VERSION := 1
 const HILL_STATE_VERSION := 1
+const MATCH_META_VERSION := 1
 
 
 static func make_player_state(pos: Vector3, rot_y: float, rot_x: float, anim: Variant) -> Dictionary:
@@ -108,6 +109,27 @@ static func is_end_match(data: Dictionary) -> bool:
 	for player_data in data[NetKeys.PLAYERS]:
 		if not is_end_match_player(player_data):
 			return false
+
+	return true
+
+
+static func make_match_meta(mode: int, score_to_win: int) -> Dictionary:
+	return {
+		NetKeys.VERSION: MATCH_META_VERSION,
+		NetKeys.MODE: mode,
+		NetKeys.SCORE_TO_WIN: score_to_win,
+	}
+
+
+static func is_match_meta(data: Dictionary) -> bool:
+	if not _has_exact_version(data, MATCH_META_VERSION):
+		return false
+
+	if not data.has(NetKeys.MODE) or not data[NetKeys.MODE] is int:
+		return false
+
+	if not data.has(NetKeys.SCORE_TO_WIN) or not data[NetKeys.SCORE_TO_WIN] is int:
+		return false
 
 	return true
 

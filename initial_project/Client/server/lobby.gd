@@ -9,6 +9,7 @@ var players:= {} # Dicionário dos jogadores chave:valor =  { id: PlayerScene }
 var world_state_buffer:Array[Dictionary] = []
 var pickups := {}
 var grenades := {}
+var match_meta := {}
 var player_names_and_teams := {} # key player ID value outro dicionário com player name e Time
 
 func get_local_player()->PlayerLocal:
@@ -51,6 +52,7 @@ func clear_loaded_map_runtime_state() -> void:
 		if grenade_data is Dictionary and is_instance_valid(grenade_data.get(NetKeys.INSTANCE)):
 			queue_free_child(grenade_data.get(NetKeys.INSTANCE))
 	grenades.clear()
+	match_meta.clear()
 	world_state_buffer.clear()
 
 	
@@ -179,8 +181,30 @@ func c_map_ready()->void:
 	
 @rpc("authority", "call_remote", "reliable")
 func s_start_match()->void:
+	apply_match_meta_to_ui()
 	get_tree().call_group(ClientNames.GROUP_PLAYER_LOCAL, ClientNames.METHOD_UNFREEZE)
 	set_physics_process(true)
+
+
+func apply_match_meta_to_ui() -> void:
+	if match_meta.is_empty():
+		return
+
+	get_tree().call_group(
+		ClientNames.GROUP_MATCH_INFO_UI,
+		ClientNames.METHOD_UPDATE_MATCH_META,
+		match_meta
+	)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_update_match_meta(new_match_meta: Dictionary) -> void:
+	if not NetPayloads.is_match_meta(new_match_meta):
+		push_warning("Invalid match_meta payload")
+		return
+
+	match_meta = new_match_meta.duplicate(true)
+	apply_match_meta_to_ui()
 	
 @rpc ("authority", "call_remote", "reliable")
 func s_spawn_player(spawn_data: Dictionary)->void:
