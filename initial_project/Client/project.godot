@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Server="res://server/server.tscn"
+Server="*res://server/server.tscn"
 AudioManager="*res://game/audio_manager.tscn"
 SettingsManager="*res://game/settings_manager.gd"
 

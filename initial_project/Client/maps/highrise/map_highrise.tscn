@@ -1,0 +1,126 @@
+[gd_scene load_steps=11 format=3 uid="uid://bhhwyppkn5rp8"]
+
+[ext_resource type="PackedScene" uid="uid://difmbyjy32p0l" path="res://maps/highrise/highRisePlayableArea.tscn" id="1_mygbh"]
+[ext_resource type="Script" uid="uid://d4js4ps8hh8uw" path="res://shared/game_map.gd" id="1_u0lkw"]
+[ext_resource type="PackedScene" uid="uid://niwaw0ilssci" path="res://maps/highrise/highRiseUnplayableArea.tscn" id="2_6jufm"]
+[ext_resource type="Texture2D" uid="uid://eeb52qhocefr" path="res://assets/textures/kloofendal_48d_partly_cloudy_puresky_4k.hdr" id="3_6jufm"]
+[ext_resource type="Script" uid="uid://ipn7xeoq3v0c" path="res://player/spawn_point/player_spawn_point.gd" id="5_pg82g"]
+[ext_resource type="PackedScene" uid="uid://r1fsrv56vckp" path="res://ui/weapon_selection/weapon_selection_ui.tscn" id="6_1jxcs"]
+[ext_resource type="PackedScene" uid="uid://o6acxrwqfn0x" path="res://ui/match_info/match_info_ui.tscn" id="7_nxa1b"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_lngba"]
+panorama = ExtResource("3_6jufm")
+filter = false
+
+[sub_resource type="Sky" id="Sky_lmb10"]
+sky_material = SubResource("PanoramaSkyMaterial_lngba")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_ixy6o"]
+background_mode = 2
+sky = SubResource("Sky_lmb10")
+sky_custom_fov = 80.0
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_sky_contribution = 0.0
+ambient_light_energy = 0.6
+tonemap_mode = 2
+glow_enabled = true
+glow_levels/1 = 2.0
+glow_levels/2 = 2.0
+glow_levels/3 = 2.0
+glow_intensity = 0.6
+glow_strength = 0.5
+glow_bloom = 0.2
+fog_enabled = true
+fog_light_color = Color(0.470588, 0.596078, 0.321569, 1)
+fog_density = 0.002
+fog_aerial_perspective = 0.6
+fog_sky_affect = 0.0
+volumetric_fog_density = 0.04
+volumetric_fog_albedo = Color(0.643137, 0.815686, 0.890196, 1)
+volumetric_fog_emission = Color(0.572549, 0.890196, 0.980392, 1)
+volumetric_fog_emission_energy = 0.1
+volumetric_fog_sky_affect = 0.0
+adjustment_enabled = true
+adjustment_brightness = 1.1
+adjustment_contrast = 1.1
+adjustment_saturation = 1.8
+
+[node name="Map" type="Node3D" node_paths=PackedStringArray("spawn_points_root", "objectives_root", "special_platforms_root")]
+script = ExtResource("1_u0lkw")
+spawn_points_root = NodePath("SpawnPoints")
+objectives_root = NodePath("Objectives")
+special_platforms_root = NodePath("SpecialPlatforms")
+
+[node name="WorldSettings" type="Node" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldSettings"]
+transform = Transform3D(0.819152, 0.419487, -0.391178, 0, 0.681998, 0.731354, 0.573576, -0.59909, 0.55866, 0, 0, 0)
+light_color = Color(0.901961, 0.901961, 0.866667, 1)
+shadow_enabled = true
+shadow_bias = 0.05
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="WorldSettings"]
+environment = SubResource("Environment_ixy6o")
+
+[node name="HighRisePlayableArea" parent="." instance=ExtResource("1_mygbh")]
+
+[node name="HighRiseUnplayableArea" parent="." instance=ExtResource("2_6jufm")]
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+
+[node name="BluePlayerSpawnPoint" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -9.780603, 0.18686318, 4.3905134)
+script = ExtResource("5_pg82g")
+metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
+
+[node name="BluePlayerSpawnPoint2" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -9.780603, 0.18686318, 5.3905134)
+script = ExtResource("5_pg82g")
+metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
+
+[node name="BluePlayerSpawnPoint3" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -9.780603, 0.18686318, 6.3905134)
+script = ExtResource("5_pg82g")
+metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
+
+[node name="BluePlayerSpawnPoint4" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -7.7806034, 0.18686318, 5.3905134)
+script = ExtResource("5_pg82g")
+metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
+
+[node name="RedPlayerSpawnPoint5" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14.219397, 3.1868632, -4.6094866)
+script = ExtResource("5_pg82g")
+team = 1
+metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
+
+[node name="RedPlayerSpawnPoint6" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14.219397, 3.1868632, -5.6094866)
+script = ExtResource("5_pg82g")
+team = 1
+metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
+
+[node name="RedPlayerSpawnPoint7" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14.219397, 3.1868632, -6.6094866)
+script = ExtResource("5_pg82g")
+team = 1
+metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
+
+[node name="RedPlayerSpawnPoint8" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 12.219397, 3.1868632, -5.6094866)
+script = ExtResource("5_pg82g")
+team = 1
+metadata/_custom_type_script = "uid://ipn7xeoq3v0c"
+
+[node name="Objectives" type="Node3D" parent="."]
+
+[node name="SpecialPlatforms" type="Node3D" parent="."]
+
+[node name="WeaponSelectionUI" parent="." instance=ExtResource("6_1jxcs")]
+
+[node name="MatchInfoUI" parent="." instance=ExtResource("7_nxa1b")]
+
+[node name="PreviewCamera" type="Camera3D" parent="."]
+transform = Transform3D(-4.371139e-08, 0.7071068, -0.7071067, 0, 0.7071067, 0.7071068, 1, 3.090862e-08, -3.0908616e-08, -16.391949, 14.644924, 0.37066174)
+current = true

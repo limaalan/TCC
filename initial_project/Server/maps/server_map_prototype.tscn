@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" path="res://game_modes/objectives/hill_zone.tscn" id="4_o7xdx"]
 [ext_resource type="PackedScene" uid="uid://ccb4lse76if73" path="res://platforms/jump_pad.tscn" id="5_3xj57"]
 [ext_resource type="PackedScene" path="res://platforms/death_zone.tscn" id="6_i1sjg"]
-[ext_resource type="Resource" uid="uid://8jq8kvp628o7" path="res://player/pickups/data/grenade_pickup_data.tres" id="7_gpdata"]
+[ext_resource type="Resource" path="res://player/pickups/data/grenade_pickup_data.tres" id="7_gpdata"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fqf3o"]
 size = Vector3(36, 1, 24)

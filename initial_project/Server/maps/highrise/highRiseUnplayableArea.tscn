@@ -1,0 +1,155 @@
+[gd_scene load_steps=7 format=3 uid="uid://niwaw0ilssci"]
+
+[ext_resource type="PackedScene" uid="uid://6dm7mvxbh6m1" path="res://maps/highrise/source/base_floor.tscn" id="1_24gkl"]
+[ext_resource type="PackedScene" uid="uid://bvt0xo8j21inb" path="res://maps/highrise/pilar.tscn" id="5_fl4sq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xe2mt"]
+size = Vector3(5.7998047, 27.408752, 16.17743)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xnr2n"]
+size = Vector3(20.205078, 27.408752, 5.9400635)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xali5"]
+size = Vector3(15.628937, 27.408752, 5.3411255)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_24gkl"]
+size = Vector3(10.040527, 27.408752, 5.7562256)
+
+[node name="HighRiseUnplayableArea" type="Node3D"]
+
+[node name="NoCollisions" type="Node3D" parent="."]
+
+[node name="FloorArray" type="Node3D" parent="NoCollisions"]
+
+[node name="_Generated" type="Node3D" parent="NoCollisions/FloorArray"]
+
+[node name="Base Floor_02" parent="NoCollisions/FloorArray/_Generated" instance=ExtResource("1_24gkl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
+
+[node name="Base Floor_03" parent="NoCollisions/FloorArray/_Generated" instance=ExtResource("1_24gkl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, 0)
+
+[node name="Base Floor_04" parent="NoCollisions/FloorArray/_Generated" instance=ExtResource("1_24gkl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -9, 0)
+
+[node name="Base Floor_05" parent="NoCollisions/FloorArray/_Generated" instance=ExtResource("1_24gkl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -12, 0)
+
+[node name="Base Floor_06" parent="NoCollisions/FloorArray/_Generated" instance=ExtResource("1_24gkl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -15, 0)
+
+[node name="Base Floor_07" parent="NoCollisions/FloorArray/_Generated" instance=ExtResource("1_24gkl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -18, 0)
+
+[node name="Base Floor_08" parent="NoCollisions/FloorArray/_Generated" instance=ExtResource("1_24gkl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -21, 0)
+
+[node name="Base Floor_09" parent="NoCollisions/FloorArray/_Generated" instance=ExtResource("1_24gkl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -24, 0)
+
+[node name="Base Floor_10" parent="NoCollisions/FloorArray/_Generated" instance=ExtResource("1_24gkl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -27, 0)
+
+[node name="Pilares" type="Node3D" parent="NoCollisions"]
+
+[node name="PilarArray4" type="Node3D" parent="NoCollisions/Pilares"]
+transform = Transform3D(1, 0, 0, 0, -9, 0, 0, 0, 1, -10.3217745, 0, 7.1761966)
+
+[node name="_Generated" type="Node3D" parent="NoCollisions/Pilares/PilarArray4"]
+
+[node name="Pilar_01" parent="NoCollisions/Pilares/PilarArray4/_Generated" instance=ExtResource("5_fl4sq")]
+
+[node name="Pilar_02" parent="NoCollisions/Pilares/PilarArray4/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.939, 0, 0)
+
+[node name="Pilar_03" parent="NoCollisions/Pilares/PilarArray4/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.878, 0, 0)
+
+[node name="Pilar_04" parent="NoCollisions/Pilares/PilarArray4/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.817, 0, 0)
+
+[node name="PilarArray" type="Node3D" parent="NoCollisions/Pilares"]
+transform = Transform3D(1, 0, 0, 0, -9, 0, 0, 0, 1, -10.3217745, 0, -7.8142943)
+
+[node name="_Generated" type="Node3D" parent="NoCollisions/Pilares/PilarArray"]
+
+[node name="Pilar_01" parent="NoCollisions/Pilares/PilarArray/_Generated" instance=ExtResource("5_fl4sq")]
+
+[node name="Pilar_02" parent="NoCollisions/Pilares/PilarArray/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.939, 0, 0)
+
+[node name="Pilar_03" parent="NoCollisions/Pilares/PilarArray/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.878, 0, 0)
+
+[node name="Pilar_04" parent="NoCollisions/Pilares/PilarArray/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.817, 0, 0)
+
+[node name="Pilar_05" parent="NoCollisions/Pilares/PilarArray/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.756, 0, 0)
+
+[node name="Pilar_06" parent="NoCollisions/Pilares/PilarArray/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.695, 0, 0)
+
+[node name="PilarArray2" type="Node3D" parent="NoCollisions/Pilares"]
+transform = Transform3D(1, 0, 0, 0, -9, 0, 0, 0, 1, -10.3217745, 0, -2.8191018)
+
+[node name="_Generated" type="Node3D" parent="NoCollisions/Pilares/PilarArray2"]
+
+[node name="Pilar_01" parent="NoCollisions/Pilares/PilarArray2/_Generated" instance=ExtResource("5_fl4sq")]
+
+[node name="Pilar_02" parent="NoCollisions/Pilares/PilarArray2/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.939, 0, 0)
+
+[node name="Pilar_03" parent="NoCollisions/Pilares/PilarArray2/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.878, 0, 0)
+
+[node name="Pilar_04" parent="NoCollisions/Pilares/PilarArray2/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.817, 0, 0)
+
+[node name="Pilar_05" parent="NoCollisions/Pilares/PilarArray2/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.756, 0, 0)
+
+[node name="Pilar_06" parent="NoCollisions/Pilares/PilarArray2/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.695, 0, 0)
+
+[node name="PilarArray3" type="Node3D" parent="NoCollisions/Pilares"]
+transform = Transform3D(1, 0, 0, 0, -9, 0, 0, 0, 1, -10.3217745, 0, 2.3102975)
+
+[node name="_Generated" type="Node3D" parent="NoCollisions/Pilares/PilarArray3"]
+
+[node name="Pilar_01" parent="NoCollisions/Pilares/PilarArray3/_Generated" instance=ExtResource("5_fl4sq")]
+
+[node name="Pilar_02" parent="NoCollisions/Pilares/PilarArray3/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.939, 0, 0)
+
+[node name="Pilar_03" parent="NoCollisions/Pilares/PilarArray3/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.878, 0, 0)
+
+[node name="Pilar_04" parent="NoCollisions/Pilares/PilarArray3/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.817, 0, 0)
+
+[node name="Pilar_05" parent="NoCollisions/Pilares/PilarArray3/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.756, 0, 0)
+
+[node name="Pilar_06" parent="NoCollisions/Pilares/PilarArray3/_Generated" instance=ExtResource("5_fl4sq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.695, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+collision_layer = 17
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.090332, -13.526825, -0.25875854)
+shape = SubResource("BoxShape3D_xe2mt")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9072266, -13.526825, -5.5088944)
+shape = SubResource("BoxShape3D_xnr2n")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.199753, -13.526825, 0.1172986)
+shape = SubResource("BoxShape3D_xali5")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18139648, -13.526825, 4.9166408)
+shape = SubResource("BoxShape3D_24gkl")
