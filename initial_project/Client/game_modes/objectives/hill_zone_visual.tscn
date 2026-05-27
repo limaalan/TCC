@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvo0xhcdk7tog"]
+[gd_scene load_steps=6 format=3 uid="uid://cvo0xhcdk7tog"]
 
 [ext_resource type="Script" uid="uid://bubbu85yptuay" path="res://game_modes/objectives/hill_zone_visual.gd" id="1_hill_visual"]
 
@@ -13,6 +13,19 @@ top_radius = 4.0
 bottom_radius = 4.0
 height = 0.08
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dome"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 1, 1, 0.1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_dome"]
+radius = 4.0
+height = 4.0
+radial_segments = 48
+rings = 16
+is_hemisphere = true
+
 [node name="HillZoneVisual" type="Node3D"]
 script = ExtResource("1_hill_visual")
 
@@ -22,3 +35,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.96, 0)
 material_override = SubResource("StandardMaterial3D_capture")
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_capture")
+
+[node name="DomeMesh" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+material_override = SubResource("StandardMaterial3D_dome")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_dome")

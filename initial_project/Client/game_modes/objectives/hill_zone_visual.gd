@@ -5,24 +5,20 @@ const EMPTY_COLOR := Color(1.0, 1.0, 1.0, 0.18)
 const CONTESTED_COLOR := Color(1.0, 0.84, 0.3, 0.2)
 const BLUE_COLOR := Color(0.0, 0.53, 1.0, 0.22)
 const RED_COLOR := Color(1.0, 0.3, 0.0, 0.22)
+const DOME_ALPHA_SCALE := 0.35
 
 @onready var cylinder_mesh_instance: MeshInstance3D = %CylinderMesh
+@onready var dome_mesh_instance: MeshInstance3D = %DomeMesh
 
 var objective_id := ""
 var cylinder_material: StandardMaterial3D
+var dome_material: StandardMaterial3D
 var current_color := EMPTY_COLOR
 
 
 func _ready() -> void:
-	cylinder_material = cylinder_mesh_instance.material_override.duplicate() as StandardMaterial3D
-	if cylinder_material == null:
-		cylinder_material = StandardMaterial3D.new()
-		cylinder_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		cylinder_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		cylinder_material.cull_mode = BaseMaterial3D.CULL_DISABLED
-		cylinder_material.emission_enabled = true
-
-	cylinder_mesh_instance.material_override = cylinder_material
+	cylinder_material = _setup_runtime_material(cylinder_mesh_instance)
+	dome_material = _setup_runtime_material(dome_mesh_instance)
 	_apply_color(current_color)
 
 
@@ -62,3 +58,27 @@ func _apply_color(color: Color) -> void:
 
 	cylinder_material.albedo_color = color
 	cylinder_material.emission = color
+
+	if dome_material != null:
+		var dome_color := color
+		dome_color.a *= DOME_ALPHA_SCALE
+		dome_material.albedo_color = dome_color
+		dome_material.emission = dome_color
+
+
+func _setup_runtime_material(mesh_instance: MeshInstance3D) -> StandardMaterial3D:
+	var base_material := mesh_instance.material_override
+	var runtime_material: StandardMaterial3D
+	if base_material != null:
+		runtime_material = base_material.duplicate() as StandardMaterial3D
+	else:
+		runtime_material = StandardMaterial3D.new()
+
+	runtime_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	runtime_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	runtime_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	runtime_material.emission_enabled = true
+	runtime_material.emission_energy_multiplier = 1.0
+
+	mesh_instance.material_override = runtime_material
+	return runtime_material

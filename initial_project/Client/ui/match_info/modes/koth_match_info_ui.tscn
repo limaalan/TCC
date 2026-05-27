@@ -1,7 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://bqtljtg7kd2wb"]
 
 [ext_resource type="Script" uid="uid://cmn1tovjwtmy7" path="res://ui/match_info/modes/koth_match_info_ui.gd" id="1_koth"]
-[ext_resource type="PackedScene" uid="uid://o6acxrwqfn0x" path="res://ui/match_info/match_info_ui.tscn" id="2_1acrq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tdtrm"]
 bg_color = Color(0.08235294, 0.08235294, 0.08235294, 0.9019608)
@@ -100,6 +99,3 @@ size_flags_vertical = 6
 theme_override_font_sizes/font_size = 14
 text = "Hill vazia"
 horizontal_alignment = 1
-
-[node name="MatchInfoUI" parent="." instance=ExtResource("2_1acrq")]
-layout_mode = 1
