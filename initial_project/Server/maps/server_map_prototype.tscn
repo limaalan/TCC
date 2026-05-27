@@ -289,6 +289,7 @@ network_id = &"prototype_grenade_pickup_01"
 
 [node name="HillZone" parent="Objectives" instance=ExtResource("4_o7xdx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+objective_id = &"prototype_hill_main"
 
 [node name="SpecialPlatforms" type="Node3D" parent="."]
 

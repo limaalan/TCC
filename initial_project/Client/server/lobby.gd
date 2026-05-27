@@ -2,6 +2,7 @@ extends Node3D
 class_name Lobby
 const PickupPresentationRegistry = preload("res://player/pickups/pickup_presentation_registry.gd")
 const ServerLocator = preload("res://server/server_locator.gd")
+const HillZoneVisualScene = preload("res://game_modes/objectives/hill_zone_visual.tscn")
 
 const INTERPOLATION_BUFFER_MS := 100 
 
@@ -9,6 +10,8 @@ var players:= {} # Dicionário dos jogadores chave:valor =  { id: PlayerScene }
 var world_state_buffer:Array[Dictionary] = []
 var pickups := {}
 var grenades := {}
+var objective_visuals := {}
+var current_hill_state := {}
 var match_meta := {}
 var player_names_and_teams := {} # key player ID value outro dicionário com player name e Time
 
@@ -39,6 +42,12 @@ func queue_free_child(node: Node) -> void:
 	node.queue_free()
 
 func clear_loaded_map_runtime_state() -> void:
+	for objective_visual in objective_visuals.values():
+		if is_instance_valid(objective_visual):
+			queue_free_child(objective_visual)
+	objective_visuals.clear()
+	current_hill_state.clear()
+
 	var loaded_map := get_node_or_null("Map")
 	if loaded_map != null:
 		queue_free_child(loaded_map)
@@ -309,6 +318,51 @@ func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3)->void:
 	add_child(pickup, true)
 	pickups[network_id] = pickup
 
+
+@rpc("authority", "call_remote", "reliable")
+func s_spawn_objective_visual(objective_visual_spawn: Dictionary) -> void:
+	if not NetPayloads.is_objective_visual_spawn(objective_visual_spawn):
+		push_warning("Invalid objective_visual_spawn payload")
+		return
+
+	var loaded_map := get_node_or_null("Map")
+	if loaded_map == null:
+		push_warning("Cannot spawn objective visual without a loaded map.")
+		return
+
+	var objectives_root := loaded_map.get_node_or_null("Objectives")
+	if objectives_root == null:
+		push_warning("Loaded map is missing Objectives node.")
+		return
+
+	var objective_id := String(objective_visual_spawn[NetKeys.OBJECTIVE_ID])
+	var objective_type: int = objective_visual_spawn[NetKeys.OBJECTIVE_TYPE]
+	var objective_pos: Vector3 = objective_visual_spawn[NetKeys.POS]
+
+	if objective_visuals.has(objective_id) and is_instance_valid(objective_visuals[objective_id]):
+		queue_free_child(objective_visuals[objective_id])
+		objective_visuals.erase(objective_id)
+
+	var objective_visual: HillZoneVisual
+	match objective_type:
+		GameEnums.ObjectiveType.HILL_ZONE:
+			objective_visual = HillZoneVisualScene.instantiate() as HillZoneVisual
+		_:
+			push_warning("Unsupported objective_type '%s'." % objective_type)
+			return
+
+	if objective_visual == null:
+		push_warning("Failed to instantiate objective visual for type '%s'." % objective_type)
+		return
+
+	objective_visual.name = "Objective_%s" % objective_id
+	objective_visual.configure(objective_id, objective_pos)
+	objectives_root.add_child(objective_visual, true)
+	objective_visuals[objective_id] = objective_visual
+
+	if not current_hill_state.is_empty() and objective_visual.has_method(&"update_hill_state"):
+		objective_visual.update_hill_state(current_hill_state)
+
 @rpc("authority", "call_remote", "reliable")
 func s_pickup_cooldown_started(network_id:String)->void:
 	var pickup: Pickup = pickups.get(network_id)
@@ -362,6 +416,11 @@ func s_update_hill_state(hill_state: Dictionary) -> void:
 	if not NetPayloads.is_hill_state(hill_state):
 		push_warning("Invalid hill_state payload")
 		return
+
+	current_hill_state = hill_state.duplicate(true)
+	for objective_visual in objective_visuals.values():
+		if is_instance_valid(objective_visual) and objective_visual.has_method(&"update_hill_state"):
+			objective_visual.update_hill_state(hill_state)
 
 	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_HILL_STATE, hill_state)
 

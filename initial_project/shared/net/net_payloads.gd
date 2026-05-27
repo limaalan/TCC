@@ -6,6 +6,7 @@ const SPAWN_PLAYER_VERSION := 1
 const END_MATCH_VERSION := 1
 const HILL_STATE_VERSION := 1
 const MATCH_META_VERSION := 1
+const OBJECTIVE_VISUAL_SPAWN_VERSION := 1
 
 
 static func make_player_state(pos: Vector3, rot_y: float, rot_x: float, anim: Variant) -> Dictionary:
@@ -129,6 +130,39 @@ static func is_match_meta(data: Dictionary) -> bool:
 		return false
 
 	if not data.has(NetKeys.SCORE_TO_WIN) or not data[NetKeys.SCORE_TO_WIN] is int:
+		return false
+
+	return true
+
+
+static func make_objective_visual_spawn(
+	objective_id: String,
+	objective_type: int,
+	pos: Vector3
+) -> Dictionary:
+	return {
+		NetKeys.VERSION: OBJECTIVE_VISUAL_SPAWN_VERSION,
+		NetKeys.OBJECTIVE_ID: objective_id,
+		NetKeys.OBJECTIVE_TYPE: objective_type,
+		NetKeys.POS: pos,
+	}
+
+
+static func is_objective_visual_spawn(data: Dictionary) -> bool:
+	if not _has_exact_version(data, OBJECTIVE_VISUAL_SPAWN_VERSION):
+		return false
+
+	if not data.has(NetKeys.OBJECTIVE_ID):
+		return false
+
+	var objective_id: Variant = data[NetKeys.OBJECTIVE_ID]
+	if not (objective_id is String or objective_id is StringName):
+		return false
+
+	if not data.has(NetKeys.OBJECTIVE_TYPE) or not data[NetKeys.OBJECTIVE_TYPE] is int:
+		return false
+
+	if not data.has(NetKeys.POS) or not data[NetKeys.POS] is Vector3:
 		return false
 
 	return true
