@@ -40,6 +40,10 @@ enum GameMode {
 	CAPTURE_THE_FLAG = 2,
 }
 
+enum ObjectiveType {
+	HILL_ZONE = 0,
+}
+
 enum PlatformState {
 	READY = 0,
 	BREAKING = 1,

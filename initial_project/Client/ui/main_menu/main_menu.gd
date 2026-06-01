@@ -1,6 +1,7 @@
 extends Control
 const NAME_SAVE_PATH :='user://player_name.dat'
 const NAME_MAX_LEN = 16
+const ServerLocator = preload("res://server/server_locator.gd")
 
 @onready var player_name_line_edit: LineEdit = %PlayerNameLineEdit
 
@@ -18,8 +19,13 @@ func _on_play_button_pressed() -> void:
 		
 	var file = FileAccess.open(NAME_SAVE_PATH,FileAccess.WRITE)
 	file.store_string(player_name)
+
+	var server := ServerLocator.get_server(get_tree())
+	if server == null:
+		push_warning("Server autoload is disabled.")
+		return
 	
-	Server.try_connect_client_to_lobby(player_name)
+	server.try_connect_client_to_lobby(player_name)
 	$QuickPlayConnectionUI.activate()
 	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 

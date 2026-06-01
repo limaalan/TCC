@@ -284,6 +284,8 @@ func c_map_ready()->void:
 	
 	for pickup in pickups:
 		s_spawn_pickup.rpc_id(client_id, pickup.get_network_id(), pickup.get_pickup_type(), pickup.position)
+
+	send_objective_visuals_to_client(client_id)
 	
 	waiting_players_ready = true
 	check_players_ready(start_weapon_selection)
@@ -300,6 +302,27 @@ func c_map_ready()->void:
 		
 @rpc("authority", "call_remote", "reliable")
 func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3)->void:
+	pass
+
+
+func send_objective_visuals_to_client(client_id: int) -> void:
+	if match_config.mode != GameEnums.GameMode.KING_OF_THE_HILL:
+		return
+
+	for objective in objectives:
+		if not objective is HillZone:
+			continue
+
+		var hill_zone: HillZone = objective
+		var objective_visual_spawn := hill_zone.make_visual_spawn_payload()
+		if not NetPayloads.is_objective_visual_spawn(objective_visual_spawn):
+			continue
+
+		s_spawn_objective_visual.rpc_id(client_id, objective_visual_spawn)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_spawn_objective_visual(objective_visual_spawn: Dictionary) -> void:
 	pass
 
 func get_spawn_points_for_team(team: int) -> Array[PlayerSpawnPoint]:
@@ -436,6 +459,7 @@ func start_match()->void:
 		end_match()
 		return
 
+	update_match_meta(make_match_meta_payload())
 	current_game_mode.start_match()
 	
 
@@ -470,6 +494,24 @@ func setup_game_mode() -> bool:
 		_:
 			push_error("Unsupported game mode: %s" % match_config.mode)
 			return false
+
+
+func make_match_meta_payload() -> Dictionary:
+	return NetPayloads.make_match_meta(match_config.mode, match_config.score_to_win)
+
+
+func update_match_meta(match_meta: Dictionary) -> void:
+	if not NetPayloads.is_match_meta(match_meta):
+		push_warning("Invalid match_meta payload")
+		return
+
+	for client_id in get_connected_clients():
+		s_update_match_meta.rpc_id(client_id, match_meta)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_update_match_meta(match_meta: Dictionary) -> void:
+	pass
 
 
 func has_current_game_mode() -> bool:
