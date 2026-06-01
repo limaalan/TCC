@@ -81,5 +81,5 @@ objective_id = &"highrise_hill_main"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -25.984848, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(-4.371139e-08, -0.57598835, 0.8174579, 0, 0.8174579, 0.57598835, -1, 2.517725e-08, -3.573222e-08, 21.735882, 15.3153, 0)
+transform = Transform3D(-4.371139e-08, 0.57598835, -0.8174579, 0, 0.8174579, 0.57598835, 1, 2.517725e-08, -3.573222e-08, -19.788496, 9.828215, 0)
 current = true
