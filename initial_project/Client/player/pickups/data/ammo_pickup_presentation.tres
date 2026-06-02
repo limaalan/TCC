@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PickupPresentationData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://player/pickups/pickup_presentation_data.gd" id="1_2y5dr"]
+[ext_resource type="PackedScene" path="res://player/pickups/ammo_pickup_mesh.tscn" id="2_0m4tq"]
+[ext_resource type="Material" path="res://assets/materials/pickup_ready_material.tres" id="3_b6ckn"]
+[ext_resource type="Material" path="res://assets/materials/pickup_not_ready_material.tres" id="4_x0jkg"]
+
+[resource]
+script = ExtResource("1_2y5dr")
+pickup_type = 3
+mesh_scene = ExtResource("2_0m4tq")
+ready_material = ExtResource("3_b6ckn")
+not_ready_material = ExtResource("4_x0jkg")
+pickup_sfx = 2

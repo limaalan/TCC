@@ -3,10 +3,12 @@ extends RefCounted
 
 const HEALTH_DATA := preload("res://player/pickups/data/health_pickup_presentation.tres")
 const GRENADE_DATA := preload("res://player/pickups/data/grenade_pickup_presentation.tres")
+const AMMO_DATA := preload("res://player/pickups/data/ammo_pickup_presentation.tres")
 
 static var _data_by_type: Dictionary = {
 	GameEnums.PickupType.HEALTH: HEALTH_DATA,
 	GameEnums.PickupType.GRENADE: GRENADE_DATA,
+	GameEnums.PickupType.AMMO: AMMO_DATA,
 }
 
 

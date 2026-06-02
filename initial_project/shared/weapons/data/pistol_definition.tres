@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://shared/weapons/weapon_definition.gd" id="1_uwdef"]
+
+[resource]
+script = ExtResource("1_uwdef")
+id = 0
+slot = 1
+display_name = &"Pistol"
+damage = 35
+accuracy = 0.9
+projectiles = 1
+shot_cooldown = 0.3
+is_automatic = false
+start_ammo = 36
+max_ammo = 72
+ammo_per_shot = 1

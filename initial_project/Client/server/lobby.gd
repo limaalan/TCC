@@ -258,6 +258,34 @@ func weapon_selected(weapon_id:int)->void:
 func c_weapon_selected(weapon_id:int)->void:
 	pass
 
+
+func request_weapon_switch(weapon_id: int) -> void:
+	c_request_weapon_switch.rpc_id(1, weapon_id)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func c_request_weapon_switch(weapon_id: int) -> void:
+	pass
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_switch_weapon(target_client_id: int, weapon_id: int) -> void:
+	var player := players.get(target_client_id) as PlayerCharacter
+	if player == null or not is_instance_valid(player):
+		push_warning("Unknown player '%s' on weapon switch." % target_client_id)
+		return
+
+	player.set_weapon_id(weapon_id)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_update_ammo(weapon_id: int, ammo: int) -> void:
+	var local_player := get_local_player()
+	if local_player == null:
+		return
+
+	local_player.set_weapon_ammo(weapon_id, ammo)
+	
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
 	get_tree().call_group(ClientNames.GROUP_WEAPON_SELECTION_UI, ClientNames.METHOD_ACTIVATE)

@@ -3,17 +3,41 @@ class_name PlayerServerReal
 
 const ANIM_BLEND_TIME := 0.2
 const MAX_HEALTH := 100
+const WeaponAmmoInventory = preload("res://shared/weapons/weapon_ammo_inventory.gd")
 
 var current_health := MAX_HEALTH
 var lobby :Lobby
 var grenades_left := 2
+var ammo_inventory := WeaponAmmoInventory.new()
 
 @onready var animation_player: AnimationPlayer = $character_soldier/AnimationPlayer
+
+
+func _ready() -> void:
+	ammo_inventory.setup_default_ammo()
+
 
 func set_anim(anim_name:String)->void:
 	if animation_player.assigned_animation == anim_name:
 		return 
 	animation_player.play(anim_name, ANIM_BLEND_TIME)
+
+
+func spend_weapon_ammo(weapon_id: int) -> bool:
+	return ammo_inventory.spend_for_shot(weapon_id)
+
+
+func get_weapon_ammo(weapon_id: int) -> int:
+	return ammo_inventory.get_ammo(weapon_id)
+
+
+func add_weapon_ammo(weapon_id: int, amount: int) -> int:
+	return ammo_inventory.add_ammo(weapon_id, amount)
+
+
+func set_weapon_ammo(weapon_id: int, amount: int) -> void:
+	ammo_inventory.set_ammo(weapon_id, amount)
+
 
 func change_health(amount:int, maybe_damage_dealer:int = 0 )->void:
 	current_health = clampi(current_health + amount , 0 , MAX_HEALTH)
