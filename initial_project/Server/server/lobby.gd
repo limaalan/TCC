@@ -376,10 +376,13 @@ func spawn_players()->void:
 		
 		for ready_client_id in ready_clients :
 				s_spawn_player.rpc_id(ready_client_id, spawn_payload)
+
+		sync_player_ammo(ready_clients[i])
 			
 func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)->void:
 	var server_player_real := preload("res://player/player_server_real.tscn").instantiate()
 	var server_player_dummy := preload("res://player/player_server_dummy.tscn").instantiate()
+	var selected_weapon_id: int = client_data[client_id].get(NetKeys.WEAPON_ID, GameEnums.WeaponId.PISTOL)
 
 	server_player_real.name = str(client_id)
 	server_player_dummy.name = str(client_id)+"_dummy"
@@ -393,6 +396,7 @@ func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)-
 	server_players[client_id] = {}
 	server_players[client_id].real = server_player_real
 	server_players[client_id].dummy = server_player_dummy
+	server_player_real.setup_spawn_ammo(selected_weapon_id)
 	
 	client_data[client_id][NetKeys.TEAM] = team
 
@@ -569,6 +573,8 @@ func respawn_player(respawn_client_id:int)->void:
 	for client_id in get_connected_clients() :
 			s_spawn_player.rpc_id(client_id, spawn_payload)
 
+	sync_player_ammo(respawn_client_id)
+
 func start_weapon_selection()->void:
 	for ready_client in get_connected_clients():
 		s_start_weapon_selection.rpc_id(ready_client)
@@ -584,6 +590,11 @@ func s_switch_weapon(target_client_id: int, weapon_id: int) -> void:
 
 @rpc("authority", "call_remote", "reliable")
 func s_update_ammo(weapon_id: int, ammo: int) -> void:
+	pass
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_sync_ammo_inventory(ammo_snapshot: Dictionary) -> void:
 	pass
 	
 @rpc ("any_peer", "call_remote", "unreliable")
@@ -711,6 +722,17 @@ func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void:
 
 func update_ammo(client_id: int, weapon_id: int, ammo: int) -> void:
 	s_update_ammo.rpc_id(client_id, weapon_id, ammo)
+
+
+func sync_player_ammo(client_id: int) -> void:
+	if not server_players.has(client_id):
+		return
+
+	var player: PlayerServerReal = server_players[client_id].real
+	if player == null:
+		return
+
+	s_sync_ammo_inventory.rpc_id(client_id, player.ammo_inventory.make_snapshot())
 		
 @rpc("authority", "call_remote", "unreliable")
 func s_spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int):

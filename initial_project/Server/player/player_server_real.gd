@@ -14,7 +14,7 @@ var ammo_inventory := WeaponAmmoInventory.new()
 
 
 func _ready() -> void:
-	ammo_inventory.setup_default_ammo()
+	ammo_inventory.clear_all_ammo()
 
 
 func set_anim(anim_name:String)->void:
@@ -37,6 +37,10 @@ func add_weapon_ammo(weapon_id: int, amount: int) -> int:
 
 func set_weapon_ammo(weapon_id: int, amount: int) -> void:
 	ammo_inventory.set_ammo(weapon_id, amount)
+
+
+func setup_spawn_ammo(selected_weapon_id: int) -> void:
+	ammo_inventory.setup_spawn_ammo(selected_weapon_id)
 
 
 func change_health(amount:int, maybe_damage_dealer:int = 0 )->void:

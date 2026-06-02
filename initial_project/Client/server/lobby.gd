@@ -247,6 +247,10 @@ func s_spawn_player(spawn_data: Dictionary)->void:
 		
 	players[client_id] = player
 	player_names_and_teams [client_id] = {NetKeys.DISPLAY_NAME: player_name, NetKeys.TEAM: team}
+
+	if player is PlayerLocal:
+		var local_player := player as PlayerLocal
+		local_player.setup_spawn_ammo(weapon_id)
 		
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
@@ -285,6 +289,15 @@ func s_update_ammo(weapon_id: int, ammo: int) -> void:
 		return
 
 	local_player.set_weapon_ammo(weapon_id, ammo)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_sync_ammo_inventory(ammo_snapshot: Dictionary) -> void:
+	var local_player := get_local_player()
+	if local_player == null:
+		return
+
+	local_player.apply_ammo_snapshot(ammo_snapshot)
 	
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
