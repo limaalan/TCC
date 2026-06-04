@@ -346,7 +346,7 @@ func s_update_health(target_client_id:int, current_health:int , max_health:int, 
 
 
 @rpc("authority", "call_remote", "reliable")
-func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3)->void:
+func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3, pickup_subtype: int = -1)->void:
 	if network_id.is_empty():
 		push_warning("Ignoring pickup spawn with empty network_id.")
 		return
@@ -356,6 +356,7 @@ func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3)->void:
 	pickup.name = "Pickup_%s" % network_id
 	pickup.position = pos
 	pickup.pickup_type = pickup_type
+	pickup.pickup_subtype = pickup_subtype
 	add_child(pickup, true)
 	pickups[network_id] = pickup
 
@@ -446,6 +447,35 @@ func s_player_died(dead_player_id:int, killer_id:int)->void:
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
 	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_SCORE, blue_score, red_score)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_player_powerup_started(
+	client_id: int,
+	powerup_type: int,
+	duration_sec: float,
+	damage_multiplier: float,
+	fire_rate_cooldown_multiplier: float
+) -> void:
+	var player := players.get(client_id) as PlayerCharacter
+	if player == null or not is_instance_valid(player):
+		return
+
+	player.set_powerup_active(
+		powerup_type,
+		true,
+		damage_multiplier,
+		fire_rate_cooldown_multiplier
+	)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_player_powerup_ended(client_id: int, powerup_type: int) -> void:
+	var player := players.get(client_id) as PlayerCharacter
+	if player == null or not is_instance_valid(player):
+		return
+
+	player.set_powerup_active(powerup_type, false)
 	
 @rpc("authority", "call_remote", "unreliable_ordered")
 func s_update_match_time_left(time_left:int)->void:
@@ -500,8 +530,8 @@ func explode_grenade(grenade_id :String)->void:
 	grenades[grenade_id][NetKeys.EXPLODED] = true
 	
 @rpc("authority", "call_remote","unreliable")
-func s_play_pickup_fx(pickup_type:int)->void:
-	var pickup_data = PickupPresentationRegistry.get_pickup_data(pickup_type)
+func s_play_pickup_fx(pickup_type:int, pickup_subtype: int = -1)->void:
+	var pickup_data = PickupPresentationRegistry.get_pickup_data(pickup_type, pickup_subtype)
 	AudioManager.play_sfx(pickup_data.pickup_sfx)
 			
 			

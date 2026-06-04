@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PowerupPickupData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://player/pickups/powerup_pickup_data.gd" id="1_powerup_data"]
+
+[resource]
+script = ExtResource("1_powerup_data")
+pickup_type = 4
+cooldown_time = 15.0
+powerup_type = 0
+duration_sec = 10.0
+damage_multiplier = 1.5

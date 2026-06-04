@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fire_rate"]
+albedo_color = Color(0.24705882, 0.9098039, 1, 1)
+emission_enabled = true
+emission = Color(0.24705882, 0.9098039, 1, 1)
+emission_energy_multiplier = 1.8
+roughness = 0.15
+
+[node name="FireRatePowerupPickupMesh" type="Node3D"]
+
+[node name="Ring" type="CSGTorus3D" parent="."]
+inner_radius = 0.08
+outer_radius = 0.2
+ring_sides = 6
+material = SubResource("StandardMaterial3D_fire_rate")
+
+[node name="Core" type="CSGCylinder3D" parent="."]
+height = 0.35
+radius = 0.06
+material = SubResource("StandardMaterial3D_fire_rate")

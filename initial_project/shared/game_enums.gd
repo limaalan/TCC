@@ -25,8 +25,12 @@ enum PickupType {
 	GRENADE = 1,
 	WEAPON = 2,
 	AMMO = 3,
-	DAMAGE_POWERUP = 4,
-	SPEED_POWERUP = 5,
+	POWERUP = 4,
+}
+
+enum PowerupType {
+	DAMAGE = 0,
+	FIRE_RATE = 1,
 }
 
 enum HitFxType {

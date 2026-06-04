@@ -3,18 +3,22 @@ class_name PlayerServerReal
 
 const ANIM_BLEND_TIME := 0.2
 const MAX_HEALTH := 100
+const PlayerPowerupController = preload("res://player/powerups/player_powerup_controller.gd")
+const PowerupEffectData = preload("res://shared/powerups/powerup_effect_data.gd")
 const WeaponAmmoInventory = preload("res://shared/weapons/weapon_ammo_inventory.gd")
 
 var current_health := MAX_HEALTH
 var lobby :Lobby
 var grenades_left := 2
 var ammo_inventory := WeaponAmmoInventory.new()
+var powerup_controller: PlayerPowerupController
 
 @onready var animation_player: AnimationPlayer = $character_soldier/AnimationPlayer
 
 
 func _ready() -> void:
 	ammo_inventory.clear_all_ammo()
+	powerup_controller = PlayerPowerupController.new(self)
 
 
 func set_anim(anim_name:String)->void:
@@ -41,6 +45,20 @@ func set_weapon_ammo(weapon_id: int, amount: int) -> void:
 
 func setup_spawn_ammo(selected_weapon_id: int) -> void:
 	ammo_inventory.setup_spawn_ammo(selected_weapon_id)
+
+
+func apply_powerup(effect: PowerupEffectData) -> void:
+	if powerup_controller == null:
+		return
+
+	powerup_controller.apply_powerup(effect)
+
+
+func get_damage_multiplier() -> float:
+	if powerup_controller == null:
+		return 1.0
+
+	return powerup_controller.get_damage_multiplier()
 
 
 func change_health(amount:int, maybe_damage_dealer:int = 0 )->void:
