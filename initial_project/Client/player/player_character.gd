@@ -24,6 +24,15 @@ func instantiate_weapon()->void:
 	weapon_holder.instantiate_weapon(weapon_id)
 
 
+func set_weapon_id(new_weapon_id: int) -> void:
+	if weapon_id == new_weapon_id and weapon_holder != null and weapon_holder.weapon != null:
+		return
+
+	weapon_id = new_weapon_id
+	if is_inside_tree():
+		instantiate_weapon()
+
+
 func update_health_bar(current_health:int, max_health:int, changed_amount:int) ->void:
 	if health_bar == null :
 		return

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://shared/weapons/weapon_definition.gd" id="1_lw3xr"]
+
+[resource]
+script = ExtResource("1_lw3xr")
+id = 1
+slot = 2
+display_name = &"SMG"
+damage = 20
+accuracy = 0.7
+projectiles = 1
+shot_cooldown = 0.1
+is_automatic = true
+start_ammo = 90
+max_ammo = 180
+ammo_per_shot = 1

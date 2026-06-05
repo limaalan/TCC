@@ -55,6 +55,19 @@ func _on_body_entered(player: PlayerServerReal) -> void:
 			player.update_grenades_left(player.grenades_left + data.amount)
 			picked_up(player)
 
+		GameEnums.PickupType.AMMO:
+			var client_id := player.name.to_int()
+			if not lobby.client_data.has(client_id):
+				return
+
+			var weapon_id: int = lobby.client_data[client_id][NetKeys.WEAPON_ID]
+			var before := player.get_weapon_ammo(weapon_id)
+			var after := player.add_weapon_ammo(weapon_id, data.amount)
+
+			if after > before:
+				lobby.update_ammo(client_id, weapon_id, after)
+				picked_up(player)
+
 		_:
 			push_warning("Unsupported pickup_type '%s' on pickup '%s'." % [data.pickup_type, name])
 

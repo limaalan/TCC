@@ -96,6 +96,20 @@ texture = ExtResource("2_4d6w6")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="AmmoTextLabel" type="Label" parent="MarginContainer/GrenadeInfoContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 28
+text = "Ammo"
+
+[node name="AmmoAmountLabel" type="Label" parent="MarginContainer/GrenadeInfoContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 32
+text = "0"
+
 [node name="GrenadePromptsControl" type="Control" parent="MarginContainer" groups=["GrenadePromptsControl"]]
 layout_mode = 2
 script = ExtResource("3_e0nub")
