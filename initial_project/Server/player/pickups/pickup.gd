@@ -2,6 +2,8 @@ extends Node3D
 class_name Pickup
 
 const NetworkEntity = preload("res://shared/network_entity.gd")
+const PowerupPickupData = preload("res://player/pickups/powerup_pickup_data.gd")
+const PowerupEffectData = preload("res://shared/powerups/powerup_effect_data.gd")
 const DEFAULT_HEALTH_PICKUP_DATA := preload("res://player/pickups/data/health_pickup_data.tres")
 
 @onready var cooldown_timer: Timer = $CooldownTimer
@@ -38,6 +40,13 @@ func get_pickup_type() -> int:
 	return data.pickup_type
 
 
+func get_pickup_subtype() -> int:
+	if data is PowerupPickupData:
+		return data.powerup_type
+
+	return -1
+
+
 func _on_body_entered(player: PlayerServerReal) -> void:
 	if is_picked :
 		return
@@ -68,6 +77,14 @@ func _on_body_entered(player: PlayerServerReal) -> void:
 				lobby.update_ammo(client_id, weapon_id, after)
 				picked_up(player)
 
+		GameEnums.PickupType.POWERUP:
+			if data is PowerupPickupData:
+				var effect := PowerupEffectData.from_pickup_data(data)
+				player.apply_powerup(effect)
+				picked_up(player)
+			else:
+				push_warning("POWERUP pickup '%s' does not use PowerupPickupData." % name)
+
 		_:
 			push_warning("Unsupported pickup_type '%s' on pickup '%s'." % [data.pickup_type, name])
 
@@ -75,7 +92,7 @@ func picked_up(player:PlayerServerReal)->void:
 	is_picked = true
 	cooldown_timer.start()
 	lobby.pickup_cooldown_started(get_network_id())
-	lobby.play_pickup_fx(player.name.to_int(), data.pickup_type)
+	lobby.play_pickup_fx(player.name.to_int(), data.pickup_type, get_pickup_subtype())
 
 func _on_cooldown_timer_timeout() -> void:
 	is_picked = false

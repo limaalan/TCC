@@ -8,11 +8,12 @@ const PickupPresentationRegistryScript = preload("res://player/pickups/pickup_pr
 @onready var mesh_holder: Node3D = $MeshHolder
 
 var pickup_type :int = GameEnums.PickupType.HEALTH
+var pickup_subtype := -1
 var network_id: StringName
 var data
 
 func _ready() -> void:
-	data = PickupPresentationRegistryScript.get_pickup_data(pickup_type)
+	data = PickupPresentationRegistryScript.get_pickup_data(pickup_type, pickup_subtype)
 
 	if data.mesh_scene != null:
 		mesh_holder.add_child(data.mesh_scene.instantiate())

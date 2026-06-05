@@ -32,7 +32,8 @@ func shoot() -> void:
 		return
 
 	is_on_cooldown = true
-	get_tree().create_timer(weapon_definition.shot_cooldown).timeout.connect(on_cooldown_timer_timeout)
+	var cooldown := weapon_definition.shot_cooldown * local_player.get_fire_rate_cooldown_multiplier()
+	get_tree().create_timer(cooldown).timeout.connect(on_cooldown_timer_timeout)
 	weapon.play_shoot_fx(true)
 	if recoil_tween != null:
 		recoil_tween.kill()
