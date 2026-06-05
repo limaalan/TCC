@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://4jr7gd267s68"]
+
+[resource]
+resource_name = "azul_claro"
+cull_mode = 2
+albedo_color = Color(0.25098044, 0.7647059, 0.99607843, 1)
+roughness = 0.5
+emission = Color(0.19140625, 0.6735951, 1, 1)
+emission_energy_multiplier = 9.14
