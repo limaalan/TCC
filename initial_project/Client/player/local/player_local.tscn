@@ -44,8 +44,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("CapsuleShape3D_s7k6g")
 
 [node name="PowerupVisual" type="OmniLight3D" parent="."]
-visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+visible = false
 light_color = Color(1, 0.4, 0.2, 1)
 light_energy = 1.2
 omni_range = 3.0
@@ -62,7 +62,9 @@ metadata/_custom_type_script = "uid://ba3jleujag8nb"
 script = ExtResource("3_dog3v")
 
 [node name="Camera3D" type="Camera3D" parent="Head/CameraShakeComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0035414994)
 current = true
+fov = 80.0
 near = 0.001
 
 [node name="HUD" parent="." instance=ExtResource("3_w115m")]
