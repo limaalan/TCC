@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bbmf2gniu5m41"
-path="res://.godot/imported/apple.blend-95c5836d49732f212b5d96e7ec5139c9.scn"
+path="res://.godot/imported/apple.blend-4774b09928d1dc6d579202a1bcf40a51.scn"
 
 [deps]
 
-source_file="res://assets/meus_assets/weapons/apple.blend"
-dest_files=["res://.godot/imported/apple.blend-95c5836d49732f212b5d96e7ec5139c9.scn"]
+source_file="res://assets/meus_assets/grenade/import/apple.blend"
+dest_files=["res://.godot/imported/apple.blend-4774b09928d1dc6d579202a1bcf40a51.scn"]
 
 [params]
 
