@@ -1,14 +1,12 @@
-[gd_resource type="Resource" script_class="PickupPresentationData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="PickupPresentationData" load_steps=5 format=3 uid="uid://c473pevtymokv"]
 
-[ext_resource type="Script" path="res://player/pickups/pickup_presentation_data.gd" id="1_1xvrj"]
-[ext_resource type="PackedScene" path="res://assets/meshes/items/health.tscn" id="2_x6suh"]
-[ext_resource type="Material" path="res://assets/materials/pickup_ready_material.tres" id="3_hc4cb"]
-[ext_resource type="Material" path="res://assets/materials/pickup_not_ready_material.tres" id="4_3phv1"]
+[ext_resource type="Script" uid="uid://t8clrrf10vag" path="res://player/pickups/pickup_presentation_data.gd" id="1_1xvrj"]
+[ext_resource type="PackedScene" uid="uid://d275woa64wulw" path="res://assets/meus_assets/health_pickup/health_pickup.tscn" id="1_kby65"]
+[ext_resource type="Material" uid="uid://bv8t0ww8thvdg" path="res://assets/materials/pickup_ready_material.tres" id="3_hc4cb"]
+[ext_resource type="Material" uid="uid://ui0yeo2fb33k" path="res://assets/materials/pickup_not_ready_material.tres" id="4_3phv1"]
 
 [resource]
 script = ExtResource("1_1xvrj")
-pickup_type = 0
-mesh_scene = ExtResource("2_x6suh")
+mesh_scene = ExtResource("1_kby65")
 ready_material = ExtResource("3_hc4cb")
 not_ready_material = ExtResource("4_3phv1")
-pickup_sfx = 1

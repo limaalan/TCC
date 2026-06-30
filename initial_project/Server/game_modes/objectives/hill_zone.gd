@@ -1,6 +1,10 @@
 class_name HillZone
 extends Area3D
 
+const NetworkEntity = preload("res://shared/network_entity.gd")
+
+@export var objective_id: StringName
+
 var lobby
 var players_inside: Dictionary = {}
 
@@ -94,6 +98,29 @@ func get_controlling_team() -> int:
 		return GameEnums.NO_TEAM
 
 	return teams[0]
+
+
+func has_objective_id() -> bool:
+	return NetworkEntity.is_valid_id(objective_id)
+
+
+func get_objective_id() -> String:
+	if not NetworkEntity.require_id(objective_id, "HillZone '%s'" % name):
+		return ""
+
+	return NetworkEntity.to_wire(objective_id)
+
+
+func make_visual_spawn_payload() -> Dictionary:
+	var objective_id_wire := get_objective_id()
+	if objective_id_wire.is_empty():
+		return {}
+
+	return NetPayloads.make_objective_visual_spawn(
+		objective_id_wire,
+		GameEnums.ObjectiveType.HILL_ZONE,
+		position
+	)
 
 
 func is_player_valid_for_control(client_id: int) -> bool:

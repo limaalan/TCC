@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="PickupPresentationData" load_steps=5 format=3 uid="uid://c31h21iqltup7"]
+
+[ext_resource type="Script" uid="uid://t8clrrf10vag" path="res://player/pickups/pickup_presentation_data.gd" id="1_presentation_data"]
+[ext_resource type="PackedScene" uid="uid://ccy8o1c2ok76u" path="res://assets/meus_assets/damage_pickup/damage_pickup.tscn" id="1_wtr5a"]
+[ext_resource type="Material" uid="uid://bv8t0ww8thvdg" path="res://assets/materials/pickup_ready_material.tres" id="3_ready_material"]
+[ext_resource type="Material" uid="uid://ui0yeo2fb33k" path="res://assets/materials/pickup_not_ready_material.tres" id="4_not_ready_material"]
+
+[resource]
+script = ExtResource("1_presentation_data")
+pickup_type = 4
+pickup_subtype = 0
+mesh_scene = ExtResource("1_wtr5a")
+ready_material = ExtResource("3_ready_material")
+not_ready_material = ExtResource("4_not_ready_material")
+pickup_sfx = 2

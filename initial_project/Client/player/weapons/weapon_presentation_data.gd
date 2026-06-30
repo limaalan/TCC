@@ -9,9 +9,6 @@ const AudioManagerScript = preload("res://game/audio_manager.gd")
 @export var selection_icon: Texture2D
 @export var shoot_sfx: int = AudioManagerScript.SFXKeys.ShootPistol
 
-@export var shot_cooldown := 0.3
-@export var is_automatic := false
-
 @export var recoil_rotation_degrees := 15.0
 @export var recoil_position_z := 0.05
 @export var camera_shake_amount := 0.1

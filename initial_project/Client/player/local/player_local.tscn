@@ -29,17 +29,26 @@ corner_detail = 6
 [sub_resource type="SphereShape3D" id="SphereShape3D_y8ftr"]
 radius = 5.0
 
-[node name="PlayerLocal" type="CharacterBody3D" node_paths=PackedStringArray("grenade_amount_label", "weapon_holder", "health_bar") groups=["PlayerLocal"]]
+[node name="PlayerLocal" type="CharacterBody3D" node_paths=PackedStringArray("grenade_amount_label", "ammo_amount_label", "weapon_holder", "health_bar", "powerup_visual") groups=["PlayerLocal"]]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_gucd0")
 grenade_amount_label = NodePath("HUD/MarginContainer/GrenadeInfoContainer/GrenadeAmountLabel")
+ammo_amount_label = NodePath("HUD/MarginContainer/GrenadeInfoContainer/AmmoAmountLabel")
 weapon_holder = NodePath("Head/LocalWeaponHolder")
 health_bar = NodePath("HUD/MarginContainer/HealthBar")
+powerup_visual = NodePath("PowerupVisual")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("CapsuleShape3D_s7k6g")
+
+[node name="PowerupVisual" type="OmniLight3D" parent="."]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+light_color = Color(1, 0.4, 0.2, 1)
+light_energy = 1.2
+omni_range = 3.0
 
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)

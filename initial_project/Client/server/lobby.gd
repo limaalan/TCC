@@ -1,6 +1,8 @@
 extends Node3D
 class_name Lobby
 const PickupPresentationRegistry = preload("res://player/pickups/pickup_presentation_registry.gd")
+const ServerLocator = preload("res://server/server_locator.gd")
+const HillZoneVisualScene = preload("res://game_modes/objectives/hill_zone_visual.tscn")
 
 const INTERPOLATION_BUFFER_MS := 100 
 
@@ -8,6 +10,9 @@ var players:= {} # Dicionário dos jogadores chave:valor =  { id: PlayerScene }
 var world_state_buffer:Array[Dictionary] = []
 var pickups := {}
 var grenades := {}
+var objective_visuals := {}
+var current_hill_state := {}
+var match_meta := {}
 var player_names_and_teams := {} # key player ID value outro dicionário com player name e Time
 
 func get_local_player()->PlayerLocal:
@@ -37,6 +42,12 @@ func queue_free_child(node: Node) -> void:
 	node.queue_free()
 
 func clear_loaded_map_runtime_state() -> void:
+	for objective_visual in objective_visuals.values():
+		if is_instance_valid(objective_visual):
+			queue_free_child(objective_visual)
+	objective_visuals.clear()
+	current_hill_state.clear()
+
 	var loaded_map := get_node_or_null("Map")
 	if loaded_map != null:
 		queue_free_child(loaded_map)
@@ -50,6 +61,7 @@ func clear_loaded_map_runtime_state() -> void:
 		if grenade_data is Dictionary and is_instance_valid(grenade_data.get(NetKeys.INSTANCE)):
 			queue_free_child(grenade_data.get(NetKeys.INSTANCE))
 	grenades.clear()
+	match_meta.clear()
 	world_state_buffer.clear()
 
 	
@@ -76,7 +88,9 @@ func handle_world_state()->void:
 	if world_state_buffer.size()<2:
 		return
 		
-	var target_render_unix_ms :int = floori(Time.get_unix_time_from_system() * 1000) - INTERPOLATION_BUFFER_MS - Server.clock_deviation_ms
+	var server := ServerLocator.get_server(get_tree())
+	var clock_deviation_ms: int = server.clock_deviation_ms if server != null else 0
+	var target_render_unix_ms :int = floori(Time.get_unix_time_from_system() * 1000) - INTERPOLATION_BUFFER_MS - clock_deviation_ms
 	
 	#Remove states recebidos do server que já passaram
 	while world_state_buffer.size()>2 and target_render_unix_ms > world_state_buffer[1][NetKeys.WORLD_TIME_MS] :
@@ -176,8 +190,30 @@ func c_map_ready()->void:
 	
 @rpc("authority", "call_remote", "reliable")
 func s_start_match()->void:
+	apply_match_meta_to_ui()
 	get_tree().call_group(ClientNames.GROUP_PLAYER_LOCAL, ClientNames.METHOD_UNFREEZE)
 	set_physics_process(true)
+
+
+func apply_match_meta_to_ui() -> void:
+	if match_meta.is_empty():
+		return
+
+	get_tree().call_group(
+		ClientNames.GROUP_MATCH_INFO_UI,
+		ClientNames.METHOD_UPDATE_MATCH_META,
+		match_meta
+	)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_update_match_meta(new_match_meta: Dictionary) -> void:
+	if not NetPayloads.is_match_meta(new_match_meta):
+		push_warning("Invalid match_meta payload")
+		return
+
+	match_meta = new_match_meta.duplicate(true)
+	apply_match_meta_to_ui()
 	
 @rpc ("authority", "call_remote", "reliable")
 func s_spawn_player(spawn_data: Dictionary)->void:
@@ -211,6 +247,10 @@ func s_spawn_player(spawn_data: Dictionary)->void:
 		
 	players[client_id] = player
 	player_names_and_teams [client_id] = {NetKeys.DISPLAY_NAME: player_name, NetKeys.TEAM: team}
+
+	if player is PlayerLocal:
+		var local_player := player as PlayerLocal
+		local_player.setup_spawn_ammo(weapon_id)
 		
 @rpc ("authority", "call_remote", "unreliable_ordered")
 func s_send_world_state(new_word_state:Dictionary)->void:
@@ -222,13 +262,52 @@ func weapon_selected(weapon_id:int)->void:
 func c_weapon_selected(weapon_id:int)->void:
 	pass
 
+
+func request_weapon_switch(weapon_id: int) -> void:
+	c_request_weapon_switch.rpc_id(1, weapon_id)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func c_request_weapon_switch(weapon_id: int) -> void:
+	pass
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_switch_weapon(target_client_id: int, weapon_id: int) -> void:
+	var player := players.get(target_client_id) as PlayerCharacter
+	if player == null or not is_instance_valid(player):
+		push_warning("Unknown player '%s' on weapon switch." % target_client_id)
+		return
+
+	player.set_weapon_id(weapon_id)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_update_ammo(weapon_id: int, ammo: int) -> void:
+	var local_player := get_local_player()
+	if local_player == null:
+		return
+
+	local_player.set_weapon_ammo(weapon_id, ammo)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_sync_ammo_inventory(ammo_snapshot: Dictionary) -> void:
+	var local_player := get_local_player()
+	if local_player == null:
+		return
+
+	local_player.apply_ammo_snapshot(ammo_snapshot)
+	
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
 	get_tree().call_group(ClientNames.GROUP_WEAPON_SELECTION_UI, ClientNames.METHOD_ACTIVATE)
 
 
 func local_shot_fired()->void:
-	c_shot_fired.rpc_id(1, floori(Time.get_unix_time_from_system()*1000) - Server.clock_deviation_ms, create_player_data())
+	var server := ServerLocator.get_server(get_tree())
+	var clock_deviation_ms: int = server.clock_deviation_ms if server != null else 0
+	c_shot_fired.rpc_id(1, floori(Time.get_unix_time_from_system()*1000) - clock_deviation_ms, create_player_data())
 
 @rpc ("any_peer", "call_remote", "unreliable")
 func c_shot_fired(time_stamp:int , player_data:Dictionary)->void:
@@ -254,7 +333,7 @@ func s_spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int):
 	if not normal.is_equal_approx(Vector3.UP) and not normal.is_equal_approx(Vector3.DOWN):
 		spawn_tform = spawn_tform.looking_at(normal)
 		spawn_tform = spawn_tform.rotated_local(Vector3.RIGHT , -PI / 2) #rotacionado 90° direita
-	spawn_tform.origin = pos
+	spawn_tform.origin = pos + normal * 0.01
 	bullet_hit_fx.global_transform = spawn_tform
 	add_child(bullet_hit_fx)
 #Verificar porque não marca o chão com o sprite da bala
@@ -267,7 +346,7 @@ func s_update_health(target_client_id:int, current_health:int , max_health:int, 
 
 
 @rpc("authority", "call_remote", "reliable")
-func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3)->void:
+func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3, pickup_subtype: int = -1)->void:
 	if network_id.is_empty():
 		push_warning("Ignoring pickup spawn with empty network_id.")
 		return
@@ -277,8 +356,54 @@ func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3)->void:
 	pickup.name = "Pickup_%s" % network_id
 	pickup.position = pos
 	pickup.pickup_type = pickup_type
+	pickup.pickup_subtype = pickup_subtype
 	add_child(pickup, true)
 	pickups[network_id] = pickup
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_spawn_objective_visual(objective_visual_spawn: Dictionary) -> void:
+	if not NetPayloads.is_objective_visual_spawn(objective_visual_spawn):
+		push_warning("Invalid objective_visual_spawn payload")
+		return
+
+	var loaded_map := get_node_or_null("Map")
+	if loaded_map == null:
+		push_warning("Cannot spawn objective visual without a loaded map.")
+		return
+
+	var objectives_root := loaded_map.get_node_or_null("Objectives")
+	if objectives_root == null:
+		push_warning("Loaded map is missing Objectives node.")
+		return
+
+	var objective_id := String(objective_visual_spawn[NetKeys.OBJECTIVE_ID])
+	var objective_type: int = objective_visual_spawn[NetKeys.OBJECTIVE_TYPE]
+	var objective_pos: Vector3 = objective_visual_spawn[NetKeys.POS]
+
+	if objective_visuals.has(objective_id) and is_instance_valid(objective_visuals[objective_id]):
+		queue_free_child(objective_visuals[objective_id])
+		objective_visuals.erase(objective_id)
+
+	var objective_visual: HillZoneVisual
+	match objective_type:
+		GameEnums.ObjectiveType.HILL_ZONE:
+			objective_visual = HillZoneVisualScene.instantiate() as HillZoneVisual
+		_:
+			push_warning("Unsupported objective_type '%s'." % objective_type)
+			return
+
+	if objective_visual == null:
+		push_warning("Failed to instantiate objective visual for type '%s'." % objective_type)
+		return
+
+	objective_visual.name = "Objective_%s" % objective_id
+	objective_visual.configure(objective_id, objective_pos)
+	objectives_root.add_child(objective_visual, true)
+	objective_visuals[objective_id] = objective_visual
+
+	if not current_hill_state.is_empty() and objective_visual.has_method(&"update_hill_state"):
+		objective_visual.update_hill_state(current_hill_state)
 
 @rpc("authority", "call_remote", "reliable")
 func s_pickup_cooldown_started(network_id:String)->void:
@@ -322,6 +447,35 @@ func s_player_died(dead_player_id:int, killer_id:int)->void:
 @rpc("authority", "call_remote", "reliable")
 func s_update_game_scores(blue_score:int , red_score : int):
 	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_SCORE, blue_score, red_score)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_player_powerup_started(
+	client_id: int,
+	powerup_type: int,
+	duration_sec: float,
+	damage_multiplier: float,
+	fire_rate_cooldown_multiplier: float
+) -> void:
+	var player := players.get(client_id) as PlayerCharacter
+	if player == null or not is_instance_valid(player):
+		return
+
+	player.set_powerup_active(
+		powerup_type,
+		true,
+		damage_multiplier,
+		fire_rate_cooldown_multiplier
+	)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_player_powerup_ended(client_id: int, powerup_type: int) -> void:
+	var player := players.get(client_id) as PlayerCharacter
+	if player == null or not is_instance_valid(player):
+		return
+
+	player.set_powerup_active(powerup_type, false)
 	
 @rpc("authority", "call_remote", "unreliable_ordered")
 func s_update_match_time_left(time_left:int)->void:
@@ -333,6 +487,11 @@ func s_update_hill_state(hill_state: Dictionary) -> void:
 	if not NetPayloads.is_hill_state(hill_state):
 		push_warning("Invalid hill_state payload")
 		return
+
+	current_hill_state = hill_state.duplicate(true)
+	for objective_visual in objective_visuals.values():
+		if is_instance_valid(objective_visual) and objective_visual.has_method(&"update_hill_state"):
+			objective_visual.update_hill_state(hill_state)
 
 	get_tree().call_group(ClientNames.GROUP_MATCH_INFO_UI, ClientNames.METHOD_UPDATE_HILL_STATE, hill_state)
 
@@ -371,8 +530,8 @@ func explode_grenade(grenade_id :String)->void:
 	grenades[grenade_id][NetKeys.EXPLODED] = true
 	
 @rpc("authority", "call_remote","unreliable")
-func s_play_pickup_fx(pickup_type:int)->void:
-	var pickup_data = PickupPresentationRegistry.get_pickup_data(pickup_type)
+func s_play_pickup_fx(pickup_type:int, pickup_subtype: int = -1)->void:
+	var pickup_data = PickupPresentationRegistry.get_pickup_data(pickup_type, pickup_subtype)
 	AudioManager.play_sfx(pickup_data.pickup_sfx)
 			
 			

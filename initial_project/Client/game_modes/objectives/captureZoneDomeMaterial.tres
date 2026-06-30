@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://qv753gx3rlom"]
+
+[ext_resource type="Shader" uid="uid://bsj63eamfehg8" path="res://game_modes/objectives/captureZoneDomeShader.gdshader" id="1_ylx0r"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ylx0r")
+shader_parameter/grid_color = Color(0, 0.75, 1, 1)
+shader_parameter/grid_scale = 4.0
+shader_parameter/hex_radius = 0.45
+shader_parameter/line_width = 0.06
+shader_parameter/fill_alpha = 0.04
+shader_parameter/line_alpha = 0.55
+shader_parameter/rim_alpha = 0.35
+shader_parameter/rim_power = 2.5

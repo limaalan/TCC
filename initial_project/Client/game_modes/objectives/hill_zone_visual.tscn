@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3 uid="uid://cvo0xhcdk7tog"]
+
+[ext_resource type="Script" uid="uid://bubbu85yptuay" path="res://game_modes/objectives/hill_zone_visual.gd" id="1_hill_visual"]
+[ext_resource type="Material" uid="uid://qv753gx3rlom" path="res://game_modes/objectives/captureZoneDomeMaterial.tres" id="2_iyw4s"]
+[ext_resource type="Material" uid="uid://balhc6wlidjp5" path="res://game_modes/objectives/captureZoneFloorMaterial.tres" id="3_tsv4g"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_capture"]
+top_radius = 4.0
+bottom_radius = 4.0
+height = 0.08
+
+[sub_resource type="SphereMesh" id="SphereMesh_dome"]
+radius = 4.0
+height = 4.0
+radial_segments = 48
+rings = 16
+is_hemisphere = true
+
+[node name="HillZoneVisual" type="Node3D"]
+script = ExtResource("1_hill_visual")
+
+[node name="CylinderMesh" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.96, 0)
+material_override = ExtResource("3_tsv4g")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_capture")
+
+[node name="DomeMesh" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.065, 0)
+material_override = ExtResource("2_iyw4s")
+cast_shadow = 0
+mesh = SubResource("SphereMesh_dome")

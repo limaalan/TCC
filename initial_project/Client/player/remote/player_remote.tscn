@@ -4968,17 +4968,25 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 corner_detail = 6
 
-[node name="PlayerRemote" type="CharacterBody3D" node_paths=PackedStringArray("name_tag_player", "weapon_holder", "health_bar")]
+[node name="PlayerRemote" type="CharacterBody3D" node_paths=PackedStringArray("name_tag_player", "weapon_holder", "health_bar", "powerup_visual")]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_55a7p")
 name_tag_player = NodePath("SubViewport/PlayerInfo/VBoxContainer/PlayerNameLabel")
 weapon_holder = NodePath("character_soldier/CharacterArmature/Skeleton3D/WeaponHolder/WeaponHolder")
 health_bar = NodePath("SubViewport/PlayerInfo/VBoxContainer/HealthBar")
+powerup_visual = NodePath("PowerupVisual")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("CapsuleShape3D_s7k6g")
+
+[node name="PowerupVisual" type="OmniLight3D" parent="."]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+light_color = Color(1, 0.4, 0.2, 1)
+light_energy = 1.8
+omni_range = 4.0
 
 [node name="character_soldier" type="Node3D" parent="."]
 transform = Transform3D(-0.7, 0, 6.119594e-08, 0, 0.7, 0, -6.119594e-08, 0, -0.7, 0, 0, 0)

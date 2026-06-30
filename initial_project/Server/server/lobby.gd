@@ -28,8 +28,7 @@ const HillZone = preload("res://game_modes/objectives/hill_zone.gd")
 const KingOfTheHillMode = preload("res://game_modes/king_of_the_hill_mode.gd")
 const NetworkEntity = preload("res://shared/network_entity.gd")
 const TeamDeathmatchMode = preload("res://game_modes/team_deathmatch_mode.gd")
-const WeaponGameplayData = preload("res://game/weapon_gameplay_data.gd")
-
+const WeaponDefinition = preload("res://shared/weapons/weapon_definition.gd")
 @export var match_config: MatchConfig
 
 var client_data : Dictionary = {}
@@ -169,6 +168,10 @@ func delete_player(client_id:int)->void:
 	remove_player_from_objectives(client_id)
 
 	if server_players.has(client_id):
+		var player: PlayerServerReal = server_players.get(client_id).real
+		if player != null and player.powerup_controller != null:
+			player.powerup_controller.clear_all_powerups()
+
 		server_players.get(client_id).real.queue_free()
 		server_players.get(client_id).dummy.queue_free()
 		server_players.erase(client_id)
@@ -283,7 +286,15 @@ func c_map_ready()->void:
 	ready_clients.append(client_id)
 	
 	for pickup in pickups:
-		s_spawn_pickup.rpc_id(client_id, pickup.get_network_id(), pickup.get_pickup_type(), pickup.position)
+		s_spawn_pickup.rpc_id(
+			client_id,
+			pickup.get_network_id(),
+			pickup.get_pickup_type(),
+			pickup.position,
+			pickup.get_pickup_subtype()
+		)
+
+	send_objective_visuals_to_client(client_id)
 	
 	waiting_players_ready = true
 	check_players_ready(start_weapon_selection)
@@ -299,7 +310,28 @@ func c_map_ready()->void:
 
 		
 @rpc("authority", "call_remote", "reliable")
-func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3)->void:
+func s_spawn_pickup(network_id:String, pickup_type:int , pos : Vector3, pickup_subtype: int = -1)->void:
+	pass
+
+
+func send_objective_visuals_to_client(client_id: int) -> void:
+	if match_config.mode != GameEnums.GameMode.KING_OF_THE_HILL:
+		return
+
+	for objective in objectives:
+		if not objective is HillZone:
+			continue
+
+		var hill_zone: HillZone = objective
+		var objective_visual_spawn := hill_zone.make_visual_spawn_payload()
+		if not NetPayloads.is_objective_visual_spawn(objective_visual_spawn):
+			continue
+
+		s_spawn_objective_visual.rpc_id(client_id, objective_visual_spawn)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_spawn_objective_visual(objective_visual_spawn: Dictionary) -> void:
 	pass
 
 func get_spawn_points_for_team(team: int) -> Array[PlayerSpawnPoint]:
@@ -354,10 +386,14 @@ func spawn_players()->void:
 		
 		for ready_client_id in ready_clients :
 				s_spawn_player.rpc_id(ready_client_id, spawn_payload)
+				sync_active_powerups_to_client(ready_client_id)
+
+		sync_player_ammo(ready_clients[i])
 			
 func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)->void:
 	var server_player_real := preload("res://player/player_server_real.tscn").instantiate()
 	var server_player_dummy := preload("res://player/player_server_dummy.tscn").instantiate()
+	var selected_weapon_id: int = client_data[client_id].get(NetKeys.WEAPON_ID, GameEnums.WeaponId.PISTOL)
 
 	server_player_real.name = str(client_id)
 	server_player_dummy.name = str(client_id)+"_dummy"
@@ -371,6 +407,7 @@ func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)-
 	server_players[client_id] = {}
 	server_players[client_id].real = server_player_real
 	server_players[client_id].dummy = server_player_dummy
+	server_player_real.setup_spawn_ammo(selected_weapon_id)
 	
 	client_data[client_id][NetKeys.TEAM] = team
 
@@ -418,6 +455,11 @@ func c_weapon_selected(weapon_id:int)->void:
 	var client_id =  multiplayer.get_remote_sender_id()
 	if !client_id in client_data.keys() or client_id in ready_clients:
 		return
+
+	if not WeaponConfig.is_valid_weapon_id(weapon_id):
+		push_warning("Ignoring invalid weapon_id '%s' from client %s." % [weapon_id, client_id])
+		return
+
 	client_data[client_id][NetKeys.WEAPON_ID] = weapon_id
 
 	if status == GAME:
@@ -427,6 +469,29 @@ func c_weapon_selected(weapon_id:int)->void:
 	ready_clients.append(client_id)
 	waiting_players_ready = true
 	check_players_ready(start_match)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func c_request_weapon_switch(weapon_id: int) -> void:
+	var client_id := multiplayer.get_remote_sender_id()
+	if not server_players.has(client_id):
+		return
+
+	if not WeaponConfig.is_valid_weapon_id(weapon_id):
+		push_warning("Ignoring invalid weapon switch '%s' from client %s." % [weapon_id, client_id])
+		return
+
+	if status != GAME:
+		return
+
+	update_player_weapon(client_id, weapon_id)
+
+
+func update_player_weapon(client_id: int, weapon_id: int) -> void:
+	client_data[client_id][NetKeys.WEAPON_ID] = weapon_id
+
+	for connected_client_id in get_connected_clients():
+		s_switch_weapon.rpc_id(connected_client_id, client_id, weapon_id)
 	
 func start_match()->void:
 	status = GAME
@@ -436,6 +501,7 @@ func start_match()->void:
 		end_match()
 		return
 
+	update_match_meta(make_match_meta_payload())
 	current_game_mode.start_match()
 	
 
@@ -472,6 +538,24 @@ func setup_game_mode() -> bool:
 			return false
 
 
+func make_match_meta_payload() -> Dictionary:
+	return NetPayloads.make_match_meta(match_config.mode, match_config.score_to_win)
+
+
+func update_match_meta(match_meta: Dictionary) -> void:
+	if not NetPayloads.is_match_meta(match_meta):
+		push_warning("Invalid match_meta payload")
+		return
+
+	for client_id in get_connected_clients():
+		s_update_match_meta.rpc_id(client_id, match_meta)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_update_match_meta(match_meta: Dictionary) -> void:
+	pass
+
+
 func has_current_game_mode() -> bool:
 	if current_game_mode == null:
 		push_error("Current game mode is not initialized.")
@@ -499,12 +583,30 @@ func respawn_player(respawn_client_id:int)->void:
 	#spawn para os jogadores
 	for client_id in get_connected_clients() :
 			s_spawn_player.rpc_id(client_id, spawn_payload)
+			sync_active_powerups_to_client(client_id)
+
+	sync_player_ammo(respawn_client_id)
 
 func start_weapon_selection()->void:
 	for ready_client in get_connected_clients():
 		s_start_weapon_selection.rpc_id(ready_client)
 @rpc("authority", "call_remote", "reliable")
 func s_start_weapon_selection()->void:
+	pass
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_switch_weapon(target_client_id: int, weapon_id: int) -> void:
+	pass
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_update_ammo(weapon_id: int, ammo: int) -> void:
+	pass
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_sync_ammo_inventory(ammo_snapshot: Dictionary) -> void:
 	pass
 	
 @rpc ("any_peer", "call_remote", "unreliable")
@@ -516,6 +618,17 @@ func c_shot_fired(time_stamp:int , player_data:Dictionary)->void:
 	if not NetPayloads.is_player_state(player_data):
 		push_warning("Invalid shot payload from client %s" % sender_id)
 		return
+
+	var weapon_id: int = client_data.get(sender_id)[NetKeys.WEAPON_ID]
+	var player: PlayerServerReal = server_players.get(sender_id).real
+	if player == null:
+		return
+
+	if not player.spend_weapon_ammo(weapon_id):
+		s_update_ammo.rpc_id(sender_id, weapon_id, player.get_weapon_ammo(weapon_id))
+		return
+
+	update_ammo(sender_id, weapon_id, player.get_weapon_ammo(weapon_id))
 
 	for client_id in get_connected_clients()	:
 		if client_id != sender_id:
@@ -562,7 +675,12 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 		return
 		
 	var weapon_id: int = client_data.get(shooter_id)[NetKeys.WEAPON_ID]
-	var weapon_data: WeaponGameplayData = WeaponConfig.get_weapon_data(weapon_id)
+	var weapon_data: WeaponDefinition = WeaponConfig.get_weapon_data(weapon_id)
+	var shooter_player: PlayerServerReal = server_players.get(shooter_id).real
+	if shooter_player == null:
+		return
+
+	var damage_multiplier := shooter_player.get_damage_multiplier()
 	# Faz o raycast a partir da cabeça do atirador
 	var space_state := get_world_3d().direct_space_state
 	var shooter_dummy: ServerPlayerDummy = server_players.get(shooter_id).dummy
@@ -595,7 +713,7 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			
 			#Cálculo do dano causado pela arma
 			var hurt_server_player :PlayerServerReal = server_players.get(hurt_client_id).real
-			var base_damage = -weapon_data.damage * result.collider.damage_multiplayer
+			var base_damage = -weapon_data.damage * damage_multiplier * result.collider.damage_multiplayer
 			
 			#TODO mover cálculo do dano pra outra função, utilizar Curve ou Gradiente , também dá pra configurar isso por tipo de arma
 			var damage_falloff_start := 10 
@@ -617,6 +735,39 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void:
 	for client_id in get_connected_clients(): # pega os clientes do lobby
 		s_spawn_bullet_hit_fx.rpc_id(client_id, pos, normal, type)
+
+
+func update_ammo(client_id: int, weapon_id: int, ammo: int) -> void:
+	s_update_ammo.rpc_id(client_id, weapon_id, ammo)
+
+
+func sync_player_ammo(client_id: int) -> void:
+	if not server_players.has(client_id):
+		return
+
+	var player: PlayerServerReal = server_players[client_id].real
+	if player == null:
+		return
+
+	s_sync_ammo_inventory.rpc_id(client_id, player.ammo_inventory.make_snapshot())
+
+
+func sync_active_powerups_to_client(target_client_id: int) -> void:
+	for client_id in server_players.keys():
+		var player: PlayerServerReal = server_players[client_id].real
+		if player == null or player.powerup_controller == null:
+			continue
+
+		for powerup_type in player.powerup_controller.active_powerups.keys():
+			var powerup_data: Dictionary = player.powerup_controller.active_powerups[powerup_type]
+			s_player_powerup_started.rpc_id(
+				target_client_id,
+				client_id,
+				powerup_type,
+				0.0,
+				float(powerup_data.get("damage_multiplier", 1.0)),
+				float(powerup_data.get("fire_rate_cooldown_multiplier", 1.0))
+			)
 		
 @rpc("authority", "call_remote", "unreliable")
 func s_spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int):
@@ -662,6 +813,10 @@ func player_died(dead_player_id : int, killer_id:int)->void:
 		return
 
 	remove_player_from_objectives(dead_player_id)
+
+	var dead_player: PlayerServerReal = server_players.get(dead_player_id).real
+	if dead_player != null and dead_player.powerup_controller != null:
+		dead_player.powerup_controller.clear_all_powerups()
 		
 	server_players.get(dead_player_id).real.queue_free()
 	server_players.get(dead_player_id).dummy.queue_free()
@@ -822,10 +977,52 @@ func grenade_exploded(grenade:Grenade)->void:
 func s_explode_grenade(grenade_id:String)->void:
 	pass
 
-func play_pickup_fx(client_id: int, pickup_type:int)->void:
-	s_play_pickup_fx.rpc_id(client_id, pickup_type)
+
+func player_powerup_started(
+	client_id: int,
+	powerup_type: int,
+	duration_sec: float,
+	damage_multiplier: float,
+	fire_rate_cooldown_multiplier: float
+) -> void:
+	for connected_client_id in get_connected_clients():
+		s_player_powerup_started.rpc_id(
+			connected_client_id,
+			client_id,
+			powerup_type,
+			duration_sec,
+			damage_multiplier,
+			fire_rate_cooldown_multiplier
+		)
+
+
+func player_powerup_ended(client_id: int, powerup_type: int) -> void:
+	for connected_client_id in get_connected_clients():
+		s_player_powerup_ended.rpc_id(connected_client_id, client_id, powerup_type)
+
+
+func play_pickup_fx(client_id: int, pickup_type:int, pickup_subtype: int = -1)->void:
+	s_play_pickup_fx.rpc_id(client_id, pickup_type, pickup_subtype)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_player_powerup_started(
+	client_id: int,
+	powerup_type: int,
+	duration_sec: float,
+	damage_multiplier: float,
+	fire_rate_cooldown_multiplier: float
+) -> void:
+	pass
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_player_powerup_ended(client_id: int, powerup_type: int) -> void:
+	pass
+
+
 @rpc("authority", "call_remote","unreliable")
-func s_play_pickup_fx(pickup_type:int)->void:
+func s_play_pickup_fx(pickup_type:int, pickup_subtype: int = -1)->void:
 	pass
 	
 @rpc("any_peer", "call_remote","reliable")

@@ -1,0 +1,103 @@
+[gd_scene load_steps=12 format=3 uid="uid://dh5y5hllhue6x"]
+
+[ext_resource type="Script" uid="uid://7roqioywojma" path="res://shared/server_game_map.gd" id="1_server_game_map"]
+[ext_resource type="PackedScene" uid="uid://difmbyjy32p0l" path="res://maps/highrise/highRisePlayableArea.tscn" id="2_playable_area"]
+[ext_resource type="PackedScene" uid="uid://niwaw0ilssci" path="res://maps/highrise/highRiseUnplayableArea.tscn" id="3_unplayable_area"]
+[ext_resource type="PackedScene" path="res://platforms/death_zone.tscn" id="4_death_zone"]
+[ext_resource type="PackedScene" uid="uid://bmfk1ivn60vy7" path="res://player/pickups/pickup.tscn" id="5_8x5f0"]
+[ext_resource type="PackedScene" uid="uid://y27vsb61cchf" path="res://game_modes/objectives/hill_zone.tscn" id="5_hill_zone"]
+[ext_resource type="Resource" path="res://player/pickups/data/grenade_pickup_data.tres" id="6_ofv66"]
+[ext_resource type="Script" uid="uid://c0n716rjuk4r2" path="res://player/spawn_point/player_spawn_point.gd" id="6_spawn_point"]
+[ext_resource type="Resource" path="res://player/pickups/data/ammo_pickup_data.tres" id="7_ofv66"]
+[ext_resource type="Resource" path="res://player/pickups/data/damage_powerup_pickup_data.tres" id="8_powerup_damage"]
+[ext_resource type="Resource" path="res://player/pickups/data/fire_rate_powerup_pickup_data.tres" id="9_powerup_fire_rate"]
+
+[node name="Map" type="Node3D" node_paths=PackedStringArray("spawn_points_root", "pickups_root", "objectives_root", "special_platforms_root")]
+script = ExtResource("1_server_game_map")
+spawn_points_root = NodePath("SpawnPoints")
+pickups_root = NodePath("Pickups")
+objectives_root = NodePath("Objectives")
+special_platforms_root = NodePath("SpecialPlatforms")
+
+[node name="HighRisePlayableArea" parent="." instance=ExtResource("2_playable_area")]
+
+[node name="HighRiseUnplayableArea" parent="." instance=ExtResource("3_unplayable_area")]
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+
+[node name="BluePlayerSpawnPoint" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -9.780603, 0.18686318, 4.3905134)
+script = ExtResource("6_spawn_point")
+
+[node name="BluePlayerSpawnPoint2" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -9.780603, 0.18686318, 5.3905134)
+script = ExtResource("6_spawn_point")
+
+[node name="BluePlayerSpawnPoint3" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -9.780603, 0.18686318, 6.3905134)
+script = ExtResource("6_spawn_point")
+
+[node name="BluePlayerSpawnPoint4" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -7.7806034, 0.18686318, 5.3905134)
+script = ExtResource("6_spawn_point")
+
+[node name="RedPlayerSpawnPoint5" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14.219397, 3.1868632, -4.6094866)
+script = ExtResource("6_spawn_point")
+team = 1
+
+[node name="RedPlayerSpawnPoint6" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14.219397, 3.1868632, -5.6094866)
+script = ExtResource("6_spawn_point")
+team = 1
+
+[node name="RedPlayerSpawnPoint7" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 14.219397, 3.1868632, -6.6094866)
+script = ExtResource("6_spawn_point")
+team = 1
+
+[node name="RedPlayerSpawnPoint8" type="Node3D" parent="SpawnPoints"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 12.219397, 3.1868632, -5.6094866)
+script = ExtResource("6_spawn_point")
+team = 1
+
+[node name="Pickups" type="Node3D" parent="."]
+
+[node name="HealthPickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.601507, 6.1582994, -5.9511504)
+network_id = &"highrise_health_pickup_01"
+
+[node name="GrenadePickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.791222, 6.1583004, -2.9781682)
+data = ExtResource("6_ofv66")
+network_id = &"highrise_grenade_pickup_01"
+
+[node name="AmmoPickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.40201, 6.1583004, -1.1937826)
+data = ExtResource("7_ofv66")
+network_id = &"highrise_ammo_pickup_01"
+
+[node name="DamagePowerupPickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.746109, 6.1583004, -4.474659)
+data = ExtResource("8_powerup_damage")
+network_id = &"highrise_powerup_damage_01"
+
+[node name="FireRatePowerupPickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.339784, 6.1583004, -3.6273878)
+data = ExtResource("9_powerup_fire_rate")
+network_id = &"highrise_powerup_fire_rate_01"
+
+[node name="Objectives" type="Node3D" parent="."]
+
+[node name="HillZone" parent="Objectives" instance=ExtResource("5_hill_zone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.572091, 8.14394, -2.843248)
+objective_id = &"highrise_hill_main"
+
+[node name="SpecialPlatforms" type="Node3D" parent="."]
+
+[node name="MainDeathZone" parent="SpecialPlatforms" instance=ExtResource("4_death_zone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -25.984848, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-4.371139e-08, 0.57598835, -0.8174579, 0, 0.8174579, 0.57598835, 1, 2.517725e-08, -3.573222e-08, -19.788496, 9.828215, 0)
+current = true

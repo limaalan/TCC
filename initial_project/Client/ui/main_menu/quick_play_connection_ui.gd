@@ -1,16 +1,23 @@
 extends Control
+const ServerLocator = preload("res://server/server_locator.gd")
+
 @onready var status_label: Label = $VBoxContainer/StatusLabel
 @onready var close_button: Button = $VBoxContainer/CloseButton
 @onready var cancel_button: Button = $VBoxContainer/CancelButton
 
 func _enter_tree() -> void:
 	hide()
-	Server.on_lobby_clients_updated.connect(on_lobby_clients_updated)
-	Server.on_cant_connect_to_lobby.connect(on_cant_connect_to_lobby)
-	Server.on_lobby_locked.connect(on_lobby_locked)
+	var server := ServerLocator.get_server(get_tree())
+	if server == null:
+		return
+
+	server.on_lobby_clients_updated.connect(on_lobby_clients_updated)
+	server.on_cant_connect_to_lobby.connect(on_cant_connect_to_lobby)
+	server.on_lobby_locked.connect(on_lobby_locked)
 	
 func activate()->void:
-	if Server.peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
+	var server := ServerLocator.get_server(get_tree())
+	if server != null and server.peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
 		close_button.hide()
 		cancel_button.show()
 		status_label.text = "Conectando-se ao lobby..."
@@ -36,7 +43,9 @@ func _on_close_button_pressed() -> void:
 
 func _on_cancel_button_pressed() -> void:
 	hide()
-	Server.cancel_quick_play_search()
+	var server := ServerLocator.get_server(get_tree())
+	if server != null:
+		server.cancel_quick_play_search()
 	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 
 func on_lobby_locked()->void:
