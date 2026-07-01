@@ -1,6 +1,7 @@
 extends Node
 const NetworkConfig = preload("res://shared/network_config.gd")
 const NetworkMetricsLogger = preload("res://server/network_metrics_logger.gd")
+const Lobby = preload("res://server/lobby.gd")
 signal on_lobby_clients_updated(connected_clients:int, max_clients:int)
 signal on_cant_connect_to_lobby()
 signal on_lobby_locked

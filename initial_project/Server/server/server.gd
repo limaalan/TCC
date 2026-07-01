@@ -1,6 +1,7 @@
 extends Node
 const NetworkConfig = preload("res://shared/network_config.gd")
 const NetworkMetricsLogger = preload("res://server/network_metrics_logger.gd")
+const Lobby = preload("res://server/lobby.gd")
 const MAX_CLIENTS :=64
 const MAX_LOBBIES:= 1
 const MAX_PLAYERS_PER_LOBBY :=2
