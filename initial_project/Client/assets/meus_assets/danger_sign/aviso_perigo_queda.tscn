@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://dvhrbf68b7bgx"]
+
+[ext_resource type="PackedScene" uid="uid://dt4xj1s7fegfg" path="res://assets/meus_assets/danger_sign/import/aviso_perigo_queda.glb" id="1_ut0qj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_skxeh"]
+size = Vector3(0.11857605, 4.0635376, 2.0595703)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_e0wiu"]
+size = Vector3(0.11857605, 4.0635376, 2.0302734)
+
+[node name="aviso_perigo_queda" instance=ExtResource("1_ut0qj")]
+
+[node name="PlayerCollisions" type="StaticBody3D" parent="." index="1"]
+collision_layer = 17
+collision_mask = 0
+
+[node name="FrontPanelCollision" type="CollisionShape3D" parent="PlayerCollisions" index="0"]
+transform = Transform3D(0.93969256, -0.3420201, 0, 0.3420201, 0.93969256, 0, 0, 0, 1, 0.72775143, 1.8942913, -0.018066406)
+shape = SubResource("BoxShape3D_skxeh")
+
+[node name="BackPanelCollision" type="CollisionShape3D" parent="PlayerCollisions" index="1"]
+transform = Transform3D(-0.93969256, 0.3420201, -8.742278e-08, 0.3420201, 0.93969256, 0, 8.215053e-08, -2.9900345e-08, -1, -0.728, 1.894, -0.0032421872)
+shape = SubResource("BoxShape3D_e0wiu")
