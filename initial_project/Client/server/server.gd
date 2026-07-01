@@ -1,6 +1,7 @@
 extends Node
 const NetworkConfig = preload("res://shared/network_config.gd")
 const NetworkMetricsLogger = preload("res://server/network_metrics_logger.gd")
+const Lobby = preload("res://server/lobby.gd")
 signal on_lobby_clients_updated(connected_clients:int, max_clients:int)
 signal on_cant_connect_to_lobby()
 signal on_lobby_locked
@@ -24,7 +25,7 @@ func _ready() -> void:
 		return
 	print("Cliente tentando conectar em %s:%s" % [server_address, server_port])
 
-	multiplayer.multiplayer_peer  = peer;
+	multiplayer.multiplayer_peer = peer
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
@@ -111,6 +112,13 @@ func c_try_connect_client_to_lobby(player_name:String)-> void :
 	pass
 
 @rpc("authority", "call_remote", "reliable")
+func s_create_lobby_on_clients(lobby_name:String)->void:
+	var lobby = Lobby.new()
+	lobby.name = lobby_name
+	add_child(lobby,true)
+	on_lobby_locked.emit()
+
+@rpc("authority", "call_remote", "reliable")
 func s_lobby_clients_updated(connected_clients:int, max_clients:int)->void:
 	last_known_players_count = connected_clients
 	on_lobby_clients_updated.emit(connected_clients, max_clients)
@@ -126,19 +134,16 @@ func cancel_quick_play_search()->void:
 func c_cancel_quick_play_search()->void:
 	pass
 
-@rpc("authority", "call_remote", "reliable")
-func s_create_lobby_on_clients(lobby_name:String)->void:
-	var lobby = Lobby.new()
-	lobby.name = lobby_name
-	add_child(lobby,true)
-	on_lobby_locked.emit()
-
 func _on_clock_sync_timer_timeout() -> void:
 	c_get_server_clock_time.rpc_id(1, floori(Time.get_unix_time_from_system()*1000))
 
 #cliente mandando seu relogio
 @rpc("any_peer", "call_remote", "unreliable_ordered" )
 func c_get_server_clock_time(client_clock_time:int)->void:
+	pass
+
+@rpc("any_peer", "call_remote", "unreliable_ordered")
+func c_report_app_ping(app_ping_ms: float) -> void:
 	pass
 
 #ativando quando o server manda o tempo atual
@@ -149,7 +154,3 @@ func s_return_server_clock_time(server_clock_time:int, old_client_clock_time:int
 	clock_deviation_ms = lerp(clock_deviation_ms, local_time_when_server_sent_time - server_clock_time,CLOCK_DEVIATION_CALC_WEIGHT)
 	latest_app_ping_ms = maxf(current_time_ms - old_client_clock_time, 0.0)
 	c_report_app_ping.rpc_id(1, latest_app_ping_ms)
-
-@rpc("any_peer", "call_remote", "unreliable_ordered")
-func c_report_app_ping(app_ping_ms: float) -> void:
-	pass
