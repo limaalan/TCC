@@ -1,6 +1,7 @@
 extends CharacterBody3D
 class_name PlayerServerReal
 
+const CharacterVisual = preload("res://player/character/character_visual.gd")
 const ANIM_BLEND_TIME := 0.2
 const MAX_HEALTH := 100
 const PlayerPowerupController = preload("res://player/powerups/player_powerup_controller.gd")
@@ -13,7 +14,7 @@ var grenades_left := 2
 var ammo_inventory := WeaponAmmoInventory.new()
 var powerup_controller: PlayerPowerupController
 
-@onready var animation_player: AnimationPlayer = $character_soldier/AnimationPlayer
+@export var character_visual: CharacterVisual
 
 
 func _ready() -> void:
@@ -22,9 +23,20 @@ func _ready() -> void:
 
 
 func set_anim(anim_name:String)->void:
-	if animation_player.assigned_animation == anim_name:
+	if character_visual == null:
+		return
+
+	if character_visual.is_game_animation_active(anim_name):
 		return 
-	animation_player.play(anim_name, ANIM_BLEND_TIME)
+
+	character_visual.play_game_animation(anim_name, ANIM_BLEND_TIME)
+
+
+func get_current_animation_position() -> float:
+	if character_visual == null:
+		return 0.0
+
+	return character_visual.get_current_animation_position()
 
 
 func spend_weapon_ammo(weapon_id: int) -> bool:

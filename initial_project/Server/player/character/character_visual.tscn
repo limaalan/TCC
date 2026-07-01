@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://player/character/character_visual.gd" id="1_b4noo"]
+[ext_resource type="PackedScene" path="res://assets/meus_assets/char/complete_char.tscn" id="2_n3itm"]
+
+[node name="CharacterVisual" type="Node3D"]
+script = ExtResource("1_b4noo")
+char_animation_player_path = NodePath("CompleteChar/char/AnimationPlayer")
+rings_animation_player_path = NodePath("CompleteChar/char/Armature_001/Skeleton3D/RingsAttachment/rings/AnimationPlayer")
+skeleton_path = NodePath("CompleteChar/char/Armature_001/Skeleton3D")
+
+[node name="CompleteChar" parent="." instance=ExtResource("2_n3itm")]
+
+[node name="HeadBoneAttachment" type="BoneAttachment3D" parent="CompleteChar/char/Armature_001/Skeleton3D"]
+bone_name = "head"
+bone_idx = 2
+
+[node name="HeadAnchor" type="Node3D" parent="CompleteChar/char/Armature_001/Skeleton3D/HeadBoneAttachment"]
+
+[editable path="CompleteChar"]

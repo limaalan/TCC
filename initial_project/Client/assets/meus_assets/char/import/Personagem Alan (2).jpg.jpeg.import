@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btqj8r7xhr2dg"
-path="res://.godot/imported/Personagem Alan (2).jpg.jpeg-e9cd19518c5da7b14f62e5eb30c68cc4.ctex"
+path="res://.godot/imported/Personagem Alan (2).jpg.jpeg-82b26de5c0d6a1eb66a0b718cbfc1223.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/meus_assets/char/Personagem Alan (2).jpg.jpeg"
-dest_files=["res://.godot/imported/Personagem Alan (2).jpg.jpeg-e9cd19518c5da7b14f62e5eb30c68cc4.ctex"]
+source_file="res://assets/meus_assets/char/import/Personagem Alan (2).jpg.jpeg"
+dest_files=["res://.godot/imported/Personagem Alan (2).jpg.jpeg-82b26de5c0d6a1eb66a0b718cbfc1223.ctex"]
 
 [params]
 

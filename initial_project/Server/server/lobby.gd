@@ -129,7 +129,7 @@ func _physics_process(delta: float) -> void:
 	for client_id in server_players.keys():
 		if not current_world_state[NetKeys.WORLD_PLAYERS].has(client_id):
 			continue
-		current_world_state[NetKeys.WORLD_PLAYERS][client_id][NetKeys.ANIM_POS] = server_players.get(client_id).real.animation_player.current_animation_position
+		current_world_state[NetKeys.WORLD_PLAYERS][client_id][NetKeys.ANIM_POS] = server_players.get(client_id).real.get_current_animation_position()
 	
 	previous_world_states.push_front(current_world_state.duplicate(true))
 
