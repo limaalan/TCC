@@ -13,6 +13,7 @@ var peer := ENetMultiplayerPeer.new()
 var metrics_logger := NetworkMetricsLogger.new("server")
 var metrics_timer := Timer.new()
 var latest_app_ping_by_peer: Dictionary = {}
+var latest_server_tick_ms := 0.0
 
 func _ready() -> void:
 	var port := NetworkConfig.get_server_port()
@@ -28,6 +29,9 @@ func _ready() -> void:
 
 	lobby_spots.resize(MAX_LOBBIES)
 	_setup_metrics_logging()
+
+func _process(delta: float) -> void:
+	latest_server_tick_ms = delta * 1000.0
 
 func _on_peer_connected(id:int)-> void:
 	print("cliend %d conectou-se" %id)
@@ -91,17 +95,20 @@ func _on_metrics_timer_timeout() -> void:
 	var received_bytes := host.pop_statistic(ENetConnection.HOST_TOTAL_RECEIVED_DATA)
 	var received_packets := host.pop_statistic(ENetConnection.HOST_TOTAL_RECEIVED_PACKETS)
 	var connected_peer_ids := get_connected_peer_ids()
-	if connected_peer_ids.is_empty():
-		return
-
 	var rows: Array[Dictionary] = []
+	var peers_payload: Array[Dictionary] = []
 	var players_count := connected_peer_ids.size()
+	var sent_kbps := sent_bytes / 1024.0 / elapsed_sec
+	var received_kbps := received_bytes / 1024.0 / elapsed_sec
+	var sent_packets_per_sec := sent_packets / elapsed_sec
+	var received_packets_per_sec := received_packets / elapsed_sec
+
 	for peer_id in connected_peer_ids:
 		var peer_ref := peer.get_peer(peer_id)
 		if peer_ref == null or not peer_ref.is_active():
 			continue
 
-		rows.append({
+		var peer_sample := {
 			"timestamp_ms": sample_timestamp_ms,
 			"role": "server",
 			"players_count": players_count,
@@ -110,17 +117,41 @@ func _on_metrics_timer_timeout() -> void:
 			"last_rtt_ms": peer_ref.get_statistic(ENetPacketPeer.PEER_LAST_ROUND_TRIP_TIME),
 			"rtt_variance": peer_ref.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME_VARIANCE),
 			"packet_loss_percent": _packet_loss_percent(peer_ref),
-			"sent_kbps": sent_bytes / 1024.0 / elapsed_sec,
-			"received_kbps": received_bytes / 1024.0 / elapsed_sec,
-			"sent_packets_per_sec": sent_packets / elapsed_sec,
-			"received_packets_per_sec": received_packets / elapsed_sec,
+			"sent_kbps": sent_kbps,
+			"received_kbps": received_kbps,
+			"sent_packets_per_sec": sent_packets_per_sec,
+			"received_packets_per_sec": received_packets_per_sec,
 			"app_ping_ms": latest_app_ping_by_peer.get(peer_id, null),
 			"fps": null,
+		}
+
+		rows.append(peer_sample)
+		peers_payload.append({
+			"peer_id": peer_id,
+			"rtt_ms": peer_sample["rtt_ms"],
+			"last_rtt_ms": peer_sample["last_rtt_ms"],
+			"rtt_variance_ms": peer_sample["rtt_variance"],
+			"packet_loss_percent": peer_sample["packet_loss_percent"],
+			"app_ping_ms": peer_sample["app_ping_ms"],
 		})
 
 	metrics_logger.append_rows(rows)
+	metrics_logger.stream_sample({
+		"schema_version": 1,
+		"source": "godot_server",
+		"role": "server",
+		"timestamp_ms": sample_timestamp_ms,
+		"server_pid": OS.get_process_id(),
+		"players_count": players_count,
+		"lobbies_count": lobbies.size(),
+		"server_tick_ms": latest_server_tick_ms,
+		"sent_kbps": sent_kbps,
+		"received_kbps": received_kbps,
+		"sent_packets_per_sec": sent_packets_per_sec,
+		"received_packets_per_sec": received_packets_per_sec,
+		"peers": peers_payload,
+	})
 
-#Associa um lobby a uma coordenada 3d
 func update_lobby_spots() ->void:
 	for lobby in lobbies:
 		if lobby in lobby_spots:
@@ -132,7 +163,7 @@ func update_lobby_spots() ->void:
 				break
 
 	for i in lobby_spots.size():
-		if lobby_spots[i] != null and lobby_spots[i] not  in lobbies:
+		if lobby_spots[i] != null and lobby_spots[i] not in lobbies:
 			lobby_spots[i] = null
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -158,17 +189,17 @@ func lock_lobby(lobby:Lobby)->void:
 func create_lobby_on_clients(lobby:Lobby)->void:
 	for lobby_client_id in lobby.client_data.keys():
 		s_create_lobby_on_clients.rpc_id(lobby_client_id, lobby.name)
+
 @rpc("authority", "call_remote", "reliable")
 func s_create_lobby_on_clients(lobby_name:String)->void:
 	pass
 
-func get_non_full_lobby()->Lobby: #get or create
+func get_non_full_lobby()->Lobby:
 	for lobby in lobbies:
 		if lobby.status != Lobby.IDLE:
 			continue
 		print("Size:", lobby.client_data.keys().size())
 		if lobby.client_data.keys().size() < MAX_PLAYERS_PER_LOBBY:
-
 			return lobby
 	if lobbies.size()< MAX_LOBBIES:
 		print("Lobbies size:" , lobbies.size())

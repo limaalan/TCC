@@ -24,7 +24,7 @@ func _ready() -> void:
 		return
 	print("Cliente tentando conectar em %s:%s" % [server_address, server_port])
 
-	multiplayer.multiplayer_peer  = peer;
+	multiplayer.multiplayer_peer = peer
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
@@ -136,12 +136,10 @@ func s_create_lobby_on_clients(lobby_name:String)->void:
 func _on_clock_sync_timer_timeout() -> void:
 	c_get_server_clock_time.rpc_id(1, floori(Time.get_unix_time_from_system()*1000))
 
-#cliente mandando seu relogio
 @rpc("any_peer", "call_remote", "unreliable_ordered" )
 func c_get_server_clock_time(client_clock_time:int)->void:
 	pass
 
-#ativando quando o server manda o tempo atual
 @rpc("any_peer", "call_remote", "unreliable_ordered" )
 func s_return_server_clock_time(server_clock_time:int, old_client_clock_time:int)->void:
 	var current_time_ms := floori(Time.get_unix_time_from_system() * 1000)
