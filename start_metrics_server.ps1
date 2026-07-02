@@ -80,6 +80,14 @@ function Ensure-Junction($linkPath, $targetPath) {
 	New-Item -ItemType Junction -Path $linkPath -Target $targetFullPath | Out-Null
 }
 
+function Ensure-ServerAssetsPath($serverAssetsPath, $clientAssetsPath) {
+	if (Test-Path -LiteralPath $serverAssetsPath) {
+		return
+	}
+
+	Ensure-Junction $serverAssetsPath $clientAssetsPath
+}
+
 Assert-PathExists $serverProjectDir "Godot server project"
 Assert-PathExists $sharedLinksScript "Shared links script"
 Assert-PathExists $clientProjectDir "Godot client project"
@@ -98,7 +106,7 @@ if ($StartDashboard) {
 }
 
 & $sharedLinksScript
-Ensure-Junction (Join-Path $serverProjectDir "assets") (Join-Path $clientProjectDir "assets")
+Ensure-ServerAssetsPath (Join-Path $serverProjectDir "assets") (Join-Path $clientProjectDir "assets")
 
 $dashboardOutLog = New-LogPath "dashboard-out"
 $dashboardErrLog = New-LogPath "dashboard-err"

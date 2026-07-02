@@ -89,7 +89,7 @@ func consume_elapsed_seconds(now_ms: int) -> float:
 	if last_sample_timestamp_ms <= 0:
 		last_sample_timestamp_ms = now_ms - sample_interval_ms
 
-	var elapsed_ms := max(now_ms - last_sample_timestamp_ms, 1)
+	var elapsed_ms: int = maxi(now_ms - last_sample_timestamp_ms, 1)
 	last_sample_timestamp_ms = now_ms
 	return elapsed_ms / 1000.0
 
@@ -107,7 +107,7 @@ func append_rows(rows: Array[Dictionary]) -> void:
 		var line_values: Array[String] = []
 		for column in HEADER:
 			line_values.append(_escape_csv(_format_value(row.get(column, ""))))
-		file.store_line(PackedStringArray(line_values).join(","))
+		file.store_line(",".join(line_values))
 	file.flush()
 
 func stream_sample(sample: Dictionary) -> void:
@@ -155,7 +155,7 @@ func _write_header() -> void:
 		record_enabled = false
 		return
 
-	file.store_line(PackedStringArray(HEADER).join(","))
+	file.store_line(",".join(HEADER))
 	file.flush()
 
 func _has_flag(user_args: PackedStringArray, flag: String) -> bool:
