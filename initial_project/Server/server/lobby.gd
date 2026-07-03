@@ -37,6 +37,7 @@ var server_players := {}
 var match_time_left := 0
 var is_pending_delete := false
 var current_game_mode: BaseGameMode
+var last_physics_process_ms := 0.0
 
 var match_timer := Timer.new()
 
@@ -117,6 +118,8 @@ func get_connected_clients()-> Array[int]:
 	
 
 func _physics_process(delta: float) -> void:
+	var started_at_usec := Time.get_ticks_usec()
+
 	if Engine.get_physics_frames()% WORLD_STATE_SEND_FRAME == 0:
 		current_world_state[NetKeys.WORLD_TIME_MS] = floori(Time.get_unix_time_from_system()*1000)
 		update_grenades_in_world_state()
@@ -135,6 +138,11 @@ func _physics_process(delta: float) -> void:
 
 	if status == GAME and current_game_mode != null:
 		current_game_mode.physics_process(delta)
+
+	last_physics_process_ms = float(Time.get_ticks_usec() - started_at_usec) / 1000.0
+
+func get_last_physics_process_ms() -> float:
+	return last_physics_process_ms
 	
 func update_grenades_in_world_state()->void:
 	for grenade_id in grenades.keys():

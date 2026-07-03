@@ -1,6 +1,7 @@
 param(
 	[string]$GodotCommand = "godot",
 	[string]$PythonCommand = "python",
+	[switch]$RecordMetrics,
 	[string]$DashboardHost = "127.0.0.1",
 	[int]$DashboardPort = 8000,
 	[string]$MetricsUdpHost = "127.0.0.1",
@@ -148,12 +149,15 @@ $godotArgs = @(
 	$serverMainScene,
 	"--",
 	"--port=$ServerPort",
-	"--network-metrics",
 	"--stream-metrics",
 	"--metrics-interval=$MetricsIntervalSeconds",
 	"--metrics-stream-host=$MetricsUdpHost",
 	"--metrics-stream-port=$MetricsUdpPort"
 )
+
+if ($RecordMetrics) {
+	$godotArgs += "--record-metrics"
+}
 
 $dashboardCommand = New-WindowCommand `
 	-windowTitle "TCC Metrics Dashboard" `
@@ -187,5 +191,6 @@ Write-Host ""
 Write-Host "Dashboard window PID: $($dashboardProcess.Id)"
 Write-Host "Server window PID: $($serverProcess.Id)"
 Write-Host "Dashboard URL: http://$DashboardHost`:$DashboardPort"
+Write-Host "Metrics CSV recording: $(if ($RecordMetrics) { 'enabled' } else { 'disabled' })"
 Write-Host "Client: open the Godot editor and run initial_project/Client manually."
 Write-Host ""

@@ -30,11 +30,11 @@
         <article class="metric-card"><span>Max RTT</span><strong id="card-rtt-max">-</strong></article>
         <article class="metric-card"><span>Avg Loss</span><strong id="card-loss-avg">-</strong></article>
         <article class="metric-card"><span>Max Loss</span><strong id="card-loss-max">-</strong></article>
-        <article class="metric-card"><span>Sent KB/s</span><strong id="card-sent-kbps">-</strong></article>
-        <article class="metric-card"><span>Recv KB/s</span><strong id="card-recv-kbps">-</strong></article>
+        <article class="metric-card"><span>Sent KiB/s</span><strong id="card-sent-kib-per-sec">-</strong></article>
+        <article class="metric-card"><span>Recv KiB/s</span><strong id="card-recv-kib-per-sec">-</strong></article>
         <article class="metric-card"><span>Sent pkt/s</span><strong id="card-sent-pps">-</strong></article>
         <article class="metric-card"><span>Recv pkt/s</span><strong id="card-recv-pps">-</strong></article>
-        <article class="metric-card"><span>Tick</span><strong id="card-tick">-</strong></article>
+        <article class="metric-card"><span>Server Physics</span><strong id="card-server-physics">-</strong></article>
         <article class="metric-card"><span>CPU</span><strong id="card-cpu">-</strong></article>
         <article class="metric-card"><span>Memory</span><strong id="card-memory">-</strong></article>
         <article class="metric-card"><span>PID</span><strong id="card-pid">-</strong></article>
@@ -71,10 +71,10 @@
         </article>
         <article class="chart-card">
           <div class="chart-heading">
-            <h2>Server Tick</h2>
-            <p>Latest process delta reported by Godot</p>
+            <h2>Server Physics</h2>
+            <p>Latest measured duration of the server lobby physics step</p>
           </div>
-          <div id="chart-tick" class="chart-body chart-empty">Waiting for samples...</div>
+          <div id="chart-server-physics" class="chart-body chart-empty">Waiting for samples...</div>
         </article>
         <article class="chart-card">
           <div class="chart-heading">

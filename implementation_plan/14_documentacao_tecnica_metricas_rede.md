@@ -6,7 +6,7 @@ Este documento resume como a coleta de metricas de rede foi implementada no serv
 
 ## Escopo Da Implementacao
 
-A coleta foi implementada no projeto Godot do servidor, principalmente nos arquivos `initial_project/Server/server/server.gd` e `initial_project/Server/server/network_metrics_logger.gd`. O mecanismo registra metricas em CSV durante a execucao do servidor e trabalha por amostragem periodica, nao por captura individual de cada pacote trafegado.
+A coleta foi implementada no projeto Godot do servidor, principalmente nos arquivos `initial_project/Server/server/server.gd`, `initial_project/Server/server/lobby.gd` e `initial_project/shared/metrics/network_metrics_logger.gd`. O mecanismo registra metricas em CSV durante a execucao do servidor e trabalha por amostragem periodica, nao por captura individual de cada pacote trafegado.
 
 ## Tecnologias E Bibliotecas Utilizadas
 
@@ -29,7 +29,7 @@ O servidor inicializa um `Timer` com intervalo configuravel e, a cada disparo, e
 
 - `timestamp_ms`: identifica exatamente quando a amostra foi gerada.
 - `role`: distingue a origem da amostra.
-- `players_count`: informa a quantidade de jogadores conectados no instante da coleta.
+- `players_count`: informa a quantidade de jogadores considerados na amostra do lobby naquele instante.
 - `peer_id`: associa a linha a uma conexao especifica.
 
 Esses campos foram mantidos porque ajudam a contextualizar qualquer analise posterior. Sem esse contexto, os indicadores de rede ficam desconectados do estado real da sessao de teste.
@@ -51,12 +51,18 @@ Essa metrica foi escolhida porque perda de pacotes afeta tanto atualizacoes freq
 
 ### Carga De Rede
 
-- `sent_kbps`
-- `received_kbps`
+- `sent_kib_per_sec`
+- `received_kib_per_sec`
 - `sent_packets_per_sec`
 - `received_packets_per_sec`
 
-Essas metricas foram escolhidas para representar carga e intensidade do trafego. A taxa em kilobytes por segundo ajuda a enxergar consumo de banda, enquanto a taxa de pacotes por segundo ajuda a avaliar a frequencia de mensagens trocadas, o que pode indicar pressao sobre serializacao, atualizacao de estado e processamento de rede.
+Essas metricas foram escolhidas para representar carga e intensidade do trafego. A taxa em kibibytes por segundo ajuda a enxergar consumo de banda, enquanto a taxa de pacotes por segundo ajuda a avaliar a frequencia de mensagens trocadas, o que pode indicar pressao sobre serializacao, atualizacao de estado e processamento de rede.
+
+### Custo Da Simulacao
+
+- `server_physics_process_ms`
+
+Essa metrica representa a duracao da etapa de `_physics_process()` do lobby do servidor, medida diretamente em tempo de execucao. Ela e mais apropriada para observabilidade do que usar apenas o delta de frame, porque aproxima melhor o custo da simulacao autoritativa que esta sendo executada no servidor.
 
 ### Campo Reservado
 

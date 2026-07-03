@@ -29,10 +29,11 @@ const HEADER := [
 	"last_rtt_ms",
 	"rtt_variance",
 	"packet_loss_percent",
-	"sent_kbps",
-	"received_kbps",
+	"sent_kib_per_sec",
+	"received_kib_per_sec",
 	"sent_packets_per_sec",
 	"received_packets_per_sec",
+	"server_physics_process_ms",
 	"app_ping_ms",
 	"fps",
 ]

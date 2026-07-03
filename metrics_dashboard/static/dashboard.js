@@ -25,8 +25,8 @@ const chartDefinitions = [
     id: "chart-traffic",
     emptyLabel: "Waiting for traffic samples...",
     series: [
-      { label: "Sent KB/s", color: "#4fd1c5", getValue: (sample) => sample.sent_kbps },
-      { label: "Recv KB/s", color: "#8ab4ff", getValue: (sample) => sample.received_kbps },
+      { label: "Sent KiB/s", color: "#4fd1c5", getValue: (sample) => sample.sent_kib_per_sec },
+      { label: "Recv KiB/s", color: "#8ab4ff", getValue: (sample) => sample.received_kib_per_sec },
     ],
   },
   {
@@ -38,10 +38,10 @@ const chartDefinitions = [
     ],
   },
   {
-    id: "chart-tick",
-    emptyLabel: "Waiting for tick samples...",
+    id: "chart-server-physics",
+    emptyLabel: "Waiting for server physics samples...",
     series: [
-      { label: "Server tick", color: "#8ab4ff", getValue: (sample) => sample.server_tick_ms },
+      { label: "Server physics", color: "#8ab4ff", getValue: (sample) => sample.server_physics_process_ms },
     ],
   },
   {
@@ -120,11 +120,11 @@ function renderCards() {
       "card-rtt-max",
       "card-loss-avg",
       "card-loss-max",
-      "card-sent-kbps",
-      "card-recv-kbps",
+      "card-sent-kib-per-sec",
+      "card-recv-kib-per-sec",
       "card-sent-pps",
       "card-recv-pps",
-      "card-tick",
+      "card-server-physics",
       "card-cpu",
       "card-memory",
       "card-pid",
@@ -138,11 +138,11 @@ function renderCards() {
   setCard("card-rtt-max", formatNumber(sample.summary?.max_rtt_ms, 1, " ms"));
   setCard("card-loss-avg", formatNumber(sample.summary?.avg_packet_loss_percent, 2, "%"));
   setCard("card-loss-max", formatNumber(sample.summary?.max_packet_loss_percent, 2, "%"));
-  setCard("card-sent-kbps", formatNumber(sample.sent_kbps, 1, " KB/s"));
-  setCard("card-recv-kbps", formatNumber(sample.received_kbps, 1, " KB/s"));
+  setCard("card-sent-kib-per-sec", formatNumber(sample.sent_kib_per_sec, 1, " KiB/s"));
+  setCard("card-recv-kib-per-sec", formatNumber(sample.received_kib_per_sec, 1, " KiB/s"));
   setCard("card-sent-pps", formatNumber(sample.sent_packets_per_sec, 1));
   setCard("card-recv-pps", formatNumber(sample.received_packets_per_sec, 1));
-  setCard("card-tick", formatNumber(sample.server_tick_ms, 2, " ms"));
+  setCard("card-server-physics", formatNumber(sample.server_physics_process_ms, 2, " ms"));
   setCard("card-cpu", formatNumber(sample.process_cpu_percent, 1, "%"));
   setCard("card-memory", formatNumber(sample.process_memory_rss_mb, 1, " MB"));
   setCard("card-pid", sample.server_pid ? String(sample.server_pid) : "-");

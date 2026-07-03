@@ -50,9 +50,15 @@ class MetricsStore:
         normalized["received_at_ms"] = int(time.time() * 1000)
         normalized["players_count"] = self._as_int(sample.get("players_count"), 0)
         normalized["lobbies_count"] = self._as_int(sample.get("lobbies_count"), 0)
-        normalized["server_tick_ms"] = self._as_float(sample.get("server_tick_ms"))
-        normalized["sent_kbps"] = self._as_float(sample.get("sent_kbps"))
-        normalized["received_kbps"] = self._as_float(sample.get("received_kbps"))
+        normalized["server_physics_process_ms"] = self._as_float(
+            sample.get("server_physics_process_ms", sample.get("server_tick_ms"))
+        )
+        normalized["sent_kib_per_sec"] = self._as_float(
+            sample.get("sent_kib_per_sec", sample.get("sent_kbps"))
+        )
+        normalized["received_kib_per_sec"] = self._as_float(
+            sample.get("received_kib_per_sec", sample.get("received_kbps"))
+        )
         normalized["sent_packets_per_sec"] = self._as_float(sample.get("sent_packets_per_sec"))
         normalized["received_packets_per_sec"] = self._as_float(sample.get("received_packets_per_sec"))
         normalized["server_pid"] = self._as_int(sample.get("server_pid"), 0)

@@ -1,6 +1,8 @@
 param(
 	[string]$GodotCommand = "godot",
 	[string]$PythonCommand = "python",
+	[switch]$RecordMetrics,
+	[switch]$StreamMetrics,
 	[switch]$StartDashboard,
 	[string]$DashboardHost = "127.0.0.1",
 	[int]$DashboardPort = 8000,
@@ -108,10 +110,12 @@ if ($StartDashboard) {
 & $sharedLinksScript
 Ensure-ServerAssetsPath (Join-Path $serverProjectDir "assets") (Join-Path $clientProjectDir "assets")
 
-$dashboardOutLog = New-LogPath "dashboard-out"
-$dashboardErrLog = New-LogPath "dashboard-err"
 $serverOutLog = New-LogPath "godot-server-out"
 $serverErrLog = New-LogPath "godot-server-err"
+$dashboardOutLog = ""
+$dashboardErrLog = ""
+$metricsStreamEnabled = $StreamMetrics -or $StartDashboard
+$metricsEnabled = $RecordMetrics -or $metricsStreamEnabled
 
 $godotArgs = @(
 	"--path",
@@ -119,24 +123,35 @@ $godotArgs = @(
 	"--headless",
 	$serverMainScene,
 	"--",
-	"--port=$ServerPort",
-	"--network-metrics"
+	"--port=$ServerPort"
 )
 
+if ($metricsEnabled) {
+	$godotArgs += "--metrics-interval=$MetricsIntervalSeconds"
+}
+
+if ($RecordMetrics) {
+	$godotArgs += "--record-metrics"
+}
+
+if ($metricsStreamEnabled) {
+	$godotArgs += @(
+		"--stream-metrics",
+		"--metrics-stream-host=$MetricsUdpHost",
+		"--metrics-stream-port=$MetricsUdpPort"
+	)
+}
+
 if ($StartDashboard) {
+	$dashboardOutLog = New-LogPath "dashboard-out"
+	$dashboardErrLog = New-LogPath "dashboard-err"
+
 	$dashboardArgs = @(
 		$dashboardEntry,
 		"--udp-host=$MetricsUdpHost",
 		"--udp-port=$MetricsUdpPort",
 		"--http-host=$DashboardHost",
 		"--http-port=$DashboardPort"
-	)
-
-	$godotArgs += @(
-		"--stream-metrics",
-		"--metrics-interval=$MetricsIntervalSeconds",
-		"--metrics-stream-host=$MetricsUdpHost",
-		"--metrics-stream-port=$MetricsUdpPort"
 	)
 }
 
@@ -179,6 +194,8 @@ Write-Host "Godot executable: $godotExecutable"
 Write-Host "Godot server PID: $($serverProcess.Id)"
 Write-Host "Godot stdout log: $serverOutLog"
 Write-Host "Godot stderr log: $serverErrLog"
+Write-Host "Metrics CSV recording: $(if ($RecordMetrics) { 'enabled' } else { 'disabled' })"
+Write-Host "Metrics UDP stream: $(if ($metricsStreamEnabled) { 'enabled' } else { 'disabled' })"
 if ($StartDashboard) {
 	if ($dashboardProcess -and -not $dashboardProcess.HasExited) {
 		Write-Host "Metrics dashboard started at: $dashboardUrl"

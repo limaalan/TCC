@@ -1,10 +1,10 @@
 extends Node
 const NetworkConfig = preload("res://shared/network_config.gd")
-const NetworkMetricsLogger = preload("res://server/network_metrics_logger.gd")
+const NetworkMetricsLogger = preload("res://shared/metrics/network_metrics_logger.gd")
 const Lobby = preload("res://server/lobby.gd")
 const MAX_CLIENTS :=64
-const MAX_LOBBIES:= 1
-const MAX_PLAYERS_PER_LOBBY :=2
+const MAX_LOBBIES:= 2
+const MAX_PLAYERS_PER_LOBBY :=4
 const DISTANCE_BETWEEN_LOBBIES = 100
 
 var lobbies :Array[Lobby] = []
@@ -14,7 +14,6 @@ var peer := ENetMultiplayerPeer.new()
 var metrics_logger := NetworkMetricsLogger.new("server")
 var metrics_timer := Timer.new()
 var latest_app_ping_by_peer: Dictionary = {}
-var latest_server_tick_ms := 0.0
 
 func _ready() -> void:
 	var port := NetworkConfig.get_server_port()
@@ -30,9 +29,6 @@ func _ready() -> void:
 
 	lobby_spots.resize(MAX_LOBBIES)
 	_setup_metrics_logging()
-
-func _process(delta: float) -> void:
-	latest_server_tick_ms = delta * 1000.0
 
 func _on_peer_connected(id:int)-> void:
 	print("cliend %d conectou-se" %id)
@@ -60,11 +56,17 @@ func get_lobby_from_client_id(id:int)->Lobby:
 			return lobby
 	return null
 
-func get_connected_peer_ids() -> Array[int]:
+func get_lobby_player_peer_ids() -> Array[int]:
 	var connected_peer_ids: Array[int] = []
 	for lobby in lobbies:
 		connected_peer_ids.append_array(lobby.get_connected_clients())
 	return connected_peer_ids
+
+func get_server_physics_process_ms() -> float:
+	var max_physics_process_ms := 0.0
+	for lobby in lobbies:
+		max_physics_process_ms = maxf(max_physics_process_ms, lobby.get_last_physics_process_ms())
+	return max_physics_process_ms
 
 func _setup_metrics_logging() -> void:
 	metrics_logger.configure_from_args()
@@ -95,16 +97,17 @@ func _on_metrics_timer_timeout() -> void:
 	var sent_packets := host.pop_statistic(ENetConnection.HOST_TOTAL_SENT_PACKETS)
 	var received_bytes := host.pop_statistic(ENetConnection.HOST_TOTAL_RECEIVED_DATA)
 	var received_packets := host.pop_statistic(ENetConnection.HOST_TOTAL_RECEIVED_PACKETS)
-	var connected_peer_ids := get_connected_peer_ids()
+	var lobby_player_peer_ids := get_lobby_player_peer_ids()
 	var rows: Array[Dictionary] = []
 	var peers_payload: Array[Dictionary] = []
-	var players_count := connected_peer_ids.size()
-	var sent_kbps := sent_bytes / 1024.0 / elapsed_sec
-	var received_kbps := received_bytes / 1024.0 / elapsed_sec
+	var players_count := lobby_player_peer_ids.size()
+	var sent_kib_per_sec := sent_bytes / 1024.0 / elapsed_sec
+	var received_kib_per_sec := received_bytes / 1024.0 / elapsed_sec
 	var sent_packets_per_sec := sent_packets / elapsed_sec
 	var received_packets_per_sec := received_packets / elapsed_sec
+	var server_physics_process_ms := get_server_physics_process_ms()
 
-	for peer_id in connected_peer_ids:
+	for peer_id in lobby_player_peer_ids:
 		var peer_ref := peer.get_peer(peer_id)
 		if peer_ref == null or not peer_ref.is_active():
 			continue
@@ -118,10 +121,11 @@ func _on_metrics_timer_timeout() -> void:
 			"last_rtt_ms": peer_ref.get_statistic(ENetPacketPeer.PEER_LAST_ROUND_TRIP_TIME),
 			"rtt_variance": peer_ref.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME_VARIANCE),
 			"packet_loss_percent": _packet_loss_percent(peer_ref),
-			"sent_kbps": sent_kbps,
-			"received_kbps": received_kbps,
+			"sent_kib_per_sec": sent_kib_per_sec,
+			"received_kib_per_sec": received_kib_per_sec,
 			"sent_packets_per_sec": sent_packets_per_sec,
 			"received_packets_per_sec": received_packets_per_sec,
+			"server_physics_process_ms": server_physics_process_ms,
 			"app_ping_ms": latest_app_ping_by_peer.get(peer_id, null),
 			"fps": null,
 		}
@@ -145,9 +149,9 @@ func _on_metrics_timer_timeout() -> void:
 		"server_pid": OS.get_process_id(),
 		"players_count": players_count,
 		"lobbies_count": lobbies.size(),
-		"server_tick_ms": latest_server_tick_ms,
-		"sent_kbps": sent_kbps,
-		"received_kbps": received_kbps,
+		"server_physics_process_ms": server_physics_process_ms,
+		"sent_kib_per_sec": sent_kib_per_sec,
+		"received_kib_per_sec": received_kib_per_sec,
 		"sent_packets_per_sec": sent_packets_per_sec,
 		"received_packets_per_sec": received_packets_per_sec,
 		"peers": peers_payload,

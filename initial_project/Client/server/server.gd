@@ -1,6 +1,6 @@
 extends Node
 const NetworkConfig = preload("res://shared/network_config.gd")
-const NetworkMetricsLogger = preload("res://server/network_metrics_logger.gd")
+const NetworkMetricsLogger = preload("res://shared/metrics/network_metrics_logger.gd")
 const Lobby = preload("res://server/lobby.gd")
 signal on_lobby_clients_updated(connected_clients:int, max_clients:int)
 signal on_cant_connect_to_lobby()
@@ -95,10 +95,11 @@ func _on_metrics_timer_timeout() -> void:
 		"last_rtt_ms": server_peer.get_statistic(ENetPacketPeer.PEER_LAST_ROUND_TRIP_TIME),
 		"rtt_variance": server_peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME_VARIANCE),
 		"packet_loss_percent": _packet_loss_percent(server_peer),
-		"sent_kbps": sent_bytes / 1024.0 / elapsed_sec,
-		"received_kbps": received_bytes / 1024.0 / elapsed_sec,
+		"sent_kib_per_sec": sent_bytes / 1024.0 / elapsed_sec,
+		"received_kib_per_sec": received_bytes / 1024.0 / elapsed_sec,
 		"sent_packets_per_sec": sent_packets / elapsed_sec,
 		"received_packets_per_sec": received_packets / elapsed_sec,
+		"server_physics_process_ms": null,
 		"app_ping_ms": latest_app_ping_ms if latest_app_ping_ms >= 0.0 else null,
 		"fps": Engine.get_frames_per_second(),
 	})
