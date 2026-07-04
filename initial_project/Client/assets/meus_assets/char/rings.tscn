@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://cla7tj570162f"]
+
+[ext_resource type="PackedScene" uid="uid://y3erl0f6lybo" path="res://assets/meus_assets/char/char_rings.glb" id="1_ivcj0"]
+
+[node name="rings" instance=ExtResource("1_ivcj0")]

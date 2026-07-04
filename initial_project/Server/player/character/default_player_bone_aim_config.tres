@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="PlayerBoneAimConfig" load_steps=7 format=3 uid="uid://b18708pep6x61"]
+
+[ext_resource type="Script" uid="uid://b8ir7vd5tdax4" path="res://shared/player/player_bone_aim_config.gd" id="1_w9r8l"]
+[ext_resource type="Script" uid="uid://bdtlaanyjr022" path="res://shared/player/player_bone_aim_entry.gd" id="2_h42me"]
+
+[sub_resource type="Resource" id="Resource_m1dvs"]
+script = ExtResource("2_h42me")
+bone_name = &"hover"
+look_down_rotation_degrees = Vector3(8, 0, 0)
+look_up_rotation_degrees = Vector3(-6, 0, 0)
+
+[sub_resource type="Resource" id="Resource_g2l08"]
+script = ExtResource("2_h42me")
+bone_name = &"head"
+look_down_rotation_degrees = Vector3(12, 0, 0)
+look_up_rotation_degrees = Vector3(-10, 0, 0)
+
+[sub_resource type="Resource" id="Resource_3sybc"]
+script = ExtResource("2_h42me")
+bone_name = &"body"
+look_down_rotation_degrees = Vector3(4, 0, 0)
+look_up_rotation_degrees = Vector3(-2, 0, 0)
+
+[sub_resource type="Resource" id="Resource_bx2hx"]
+script = ExtResource("2_h42me")
+bone_name = &"arm_R"
+look_down_rotation_degrees = Vector3(18, -12, 0)
+look_up_rotation_degrees = Vector3(-6, -40, 0)
+apply_y = true
+
+[resource]
+script = ExtResource("1_w9r8l")
+entries = Array[ExtResource("2_h42me")]([SubResource("Resource_m1dvs"), SubResource("Resource_g2l08"), SubResource("Resource_3sybc"), SubResource("Resource_bx2hx")])
