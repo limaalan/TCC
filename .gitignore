@@ -2,6 +2,7 @@
 .godot/
 build/
 /android/
+imgs/referencias
 initial_project/Client/assets/**
 !initial_project/Client/assets/meus_assets
 !initial_project/Client/assets/meus_assets/**
@@ -10,3 +11,5 @@ initial_project/Server/shared
 initial_project/Server/assets
 /assets/
 *.blend1
+/metrics_dashboard/__pycache__/
+settings.json

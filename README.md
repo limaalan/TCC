@@ -11,10 +11,15 @@ O padrao de commit sera: `1. Breve descricao da tarefa`
 ex: `2. Criacao do modelo de personagem`
 
 ## Coleta de metricas de rede
-Servidor e cliente aceitam os argumentos abaixo para registrar metricas em CSV durante testes manuais:
+O contrato oficial de observabilidade do servidor passa a ser:
 
-- `--network-metrics`
-- `--network-metrics-interval-ms=1000`
-- `--network-metrics-label=teste_2p`
+- `--port=7777`
+- `--record-metrics`
+- `--stream-metrics`
+- `--metrics-interval=1.0`
+- `--metrics-stream-host=127.0.0.1`
+- `--metrics-stream-port=8765`
 
-Os arquivos sao gravados em `user://network_metrics/`, um CSV por processo, com o cabecalho pedido na issue `#102`.
+Sem flags de observabilidade o servidor sobe normal, sem CSV e sem stream UDP. Os arquivos CSV continuam sendo gravados em `user://network_metrics/` quando `--record-metrics` estiver ativo.
+
+As flags antigas `--network-metrics` e `--metrics` permanecem apenas por compatibilidade temporaria. A documentacao completa de build, deploy e scripts de inicializacao esta em `implementation_plan/15_runtime_observabilidade_e_comandos_servidor.md`.
