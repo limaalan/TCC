@@ -1,10 +1,11 @@
 extends Node
 const NetworkConfig = preload("res://shared/network_config.gd")
+const MatchPresetRegistry = preload("res://shared/match_preset_registry.gd")
 const NetworkMetricsLogger = preload("res://shared/metrics/network_metrics_logger.gd")
 const Lobby = preload("res://server/lobby.gd")
 const MAX_CLIENTS :=64
 const MAX_LOBBIES:= 2
-const MAX_PLAYERS_PER_LOBBY :=4
+const MAX_PLAYERS_PER_LOBBY :=2
 const DISTANCE_BETWEEN_LOBBIES = 100
 
 var lobbies :Array[Lobby] = []
@@ -51,10 +52,16 @@ func remove_client_from_lobby(client_id:int)-> void:
 	print("cliend %d desconectou-se do lobby" %client_id)
 
 func get_lobby_from_client_id(id:int)->Lobby:
+	var disconnected_lobby: Lobby = null
 	for lobby in lobbies :
-		if lobby.client_data.keys().has(id):
+		if not lobby.client_data.keys().has(id):
+			continue
+
+		if lobby.client_data.get(id)[NetKeys.CONNECTED]:
 			return lobby
-	return null
+
+		disconnected_lobby = lobby
+	return disconnected_lobby
 
 func get_lobby_player_peer_ids() -> Array[int]:
 	var connected_peer_ids: Array[int] = []
@@ -172,18 +179,24 @@ func update_lobby_spots() ->void:
 			lobby_spots[i] = null
 
 @rpc("any_peer", "call_remote", "reliable")
-func c_try_connect_client_to_lobby(player_name:String)-> void :
+func c_try_connect_client_to_lobby(player_name: String, match_preset_id: StringName)-> void :
 	var client_id := multiplayer.get_remote_sender_id()
-	var maybe_lobby := get_non_full_lobby()
+
+	if not MatchPresetRegistry.is_valid_preset_id(match_preset_id):
+		push_warning("Client %s requested invalid match preset '%s'." % [client_id, String(match_preset_id)])
+		s_client_cant_connect_to_lobby.rpc_id(client_id)
+		return
+
+	var maybe_lobby := get_non_full_lobby(match_preset_id)
 
 	if maybe_lobby:
 		maybe_lobby.add_client(client_id,player_name)
 		idle_clients.erase(client_id)
 		lobby_clients_updated(maybe_lobby)
-		if maybe_lobby.client_data.keys().size() >= MAX_PLAYERS_PER_LOBBY:
+		if maybe_lobby.get_connected_clients().size() >= maybe_lobby.match_config.max_players:
 			lock_lobby(maybe_lobby)
 
-		print("Cliente %d conectou-se ao lobby %s" %[client_id, maybe_lobby.name])
+		print("Cliente %d conectou-se ao lobby %s (%s)" %[client_id, maybe_lobby.name, String(match_preset_id)])
 		return
 	s_client_cant_connect_to_lobby.rpc_id(client_id)
 
@@ -192,34 +205,59 @@ func lock_lobby(lobby:Lobby)->void:
 	create_lobby_on_clients(lobby)
 
 func create_lobby_on_clients(lobby:Lobby)->void:
-	for lobby_client_id in lobby.client_data.keys():
+	for lobby_client_id in lobby.get_connected_clients():
 		s_create_lobby_on_clients.rpc_id(lobby_client_id, lobby.name)
 
 @rpc("authority", "call_remote", "reliable")
 func s_create_lobby_on_clients(lobby_name:String)->void:
 	pass
 
-func get_non_full_lobby()->Lobby:
+func get_non_full_lobby(match_preset_id: StringName)->Lobby:
 	for lobby in lobbies:
 		if lobby.status != Lobby.IDLE:
 			continue
-		print("Size:", lobby.client_data.keys().size())
-		if lobby.client_data.keys().size() < MAX_PLAYERS_PER_LOBBY:
+
+		if lobby.match_preset_id != match_preset_id:
+			continue
+
+		print("Size:", lobby.get_connected_clients().size())
+		if lobby.get_connected_clients().size() < lobby.match_config.max_players:
 			return lobby
 	if lobbies.size()< MAX_LOBBIES:
 		print("Lobbies size:" , lobbies.size())
-		var new_lobby := Lobby.new()
-		lobbies.append(new_lobby)
-		new_lobby.name = str(new_lobby.get_instance_id())
-		add_child(new_lobby)
-		update_lobby_spots()
-		return new_lobby
+		return create_lobby(match_preset_id)
 	print("Todas as salas estao cheias.")
 	return null
 
+func create_lobby(match_preset_id: StringName) -> Lobby:
+	var new_lobby := Lobby.new()
+	new_lobby.match_preset_id = match_preset_id
+	new_lobby.match_config = MatchPresetRegistry.make_match_config(match_preset_id)
+	new_lobby.name = "%s_%s" % [String(match_preset_id), str(new_lobby.get_instance_id())]
+
+	lobbies.append(new_lobby)
+	add_child(new_lobby)
+	update_lobby_spots()
+
+	print(
+		"Lobby criado: %s | preset=%s | mode=%s | map=%s | max_players=%s"
+		% [
+			new_lobby.name,
+			String(match_preset_id),
+			str(new_lobby.match_config.mode),
+			String(new_lobby.match_config.map_id),
+			new_lobby.match_config.max_players
+		]
+	)
+
+	return new_lobby
+
 func lobby_clients_updated(lobby: Lobby)->void:
+	var connected_clients := lobby.get_connected_clients().size()
+	var max_clients := lobby.match_config.max_players
+
 	for client_id in lobby.get_connected_clients():
-		s_lobby_clients_updated.rpc_id(client_id, lobby.client_data.keys().size(), MAX_PLAYERS_PER_LOBBY)
+		s_lobby_clients_updated.rpc_id(client_id, connected_clients, max_clients)
 
 @rpc("authority", "call_remote", "reliable")
 func s_lobby_clients_updated(connected_clients:int, max_clients:int)->void:

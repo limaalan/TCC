@@ -30,6 +30,7 @@ const NetworkEntity = preload("res://shared/network_entity.gd")
 const TeamDeathmatchMode = preload("res://game_modes/team_deathmatch_mode.gd")
 const WeaponDefinition = preload("res://shared/weapons/weapon_definition.gd")
 @export var match_config: MatchConfig
+@export var match_preset_id: StringName = &""
 
 var client_data : Dictionary = {}
 var ready_clients: Array[int] =[]
