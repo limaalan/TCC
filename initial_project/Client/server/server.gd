@@ -105,11 +105,11 @@ func _on_metrics_timer_timeout() -> void:
 	})
 	metrics_logger.append_rows(rows)
 
-func try_connect_client_to_lobby(player_name:String)-> void:
-	c_try_connect_client_to_lobby.rpc_id(1,player_name)
+func try_connect_client_to_lobby(player_name: String, match_preset_id: StringName)-> void:
+	c_try_connect_client_to_lobby.rpc_id(1, player_name, match_preset_id)
 
 @rpc("any_peer", "call_remote", "reliable")
-func c_try_connect_client_to_lobby(player_name:String)-> void :
+func c_try_connect_client_to_lobby(player_name: String, match_preset_id: StringName)-> void :
 	pass
 
 @rpc("authority", "call_remote", "reliable")
