@@ -38,6 +38,7 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
 [node name="TopArea" type="Control" parent="MarginContainer"]
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 mouse_filter = 2
 
