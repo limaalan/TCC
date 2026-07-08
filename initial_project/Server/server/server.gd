@@ -1,8 +1,8 @@
 extends Node
 const NetworkConfig = preload("res://shared/network_config.gd")
 const MatchPresetRegistry = preload("res://shared/match_preset_registry.gd")
-const NetworkMetricsLogger = preload("res://shared/metrics/network_metrics_logger.gd")
 const Lobby = preload("res://server/lobby.gd")
+const ServerMetricsCollector = preload("res://server/server_metrics_collector.gd")
 const MAX_CLIENTS :=64
 const MAX_LOBBIES:= 2
 const MAX_PLAYERS_PER_LOBBY :=4
@@ -12,9 +12,9 @@ var lobbies :Array[Lobby] = []
 var idle_clients:Array[int]= []
 var lobby_spots : Array[Lobby] = []
 var peer := ENetMultiplayerPeer.new()
-var metrics_logger := NetworkMetricsLogger.new("server")
-var metrics_timer := Timer.new()
+var metrics_collector := ServerMetricsCollector.new()
 var latest_app_ping_by_peer: Dictionary = {}
+var latest_client_fps_by_peer: Dictionary = {}
 
 func _ready() -> void:
 	var port := NetworkConfig.get_server_port()
@@ -29,7 +29,8 @@ func _ready() -> void:
 	peer.peer_disconnected.connect(_on_peer_disconnected)
 
 	lobby_spots.resize(MAX_LOBBIES)
-	_setup_metrics_logging()
+	add_child(metrics_collector)
+	metrics_collector.setup(self, peer)
 
 func _on_peer_connected(id:int)-> void:
 	print("cliend %d conectou-se" %id)
@@ -38,6 +39,7 @@ func _on_peer_connected(id:int)-> void:
 func _on_peer_disconnected(id:int)-> void:
 	remove_client_from_lobby(id)
 	latest_app_ping_by_peer.erase(id)
+	latest_client_fps_by_peer.erase(id)
 
 	idle_clients.erase(id)
 	print("cliend %d desconectou-se do servidor" %id)
@@ -69,100 +71,30 @@ func get_lobby_player_peer_ids() -> Array[int]:
 		connected_peer_ids.append_array(lobby.get_connected_clients())
 	return connected_peer_ids
 
-func get_server_physics_process_ms() -> float:
+func get_lobbies_count() -> int:
+	return lobbies.size()
+
+func get_server_physics_summary() -> Dictionary:
 	var max_physics_process_ms := 0.0
+	var sum_physics_process_ms := 0.0
 	for lobby in lobbies:
-		max_physics_process_ms = maxf(max_physics_process_ms, lobby.get_last_physics_process_ms())
-	return max_physics_process_ms
+		var lobby_physics_process_ms := lobby.get_last_physics_process_ms()
+		max_physics_process_ms = maxf(max_physics_process_ms, lobby_physics_process_ms)
+		sum_physics_process_ms += lobby_physics_process_ms
 
-func _setup_metrics_logging() -> void:
-	metrics_logger.configure_from_args()
-	if not metrics_logger.is_enabled():
-		return
+	return {
+		"max": max_physics_process_ms,
+		"sum": sum_physics_process_ms,
+	}
 
-	metrics_timer.wait_time = metrics_logger.get_sample_interval_sec()
-	metrics_timer.one_shot = false
-	add_child(metrics_timer)
-	metrics_logger.reset_sample_window()
-	metrics_timer.timeout.connect(_on_metrics_timer_timeout)
-	metrics_timer.start()
+func get_server_physics_process_ms() -> float:
+	return float(get_server_physics_summary().get("max", 0.0))
 
-func _packet_loss_percent(peer_ref: ENetPacketPeer) -> float:
-	return 100.0 * peer_ref.get_statistic(ENetPacketPeer.PEER_PACKET_LOSS) / ENetPacketPeer.PACKET_LOSS_SCALE
+func get_app_ping_by_peer() -> Dictionary:
+	return latest_app_ping_by_peer.duplicate()
 
-func _on_metrics_timer_timeout() -> void:
-	if not metrics_logger.is_enabled():
-		return
-
-	var host := peer.host
-	if host == null:
-		return
-
-	var sample_timestamp_ms := floori(Time.get_unix_time_from_system() * 1000)
-	var elapsed_sec := metrics_logger.consume_elapsed_seconds(sample_timestamp_ms)
-	var sent_bytes := host.pop_statistic(ENetConnection.HOST_TOTAL_SENT_DATA)
-	var sent_packets := host.pop_statistic(ENetConnection.HOST_TOTAL_SENT_PACKETS)
-	var received_bytes := host.pop_statistic(ENetConnection.HOST_TOTAL_RECEIVED_DATA)
-	var received_packets := host.pop_statistic(ENetConnection.HOST_TOTAL_RECEIVED_PACKETS)
-	var lobby_player_peer_ids := get_lobby_player_peer_ids()
-	var rows: Array[Dictionary] = []
-	var peers_payload: Array[Dictionary] = []
-	var players_count := lobby_player_peer_ids.size()
-	var sent_kib_per_sec := sent_bytes / 1024.0 / elapsed_sec
-	var received_kib_per_sec := received_bytes / 1024.0 / elapsed_sec
-	var sent_packets_per_sec := sent_packets / elapsed_sec
-	var received_packets_per_sec := received_packets / elapsed_sec
-	var server_physics_process_ms := get_server_physics_process_ms()
-
-	for peer_id in lobby_player_peer_ids:
-		var peer_ref := peer.get_peer(peer_id)
-		if peer_ref == null or not peer_ref.is_active():
-			continue
-
-		var peer_sample := {
-			"timestamp_ms": sample_timestamp_ms,
-			"role": "server",
-			"players_count": players_count,
-			"peer_id": peer_id,
-			"rtt_ms": peer_ref.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME),
-			"last_rtt_ms": peer_ref.get_statistic(ENetPacketPeer.PEER_LAST_ROUND_TRIP_TIME),
-			"rtt_variance": peer_ref.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME_VARIANCE),
-			"packet_loss_percent": _packet_loss_percent(peer_ref),
-			"sent_kib_per_sec": sent_kib_per_sec,
-			"received_kib_per_sec": received_kib_per_sec,
-			"sent_packets_per_sec": sent_packets_per_sec,
-			"received_packets_per_sec": received_packets_per_sec,
-			"server_physics_process_ms": server_physics_process_ms,
-			"app_ping_ms": latest_app_ping_by_peer.get(peer_id, null),
-			"fps": null,
-		}
-
-		rows.append(peer_sample)
-		peers_payload.append({
-			"peer_id": peer_id,
-			"rtt_ms": peer_sample["rtt_ms"],
-			"last_rtt_ms": peer_sample["last_rtt_ms"],
-			"rtt_variance_ms": peer_sample["rtt_variance"],
-			"packet_loss_percent": peer_sample["packet_loss_percent"],
-			"app_ping_ms": peer_sample["app_ping_ms"],
-		})
-
-	metrics_logger.append_rows(rows)
-	metrics_logger.stream_sample({
-		"schema_version": 1,
-		"source": "godot_server",
-		"role": "server",
-		"timestamp_ms": sample_timestamp_ms,
-		"server_pid": OS.get_process_id(),
-		"players_count": players_count,
-		"lobbies_count": lobbies.size(),
-		"server_physics_process_ms": server_physics_process_ms,
-		"sent_kib_per_sec": sent_kib_per_sec,
-		"received_kib_per_sec": received_kib_per_sec,
-		"sent_packets_per_sec": sent_packets_per_sec,
-		"received_packets_per_sec": received_packets_per_sec,
-		"peers": peers_payload,
-	})
+func get_client_fps_by_peer() -> Dictionary:
+	return latest_client_fps_by_peer.duplicate()
 
 func update_lobby_spots() ->void:
 	for lobby in lobbies:
@@ -280,6 +212,15 @@ func c_get_server_clock_time(client_clock_time:int)->void:
 func c_report_app_ping(app_ping_ms: float) -> void:
 	var client_id := multiplayer.get_remote_sender_id()
 	latest_app_ping_by_peer[client_id] = app_ping_ms
+
+@rpc("any_peer", "call_remote", "unreliable_ordered")
+func c_report_client_fps(fps: float) -> void:
+	var client_id := multiplayer.get_remote_sender_id()
+
+	if is_nan(fps) or is_inf(fps):
+		return
+
+	latest_client_fps_by_peer[client_id] = clampf(fps, 0.0, 1000.0)
 
 @rpc("any_peer", "call_remote", "unreliable_ordered" )
 func s_return_server_clock_time(server_clock_time:int, old_client_clock_time:int)->void:

@@ -3,6 +3,7 @@ const state = {
   config: null,
   ws: null,
 };
+const peerColors = {};
 
 const chartDefinitions = [
   {
@@ -65,6 +66,57 @@ function latestSample() {
   return state.history.length ? state.history[state.history.length - 1] : null;
 }
 
+function colorForPeer(peerId) {
+  const key = String(peerId);
+  if (!peerColors[key]) {
+    const numericPeerId = Number(peerId);
+    const hueSeed = Number.isFinite(numericPeerId)
+      ? numericPeerId
+      : key.split("").reduce((total, character) => total + character.charCodeAt(0), 0);
+    peerColors[key] = `hsl(${(hueSeed * 57) % 360}, 70%, 55%)`;
+  }
+  return peerColors[key];
+}
+
+function getKnownFpsPeerIds() {
+  const ids = new Set();
+
+  state.history.forEach((sample) => {
+    if (!Array.isArray(sample.client_fps)) {
+      return;
+    }
+
+    sample.client_fps.forEach((entry) => {
+      if (entry?.peer_id !== undefined) {
+        ids.add(entry.peer_id);
+      }
+    });
+  });
+
+  return Array.from(ids).sort((a, b) => Number(a) - Number(b));
+}
+
+function getClientFps(sample, peerId) {
+  if (!Array.isArray(sample.client_fps)) {
+    return null;
+  }
+
+  const entry = sample.client_fps.find((item) => item.peer_id === peerId);
+  return entry?.fps ?? null;
+}
+
+function buildClientFpsChartDefinition() {
+  return {
+    id: "chart-client-fps",
+    emptyLabel: "Waiting for client FPS samples...",
+    series: getKnownFpsPeerIds().map((peerId) => ({
+      label: `Client ${peerId}`,
+      color: colorForPeer(peerId),
+      getValue: (sample) => getClientFps(sample, peerId),
+    })),
+  };
+}
+
 function upsertSample(sample) {
   if (!sample || typeof sample !== "object") {
     return;
@@ -125,6 +177,8 @@ function renderCards() {
       "card-sent-pps",
       "card-recv-pps",
       "card-server-physics",
+      "card-client-fps-avg",
+      "card-client-fps-min",
       "card-cpu",
       "card-memory",
       "card-pid",
@@ -143,6 +197,8 @@ function renderCards() {
   setCard("card-sent-pps", formatNumber(sample.sent_packets_per_sec, 1));
   setCard("card-recv-pps", formatNumber(sample.received_packets_per_sec, 1));
   setCard("card-server-physics", formatNumber(sample.server_physics_process_ms, 2, " ms"));
+  setCard("card-client-fps-avg", formatNumber(sample.client_fps_summary?.avg_fps, 1));
+  setCard("card-client-fps-min", formatNumber(sample.client_fps_summary?.min_fps, 1));
   setCard("card-cpu", formatNumber(sample.process_cpu_percent, 1, "%"));
   setCard("card-memory", formatNumber(sample.process_memory_rss_mb, 1, " MB"));
   setCard("card-pid", sample.server_pid ? String(sample.server_pid) : "-");
@@ -156,7 +212,7 @@ function renderPeers() {
   }
 
   if (!sample || !Array.isArray(sample.peers) || sample.peers.length === 0) {
-    body.innerHTML = '<tr><td colspan="6" class="empty-row">No connected peers in the latest sample.</td></tr>';
+    body.innerHTML = '<tr><td colspan="7" class="empty-row">No connected peers in the latest sample.</td></tr>';
     return;
   }
 
@@ -170,6 +226,7 @@ function renderPeers() {
           <td>${formatNumber(peer.rtt_variance_ms, 1)}</td>
           <td>${formatNumber(peer.packet_loss_percent, 2)}</td>
           <td>${formatNumber(peer.app_ping_ms, 1)}</td>
+          <td>${formatNumber(peer.client_fps, 1)}</td>
         </tr>
       `,
     )
@@ -264,6 +321,7 @@ function renderChart(definition) {
 
 function renderCharts() {
   chartDefinitions.forEach(renderChart);
+  renderChart(buildClientFpsChartDefinition());
 }
 
 function renderAll() {
