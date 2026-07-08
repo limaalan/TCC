@@ -30,7 +30,7 @@ static func make_match_config(preset_id: StringName) -> MatchConfig:
 			config.time_limit_sec = 300
 			config.score_to_win = 20
 			config.lives_per_player = 0
-			config.max_players = 2
+			config.max_players = 4
 
 		KOTH_HIGHRISE:
 			config.mode = GameEnums.GameMode.KING_OF_THE_HILL
@@ -38,7 +38,7 @@ static func make_match_config(preset_id: StringName) -> MatchConfig:
 			config.time_limit_sec = 300
 			config.score_to_win = 20
 			config.lives_per_player = 0
-			config.max_players = 2
+			config.max_players = 4
 
 		_:
 			push_warning("Invalid match preset '%s'. Using default preset." % String(preset_id))
