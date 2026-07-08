@@ -943,6 +943,8 @@ func c_try_throw_grenade(player_state:Dictionary)->void:
 		return
 	
 	var player :PlayerServerReal = server_players.get(client_id).real
+	if player == null or not is_instance_valid(player):
+		return
 	
 	if player.grenades_left <= 0 : return 
 	

@@ -5,7 +5,7 @@ const NetworkMetricsLogger = preload("res://shared/metrics/network_metrics_logge
 const Lobby = preload("res://server/lobby.gd")
 const MAX_CLIENTS :=64
 const MAX_LOBBIES:= 2
-const MAX_PLAYERS_PER_LOBBY :=2
+const MAX_PLAYERS_PER_LOBBY :=4
 const DISTANCE_BETWEEN_LOBBIES = 100
 
 var lobbies :Array[Lobby] = []
