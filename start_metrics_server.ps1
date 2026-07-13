@@ -9,7 +9,8 @@ param(
 	[string]$MetricsUdpHost = "127.0.0.1",
 	[int]$MetricsUdpPort = 8765,
 	[int]$ServerPort = 7777,
-	[double]$MetricsIntervalSeconds = 1.0
+	[double]$MetricsIntervalSeconds = 1.0,
+	[string]$MetricsOutputDir = "metrics-logs"
 )
 
 $ErrorActionPreference = "Stop"
@@ -90,6 +91,14 @@ function Ensure-ServerAssetsPath($serverAssetsPath, $clientAssetsPath) {
 	Ensure-Junction $serverAssetsPath $clientAssetsPath
 }
 
+function Resolve-MetricsOutputDir($basePath, $pathValue) {
+	if ([System.IO.Path]::IsPathRooted($pathValue)) {
+		return [System.IO.Path]::GetFullPath($pathValue)
+	}
+
+	return [System.IO.Path]::GetFullPath((Join-Path $basePath $pathValue))
+}
+
 Assert-PathExists $serverProjectDir "Godot server project"
 Assert-PathExists $sharedLinksScript "Shared links script"
 Assert-PathExists $clientProjectDir "Godot client project"
@@ -116,6 +125,7 @@ $dashboardOutLog = ""
 $dashboardErrLog = ""
 $metricsStreamEnabled = $StreamMetrics -or $StartDashboard
 $metricsEnabled = $RecordMetrics -or $metricsStreamEnabled
+$metricsOutputDirResolved = Resolve-MetricsOutputDir $repoRoot $MetricsOutputDir
 
 $godotArgs = @(
 	"--path",
@@ -132,6 +142,7 @@ if ($metricsEnabled) {
 
 if ($RecordMetrics) {
 	$godotArgs += "--record-metrics"
+	$godotArgs += "--metrics-output-dir=$metricsOutputDirResolved"
 }
 
 if ($metricsStreamEnabled) {
@@ -195,6 +206,9 @@ Write-Host "Godot server PID: $($serverProcess.Id)"
 Write-Host "Godot stdout log: $serverOutLog"
 Write-Host "Godot stderr log: $serverErrLog"
 Write-Host "Metrics CSV recording: $(if ($RecordMetrics) { 'enabled' } else { 'disabled' })"
+if ($RecordMetrics) {
+	Write-Host "Metrics CSV directory: $metricsOutputDirResolved"
+}
 Write-Host "Metrics UDP stream: $(if ($metricsStreamEnabled) { 'enabled' } else { 'disabled' })"
 if ($StartDashboard) {
 	if ($dashboardProcess -and -not $dashboardProcess.HasExited) {

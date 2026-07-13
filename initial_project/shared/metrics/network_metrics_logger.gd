@@ -7,11 +7,15 @@ const STREAM_ARG := "--stream-metrics"
 const LEGACY_INTERVAL_ARG_PREFIX := "--network-metrics-interval-ms="
 const INTERVAL_ARG_PREFIX := "--metrics-interval="
 const LABEL_ARG_PREFIX := "--network-metrics-label="
+const LEGACY_OUTPUT_DIR_ARG_PREFIX := "--network-metrics-output-dir="
+const OUTPUT_DIR_ARG_PREFIX := "--metrics-output-dir="
 const STREAM_HOST_ARG_PREFIX := "--metrics-stream-host="
 const STREAM_PORT_ARG_PREFIX := "--metrics-stream-port="
 const ENV_ENABLE := "TCC_NETWORK_METRICS"
 const ENV_INTERVAL_MS := "TCC_NETWORK_METRICS_INTERVAL_MS"
 const ENV_LABEL := "TCC_NETWORK_METRICS_LABEL"
+const ENV_OUTPUT_DIR := "TCC_METRICS_OUTPUT_DIR"
+const LEGACY_ENV_OUTPUT_DIR := "TCC_NETWORK_METRICS_OUTPUT_DIR"
 const ENV_RECORD := "TCC_RECORD_METRICS"
 const ENV_STREAM := "TCC_STREAM_METRICS"
 const ENV_STREAM_HOST := "TCC_METRICS_STREAM_HOST"
@@ -19,7 +23,7 @@ const ENV_STREAM_PORT := "TCC_METRICS_STREAM_PORT"
 const DEFAULT_INTERVAL_MS := 1000
 const DEFAULT_STREAM_HOST := "127.0.0.1"
 const DEFAULT_STREAM_PORT := 8765
-const METRICS_DIR := "network_metrics"
+const DEFAULT_OUTPUT_DIR := "res://../../metrics-logs"
 
 var enabled := false
 var record_enabled := false
@@ -127,15 +131,10 @@ func stream_sample(sample: Dictionary) -> void:
 		push_warning("Failed to send network metrics UDP packet: %s" % error)
 
 func _configure_csv_outputs(user_args: PackedStringArray) -> void:
-	var metrics_dir := DirAccess.open("user://")
-	if metrics_dir == null:
-		printerr("Could not open user:// for network metrics output.")
-		record_enabled = false
-		return
-
-	var dir_error := metrics_dir.make_dir_recursive(METRICS_DIR)
+	var output_dir_absolute := _read_output_dir(user_args)
+	var dir_error := DirAccess.make_dir_recursive_absolute(output_dir_absolute)
 	if dir_error != OK and dir_error != ERR_ALREADY_EXISTS:
-		printerr("Could not create metrics directory in user://.")
+		printerr("Could not create metrics directory at %s." % output_dir_absolute)
 		record_enabled = false
 		return
 
@@ -143,10 +142,9 @@ func _configure_csv_outputs(user_args: PackedStringArray) -> void:
 	var timestamp_sec := int(Time.get_unix_time_from_system())
 	var label_suffix := _build_label_suffix(user_args)
 	for file_key in headers_by_file.keys():
-		var output_path := "user://%s/%s" % [
-			METRICS_DIR,
-			_build_output_filename(str(file_key), timestamp_sec, label_suffix),
-		]
+		var output_path := output_dir_absolute.path_join(
+			_build_output_filename(str(file_key), timestamp_sec, label_suffix)
+		)
 		var header: Array = headers_by_file.get(file_key, [])
 		if not _write_header(output_path, header):
 			continue
@@ -154,7 +152,7 @@ func _configure_csv_outputs(user_args: PackedStringArray) -> void:
 		configured_output_paths[file_key] = output_path
 		print(
 			"Network metrics CSV enabled for %s (%s) at %s"
-			% [role, str(file_key), ProjectSettings.globalize_path(output_path)]
+			% [role, str(file_key), output_path]
 		)
 
 	output_paths = configured_output_paths
@@ -226,6 +224,18 @@ func _build_label_suffix(user_args: PackedStringArray) -> String:
 		return ""
 	return "_" + _sanitize_label(raw_label)
 
+func _read_output_dir(user_args: PackedStringArray) -> String:
+	var raw_output_dir := _read_string_value(user_args, OUTPUT_DIR_ARG_PREFIX, ENV_OUTPUT_DIR, "")
+	if raw_output_dir.is_empty():
+		raw_output_dir = _read_string_value(
+			user_args,
+			LEGACY_OUTPUT_DIR_ARG_PREFIX,
+			LEGACY_ENV_OUTPUT_DIR,
+			DEFAULT_OUTPUT_DIR
+		)
+
+	return _resolve_output_dir(raw_output_dir)
+
 func _read_string_value(user_args: PackedStringArray, prefix: String, environment_key: String, fallback: String) -> String:
 	for arg in user_args:
 		if arg.begins_with(prefix):
@@ -246,6 +256,20 @@ func _sanitize_label(raw_label: String) -> String:
 		else:
 			sanitized += "_"
 	return sanitized.strip_edges()
+
+func _resolve_output_dir(raw_output_dir: String) -> String:
+	var trimmed_output_dir := raw_output_dir.strip_edges()
+	if trimmed_output_dir.is_empty():
+		trimmed_output_dir = DEFAULT_OUTPUT_DIR
+
+	if trimmed_output_dir.begins_with("res://") or trimmed_output_dir.begins_with("user://"):
+		return ProjectSettings.globalize_path(trimmed_output_dir).simplify_path()
+
+	if trimmed_output_dir.is_absolute_path():
+		return trimmed_output_dir.simplify_path()
+
+	var repo_root := ProjectSettings.globalize_path("res://../../")
+	return repo_root.path_join(trimmed_output_dir).simplify_path()
 
 func _sanitize_port(port: int, fallback: int) -> int:
 	if port <= 0 or port > 65535:

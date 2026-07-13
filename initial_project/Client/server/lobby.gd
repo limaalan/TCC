@@ -133,8 +133,8 @@ func handle_grenades(old_grenade_data:Dictionary, new_grenade_data:Dictionary, l
 			grenade.set_network_id(grenade_id)
 			grenade.name = "Grenade_%s" % grenade_id
 			grenades[grenade_id] = {NetKeys.INSTANCE: grenade, NetKeys.EXPLODED: false} #instância da granada e indicador de explodido
-			grenade.global_transform = new_grenade_data.get(grenade_id)[NetKeys.TRANSFORM]
 			add_child(grenade , true)
+			grenade.transform = new_grenade_data.get(grenade_id)[NetKeys.TRANSFORM]
 	
 	for grenade_id in old_grenade_data.keys():
 		#explodindo a granada se não existe mais no buffer e não foi explodido ainda
@@ -239,11 +239,11 @@ func s_spawn_player(spawn_data: Dictionary)->void:
 	player.team = team
 	player.weapon_id = weapon_id 
 	player.name = str(client_id)
-	player.global_transform = spawn_tform
-	add_child(player, true)
-	
 	if players.has(client_id) and is_instance_valid(players[client_id]):
-		players[client_id].queue_free()
+		queue_free_child(players[client_id])
+
+	add_child(player, true)
+	player.transform = spawn_tform
 		
 	players[client_id] = player
 	player_names_and_teams [client_id] = {NetKeys.DISPLAY_NAME: player_name, NetKeys.TEAM: team}
