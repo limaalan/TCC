@@ -23,6 +23,8 @@ const PHYSICS_LAYER_HITBOX = 4
 const MAX_SHOT_RANDOM_DEGREES = 5
 const DEATH_COOLDOWN_LENGTH := 5
 const FINISHED_LOBBY_DELETE_DELAY_SEC := 0.5
+const RESPAWN_MIN_PLAYER_DISTANCE := 0.75
+const RESPAWN_MIN_PLAYER_DISTANCE_SQ := RESPAWN_MIN_PLAYER_DISTANCE * RESPAWN_MIN_PLAYER_DISTANCE
 const BaseGameMode = preload("res://game_modes/base_game_mode.gd")
 const HillZone = preload("res://game_modes/objectives/hill_zone.gd")
 const KingOfTheHillMode = preload("res://game_modes/king_of_the_hill_mode.gd")
@@ -360,6 +362,42 @@ func to_lobby_local_transform(node: Node3D) -> Transform3D:
 func to_lobby_local_position(global_pos: Vector3) -> Vector3:
 	return global_transform.affine_inverse() * global_pos
 
+
+func get_spawn_clearance_sq(spawn_pos: Vector3) -> float:
+	var nearest_distance_sq := INF
+
+	for client_id in server_players.keys():
+		var player: PlayerServerReal = server_players[client_id].real
+		if player == null or not is_instance_valid(player):
+			continue
+
+		nearest_distance_sq = minf(nearest_distance_sq, player.position.distance_squared_to(spawn_pos))
+
+	return nearest_distance_sq
+
+
+func choose_respawn_transform(team: int) -> Transform3D:
+	var possible_spawn_points := get_spawn_points_for_team(team)
+	var free_spawn_tforms: Array[Transform3D] = []
+	var fallback_spawn_tform := Transform3D.IDENTITY
+	var fallback_clearance_sq := -1.0
+
+	for spawn_point in possible_spawn_points:
+		var spawn_tform := to_lobby_local_transform(spawn_point)
+		var clearance_sq := get_spawn_clearance_sq(spawn_tform.origin)
+
+		if clearance_sq > fallback_clearance_sq:
+			fallback_clearance_sq = clearance_sq
+			fallback_spawn_tform = spawn_tform
+
+		if clearance_sq >= RESPAWN_MIN_PLAYER_DISTANCE_SQ:
+			free_spawn_tforms.append(spawn_tform)
+
+	if not free_spawn_tforms.is_empty():
+		return free_spawn_tforms.pick_random()
+
+	return fallback_spawn_tform
+
 func spawn_players()->void:
 	var blue_spawn_points := get_spawn_points_for_team(GameEnums.Team.BLUE)
 	var red_spawn_points := get_spawn_points_for_team(GameEnums.Team.RED)
@@ -592,8 +630,7 @@ func respawn_player(respawn_client_id:int)->void:
 		push_error("Cannot respawn player %s: no spawn points for team %s." % [respawn_client_id, team])
 		return
 	
-	var spawn_point = possible_spawn_points.pick_random()
-	var spawn_tform: Transform3D = to_lobby_local_transform(spawn_point)
+	var spawn_tform := choose_respawn_transform(team)
 	
 	#spawn para o server
 	spawn_server_player(respawn_client_id, spawn_tform, team)
