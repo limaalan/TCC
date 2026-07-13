@@ -8,18 +8,83 @@ offset_bottom = 40.0
 theme_override_constants/separation = 16
 script = ExtResource("1_4c38t")
 
-[node name="AudioContainer" type="HBoxContainer" parent="."]
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
-alignment = 2
+theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="AudioContainer"]
+[node name="Label" type="Label" parent="MasterVolumeContainer"]
+custom_minimum_size = Vector2(105, 0)
 layout_mode = 2
-text = "Audio"
+text = "Volume geral"
 
-[node name="AudioCheckBox" type="CheckBox" parent="AudioContainer"]
+[node name="MasterVolumeSlider" type="HSlider" parent="MasterVolumeContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
-focus_mode = 0
+size_flags_horizontal = 3
+focus_mode = 2
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="MasterVolumeValueLabel" type="Label" parent="MasterVolumeContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(45, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="MusicVolumeContainer"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Música"
+
+[node name="MusicVolumeSlider" type="HSlider" parent="MusicVolumeContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 2
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="MusicVolumeValueLabel" type="Label" parent="MusicVolumeContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(45, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="SfxVolumeContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="SfxVolumeContainer"]
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+text = "Efeitos"
+
+[node name="SfxVolumeSlider" type="HSlider" parent="SfxVolumeContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 2
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="SfxVolumeValueLabel" type="Label" parent="SfxVolumeContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(45, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
 
 [node name="FullscreenContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
@@ -27,12 +92,14 @@ alignment = 2
 
 [node name="Label" type="Label" parent="FullscreenContainer"]
 layout_mode = 2
-text = "FullScreen"
+text = "Tela cheia"
 
 [node name="FullscreenCheckBox" type="CheckBox" parent="FullscreenContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 
-[connection signal="toggled" from="AudioContainer/AudioCheckBox" to="." method="_on_audio_check_box_toggled"]
+[connection signal="value_changed" from="MasterVolumeContainer/MasterVolumeSlider" to="." method="_on_master_volume_changed"]
+[connection signal="value_changed" from="MusicVolumeContainer/MusicVolumeSlider" to="." method="_on_music_volume_changed"]
+[connection signal="value_changed" from="SfxVolumeContainer/SfxVolumeSlider" to="." method="_on_sfx_volume_changed"]
 [connection signal="toggled" from="FullscreenContainer/FullscreenCheckBox" to="." method="_on_fullscreen_check_box_toggled"]

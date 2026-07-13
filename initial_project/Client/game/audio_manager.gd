@@ -19,12 +19,14 @@ enum SFXKeys{
 const MASTER_BUS := &"Master"
 const MUSIC_BUS := &"Music"
 const SFX_BUS := &"SFX"
+const MUSIC_TARGET_VOLUME_DB := -16.0
+const MUSIC_SILENT_VOLUME_DB := -60.0
 @onready var music_player: AudioStreamPlayer = $MusicPlayer
 
 var music_transition_tween :Tween
 
 func _ready()->void:
-	set_music_volume(0)
+	music_player.volume_db = MUSIC_SILENT_VOLUME_DB
 	
 func play_music(music_key: MusicKeys)->void:
 	var stream :AudioStream 
@@ -39,16 +41,22 @@ func play_music(music_key: MusicKeys)->void:
 
 	music_transition_tween = create_tween()
 	if music_player.playing:
-		music_transition_tween.tween_method(set_music_volume,1.0,0.0,1)
+		music_transition_tween.tween_property(
+			music_player,
+			"volume_db",
+			MUSIC_SILENT_VOLUME_DB,
+			1.0
+		)
 		
 	music_transition_tween.tween_callback(music_player.set_stream.bind(stream))
 	music_transition_tween.tween_callback(music_player.play)
 	
-	music_transition_tween.tween_method(set_music_volume,0.0,1.0,1)
-
-	
-func set_music_volume(volume_linear:float)->void:
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(MUSIC_BUS), db_to_linear(volume_linear))
+	music_transition_tween.tween_property(
+		music_player,
+		"volume_db",
+		MUSIC_TARGET_VOLUME_DB,
+		1.0
+	)
 	
 #Pitch random pro som não ficar repetivo ( tiro da arma )
 func play_sfx(sfx_key : SFXKeys, position:= Vector3.ZERO , pitch_rand := 0.0)->void:
