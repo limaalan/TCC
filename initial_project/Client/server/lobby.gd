@@ -133,8 +133,8 @@ func handle_grenades(old_grenade_data:Dictionary, new_grenade_data:Dictionary, l
 			grenade.set_network_id(grenade_id)
 			grenade.name = "Grenade_%s" % grenade_id
 			grenades[grenade_id] = {NetKeys.INSTANCE: grenade, NetKeys.EXPLODED: false} #instância da granada e indicador de explodido
-			add_child(grenade , true)
 			grenade.transform = new_grenade_data.get(grenade_id)[NetKeys.TRANSFORM]
+			add_child(grenade , true)
 	
 	for grenade_id in old_grenade_data.keys():
 		#explodindo a granada se não existe mais no buffer e não foi explodido ainda
