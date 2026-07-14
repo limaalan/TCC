@@ -23,6 +23,8 @@ const PHYSICS_LAYER_HITBOX = 4
 const MAX_SHOT_RANDOM_DEGREES = 5
 const DEATH_COOLDOWN_LENGTH := 5
 const FINISHED_LOBBY_DELETE_DELAY_SEC := 0.5
+const RESPAWN_MIN_PLAYER_DISTANCE := 0.75
+const RESPAWN_MIN_PLAYER_DISTANCE_SQ := RESPAWN_MIN_PLAYER_DISTANCE * RESPAWN_MIN_PLAYER_DISTANCE
 const BaseGameMode = preload("res://game_modes/base_game_mode.gd")
 const HillZone = preload("res://game_modes/objectives/hill_zone.gd")
 const KingOfTheHillMode = preload("res://game_modes/king_of_the_hill_mode.gd")
@@ -352,6 +354,50 @@ func get_spawn_points_for_team(team: int) -> Array[PlayerSpawnPoint]:
 
 	return result
 
+
+func to_lobby_local_transform(node: Node3D) -> Transform3D:
+	return global_transform.affine_inverse() * node.global_transform
+
+
+func to_lobby_local_position(global_pos: Vector3) -> Vector3:
+	return global_transform.affine_inverse() * global_pos
+
+
+func get_spawn_clearance_sq(spawn_pos: Vector3) -> float:
+	var nearest_distance_sq := INF
+
+	for client_id in server_players.keys():
+		var player: PlayerServerReal = server_players[client_id].real
+		if player == null or not is_instance_valid(player):
+			continue
+
+		nearest_distance_sq = minf(nearest_distance_sq, player.position.distance_squared_to(spawn_pos))
+
+	return nearest_distance_sq
+
+
+func choose_respawn_transform(team: int) -> Transform3D:
+	var possible_spawn_points := get_spawn_points_for_team(team)
+	var free_spawn_tforms: Array[Transform3D] = []
+	var fallback_spawn_tform := Transform3D.IDENTITY
+	var fallback_clearance_sq := -1.0
+
+	for spawn_point in possible_spawn_points:
+		var spawn_tform := to_lobby_local_transform(spawn_point)
+		var clearance_sq := get_spawn_clearance_sq(spawn_tform.origin)
+
+		if clearance_sq > fallback_clearance_sq:
+			fallback_clearance_sq = clearance_sq
+			fallback_spawn_tform = spawn_tform
+
+		if clearance_sq >= RESPAWN_MIN_PLAYER_DISTANCE_SQ:
+			free_spawn_tforms.append(spawn_tform)
+
+	if not free_spawn_tforms.is_empty():
+		return free_spawn_tforms.pick_random()
+
+	return fallback_spawn_tform
+
 func spawn_players()->void:
 	var blue_spawn_points := get_spawn_points_for_team(GameEnums.Team.BLUE)
 	var red_spawn_points := get_spawn_points_for_team(GameEnums.Team.RED)
@@ -382,12 +428,12 @@ func spawn_players()->void:
 		var spawn_tform := Transform3D.IDENTITY
 		if i%2 == 0 :
 			team = GameEnums.Team.BLUE
-			spawn_tform = blue_spawn_points[0].global_transform # utilizando o global pra garantir que vai ser pego certo independente da hierarquia
+			spawn_tform = to_lobby_local_transform(blue_spawn_points[0])
 			blue_spawn_points.pop_front()
 			
 		else :
 			team = GameEnums.Team.RED
-			spawn_tform = red_spawn_points[0].global_transform
+			spawn_tform = to_lobby_local_transform(red_spawn_points[0])
 			red_spawn_points.pop_front()
 	
 		spawn_server_player(ready_clients[i], spawn_tform, team)
@@ -409,9 +455,10 @@ func spawn_server_player (client_id : int, spawn_tform : Transform3D, team:int)-
 	server_player_real.lobby = self
 	server_player_dummy.id = client_id
 
-	server_player_real.global_transform = spawn_tform
 	add_child(server_player_real, true)
 	add_child(server_player_dummy, true)
+	server_player_real.transform = spawn_tform
+	server_player_dummy.transform = spawn_tform
 	
 	server_players[client_id] = {}
 	server_players[client_id].real = server_player_real
@@ -427,6 +474,7 @@ func s_spawn_player(spawn_data: Dictionary)->void:
 
 
 func make_spawn_player_payload(client_id: int, spawn_tform: Transform3D, team: int, auto_freeze: bool) -> Dictionary:
+	# spawn_tform must be local to this lobby. Never send server global transforms to clients.
 	return NetPayloads.make_spawn_player(
 		client_id,
 		spawn_tform,
@@ -582,8 +630,7 @@ func respawn_player(respawn_client_id:int)->void:
 		push_error("Cannot respawn player %s: no spawn points for team %s." % [respawn_client_id, team])
 		return
 	
-	var spawn_point = possible_spawn_points.pick_random()
-	var spawn_tform: Transform3D = spawn_point.global_transform
+	var spawn_tform := choose_respawn_transform(team)
 	
 	#spawn para o server
 	spawn_server_player(respawn_client_id, spawn_tform, team)
@@ -736,9 +783,9 @@ func calculate_shot_results(shooter_id: int , time_stamp : int, player_data:Dict
 			hurt_server_player.change_health(damage_dealt, shooter_id)
 			
 			print (result.collider.player.name + "Foi acertado!")
-			spawn_bullet_hit_fx(result.position - global_position, result.normal, GameEnums.HitFxType.PLAYER)
+			spawn_bullet_hit_fx(to_lobby_local_position(result.position), result.normal, GameEnums.HitFxType.PLAYER)
 		else :
-			spawn_bullet_hit_fx(result.position - global_position, result.normal, GameEnums.HitFxType.ENVIRONMENT)
+			spawn_bullet_hit_fx(to_lobby_local_position(result.position), result.normal, GameEnums.HitFxType.ENVIRONMENT)
 	
 	
 func spawn_bullet_hit_fx(pos:Vector3, normal:Vector3, type : int)->void:

@@ -35,6 +35,8 @@
         <article class="metric-card"><span>Sent pkt/s</span><strong id="card-sent-pps">-</strong></article>
         <article class="metric-card"><span>Recv pkt/s</span><strong id="card-recv-pps">-</strong></article>
         <article class="metric-card"><span>Server Physics</span><strong id="card-server-physics">-</strong></article>
+        <article class="metric-card"><span>Avg Client FPS</span><strong id="card-client-fps-avg">-</strong></article>
+        <article class="metric-card"><span>Min Client FPS</span><strong id="card-client-fps-min">-</strong></article>
         <article class="metric-card"><span>CPU</span><strong id="card-cpu">-</strong></article>
         <article class="metric-card"><span>Memory</span><strong id="card-memory">-</strong></article>
         <article class="metric-card"><span>PID</span><strong id="card-pid">-</strong></article>
@@ -83,6 +85,13 @@
           </div>
           <div id="chart-process" class="chart-body chart-empty">Waiting for samples...</div>
         </article>
+        <article class="chart-card">
+          <div class="chart-heading">
+            <h2>Client FPS</h2>
+            <p>FPS reported by each connected client</p>
+          </div>
+          <div id="chart-client-fps" class="chart-body chart-empty">Waiting for FPS samples...</div>
+        </article>
       </section>
 
       <section class="peers-panel">
@@ -91,7 +100,7 @@
             <p class="eyebrow">Peer table</p>
             <h2>Connected peers</h2>
           </div>
-          <p class="panel-copy">Latest per-peer RTT, variance, packet loss, and app ping values.</p>
+          <p class="panel-copy">Latest per-peer RTT, variance, packet loss, app ping, and FPS values.</p>
         </div>
         <div class="table-wrap">
           <table>
@@ -103,11 +112,12 @@
                 <th>Variance (ms)</th>
                 <th>Loss (%)</th>
                 <th>App Ping (ms)</th>
+                <th>FPS</th>
               </tr>
             </thead>
             <tbody id="peers-body">
               <tr>
-                <td colspan="6" class="empty-row">Waiting for metrics...</td>
+                <td colspan="7" class="empty-row">Waiting for metrics...</td>
               </tr>
             </tbody>
           </table>

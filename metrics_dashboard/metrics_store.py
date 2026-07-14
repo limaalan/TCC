@@ -53,6 +53,7 @@ class MetricsStore:
         normalized["server_physics_process_ms"] = self._as_float(
             sample.get("server_physics_process_ms", sample.get("server_tick_ms"))
         )
+        normalized["server_physics_process_ms_sum"] = self._as_float(sample.get("server_physics_process_ms_sum"))
         normalized["sent_kib_per_sec"] = self._as_float(
             sample.get("sent_kib_per_sec", sample.get("sent_kbps"))
         )
@@ -63,7 +64,9 @@ class MetricsStore:
         normalized["received_packets_per_sec"] = self._as_float(sample.get("received_packets_per_sec"))
         normalized["server_pid"] = self._as_int(sample.get("server_pid"), 0)
         normalized["peers"] = self._normalize_peers(sample.get("peers", []))
+        normalized["client_fps"] = self._normalize_client_fps(sample.get("client_fps", []))
         normalized["summary"] = self._build_summary(normalized["peers"])
+        normalized["client_fps_summary"] = self._build_client_fps_summary(normalized["client_fps"])
 
         self._process_monitor.update_pid(normalized["server_pid"])
         normalized.update(self._process_monitor.collect())
@@ -86,11 +89,31 @@ class MetricsStore:
                     "rtt_variance_ms": self._as_float(peer.get("rtt_variance_ms")),
                     "packet_loss_percent": self._as_float(peer.get("packet_loss_percent")),
                     "app_ping_ms": self._as_float(peer.get("app_ping_ms")),
+                    "client_fps": self._as_float(peer.get("client_fps")),
                 }
             )
 
         normalized_peers.sort(key=lambda peer: peer["peer_id"])
         return normalized_peers
+
+    def _normalize_client_fps(self, client_fps: Any) -> list[dict[str, Any]]:
+        if not isinstance(client_fps, list):
+            return []
+
+        normalized: list[dict[str, Any]] = []
+        for item in client_fps:
+            if not isinstance(item, dict):
+                continue
+
+            normalized.append(
+                {
+                    "peer_id": self._as_int(item.get("peer_id"), 0),
+                    "fps": self._as_float(item.get("fps")),
+                }
+            )
+
+        normalized.sort(key=lambda item: item["peer_id"])
+        return normalized
 
     def _build_summary(self, peers: list[dict[str, Any]]) -> dict[str, Any]:
         rtt_values = [value for value in (peer.get("rtt_ms") for peer in peers) if isinstance(value, (int, float))]
@@ -104,6 +127,19 @@ class MetricsStore:
             "max_packet_loss_percent": max(loss_values) if loss_values else None,
             "avg_app_ping_ms": self._average(ping_values),
             "max_app_ping_ms": max(ping_values) if ping_values else None,
+        }
+
+    def _build_client_fps_summary(self, client_fps: list[dict[str, Any]]) -> dict[str, Any]:
+        values = [
+            item["fps"]
+            for item in client_fps
+            if isinstance(item.get("fps"), (int, float))
+        ]
+
+        return {
+            "avg_fps": self._average(values),
+            "min_fps": min(values) if values else None,
+            "max_fps": max(values) if values else None,
         }
 
     def _average(self, values: list[float]) -> float | None:

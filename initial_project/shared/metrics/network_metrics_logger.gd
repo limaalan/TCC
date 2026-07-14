@@ -7,11 +7,15 @@ const STREAM_ARG := "--stream-metrics"
 const LEGACY_INTERVAL_ARG_PREFIX := "--network-metrics-interval-ms="
 const INTERVAL_ARG_PREFIX := "--metrics-interval="
 const LABEL_ARG_PREFIX := "--network-metrics-label="
+const LEGACY_OUTPUT_DIR_ARG_PREFIX := "--network-metrics-output-dir="
+const OUTPUT_DIR_ARG_PREFIX := "--metrics-output-dir="
 const STREAM_HOST_ARG_PREFIX := "--metrics-stream-host="
 const STREAM_PORT_ARG_PREFIX := "--metrics-stream-port="
 const ENV_ENABLE := "TCC_NETWORK_METRICS"
 const ENV_INTERVAL_MS := "TCC_NETWORK_METRICS_INTERVAL_MS"
 const ENV_LABEL := "TCC_NETWORK_METRICS_LABEL"
+const ENV_OUTPUT_DIR := "TCC_METRICS_OUTPUT_DIR"
+const LEGACY_ENV_OUTPUT_DIR := "TCC_NETWORK_METRICS_OUTPUT_DIR"
 const ENV_RECORD := "TCC_RECORD_METRICS"
 const ENV_STREAM := "TCC_STREAM_METRICS"
 const ENV_STREAM_HOST := "TCC_METRICS_STREAM_HOST"
@@ -19,31 +23,15 @@ const ENV_STREAM_PORT := "TCC_METRICS_STREAM_PORT"
 const DEFAULT_INTERVAL_MS := 1000
 const DEFAULT_STREAM_HOST := "127.0.0.1"
 const DEFAULT_STREAM_PORT := 8765
-const METRICS_DIR := "network_metrics"
-const HEADER := [
-	"timestamp_ms",
-	"role",
-	"players_count",
-	"peer_id",
-	"rtt_ms",
-	"last_rtt_ms",
-	"rtt_variance",
-	"packet_loss_percent",
-	"sent_kib_per_sec",
-	"received_kib_per_sec",
-	"sent_packets_per_sec",
-	"received_packets_per_sec",
-	"server_physics_process_ms",
-	"app_ping_ms",
-	"fps",
-]
+const DEFAULT_OUTPUT_DIR := "res://../../metrics-logs"
 
 var enabled := false
 var record_enabled := false
 var stream_enabled := false
 var role := ""
 var sample_interval_ms := DEFAULT_INTERVAL_MS
-var output_path := ""
+var headers_by_file: Dictionary = {}
+var output_paths: Dictionary = {}
 var last_sample_timestamp_ms := 0
 var stream_host := DEFAULT_STREAM_HOST
 var stream_port := DEFAULT_STREAM_PORT
@@ -52,7 +40,14 @@ var udp_stream_peer := PacketPeerUDP.new()
 func _init(p_role: String) -> void:
 	role = p_role
 
-func configure_from_args() -> void:
+func configure_from_args(p_headers_by_file: Dictionary) -> void:
+	headers_by_file = {}
+	output_paths = {}
+	for file_key in p_headers_by_file.keys():
+		var header = p_headers_by_file.get(file_key, [])
+		if header is Array and not header.is_empty():
+			headers_by_file[file_key] = header.duplicate()
+
 	var user_args := OS.get_cmdline_user_args()
 	var legacy_enabled := _has_flag(user_args, LEGACY_ENABLE_ARG) or _has_enabled_environment(ENV_ENABLE)
 	var metrics_enabled := legacy_enabled or _has_flag(user_args, ENABLE_ARG)
@@ -65,10 +60,17 @@ func configure_from_args() -> void:
 	stream_enabled = _has_flag(user_args, STREAM_ARG) or _has_enabled_environment(ENV_STREAM)
 	sample_interval_ms = _read_sample_interval_ms(user_args)
 	stream_host = _read_string_value(user_args, STREAM_HOST_ARG_PREFIX, ENV_STREAM_HOST, DEFAULT_STREAM_HOST)
-	stream_port = _sanitize_port(_read_int_value(user_args, STREAM_PORT_ARG_PREFIX, ENV_STREAM_PORT, DEFAULT_STREAM_PORT), DEFAULT_STREAM_PORT)
+	stream_port = _sanitize_port(
+		_read_int_value(user_args, STREAM_PORT_ARG_PREFIX, ENV_STREAM_PORT, DEFAULT_STREAM_PORT),
+		DEFAULT_STREAM_PORT
+	)
 
 	if record_enabled:
-		_configure_csv_output(user_args)
+		if headers_by_file.is_empty():
+			push_warning("Metrics CSV recording requested for %s, but no CSV headers were provided." % role)
+			record_enabled = false
+		else:
+			_configure_csv_outputs(user_args)
 
 	if stream_enabled:
 		_configure_udp_stream()
@@ -94,8 +96,16 @@ func consume_elapsed_seconds(now_ms: int) -> float:
 	last_sample_timestamp_ms = now_ms
 	return elapsed_ms / 1000.0
 
-func append_rows(rows: Array[Dictionary]) -> void:
+func append_rows(file_key: String, rows: Array[Dictionary]) -> void:
 	if not record_enabled or rows.is_empty():
+		return
+
+	var output_path := str(output_paths.get(file_key, ""))
+	if output_path.is_empty():
+		return
+
+	var header: Array = headers_by_file.get(file_key, [])
+	if header.is_empty():
 		return
 
 	var file := FileAccess.open(output_path, FileAccess.READ_WRITE)
@@ -106,7 +116,7 @@ func append_rows(rows: Array[Dictionary]) -> void:
 	file.seek_end()
 	for row in rows:
 		var line_values: Array[String] = []
-		for column in HEADER:
+		for column in header:
 			line_values.append(_escape_csv(_format_value(row.get(column, ""))))
 		file.store_line(",".join(line_values))
 	file.flush()
@@ -120,25 +130,33 @@ func stream_sample(sample: Dictionary) -> void:
 	if error != OK:
 		push_warning("Failed to send network metrics UDP packet: %s" % error)
 
-func _configure_csv_output(user_args: PackedStringArray) -> void:
-	var metrics_dir := DirAccess.open("user://")
-	if metrics_dir == null:
-		printerr("Could not open user:// for network metrics output.")
-		record_enabled = false
-		return
-
-	var dir_error := metrics_dir.make_dir_recursive(METRICS_DIR)
+func _configure_csv_outputs(user_args: PackedStringArray) -> void:
+	var output_dir_absolute := _read_output_dir(user_args)
+	var dir_error := DirAccess.make_dir_recursive_absolute(output_dir_absolute)
 	if dir_error != OK and dir_error != ERR_ALREADY_EXISTS:
-		printerr("Could not create metrics directory in user://.")
+		printerr("Could not create metrics directory at %s." % output_dir_absolute)
 		record_enabled = false
 		return
 
+	var configured_output_paths: Dictionary = {}
 	var timestamp_sec := int(Time.get_unix_time_from_system())
 	var label_suffix := _build_label_suffix(user_args)
-	output_path = "user://%s/%s_metrics_%s%s.csv" % [METRICS_DIR, role, str(timestamp_sec), label_suffix]
-	_write_header()
-	if record_enabled:
-		print("Network metrics CSV enabled for %s at %s" % [role, ProjectSettings.globalize_path(output_path)])
+	for file_key in headers_by_file.keys():
+		var output_path := output_dir_absolute.path_join(
+			_build_output_filename(str(file_key), timestamp_sec, label_suffix)
+		)
+		var header: Array = headers_by_file.get(file_key, [])
+		if not _write_header(output_path, header):
+			continue
+
+		configured_output_paths[file_key] = output_path
+		print(
+			"Network metrics CSV enabled for %s (%s) at %s"
+			% [role, str(file_key), output_path]
+		)
+
+	output_paths = configured_output_paths
+	record_enabled = not output_paths.is_empty()
 
 func _configure_udp_stream() -> void:
 	var error := udp_stream_peer.set_dest_address(stream_host, stream_port)
@@ -149,15 +167,21 @@ func _configure_udp_stream() -> void:
 
 	print("Network metrics UDP stream enabled for %s at %s:%s" % [role, stream_host, stream_port])
 
-func _write_header() -> void:
+func _build_output_filename(file_key: String, timestamp_sec: int, label_suffix: String) -> String:
+	return "%s_%s_metrics_%s%s.csv" % [role, file_key, str(timestamp_sec), label_suffix]
+
+func _write_header(output_path: String, header: Array) -> bool:
 	var file := FileAccess.open(output_path, FileAccess.WRITE)
 	if file == null:
 		printerr("Could not create network metrics file at %s." % output_path)
-		record_enabled = false
-		return
+		return false
 
-	file.store_line(",".join(HEADER))
+	var columns: Array[String] = []
+	for column in header:
+		columns.append(str(column))
+	file.store_line(",".join(columns))
 	file.flush()
+	return true
 
 func _has_flag(user_args: PackedStringArray, flag: String) -> bool:
 	for arg in user_args:
@@ -200,6 +224,18 @@ func _build_label_suffix(user_args: PackedStringArray) -> String:
 		return ""
 	return "_" + _sanitize_label(raw_label)
 
+func _read_output_dir(user_args: PackedStringArray) -> String:
+	var raw_output_dir := _read_string_value(user_args, OUTPUT_DIR_ARG_PREFIX, ENV_OUTPUT_DIR, "")
+	if raw_output_dir.is_empty():
+		raw_output_dir = _read_string_value(
+			user_args,
+			LEGACY_OUTPUT_DIR_ARG_PREFIX,
+			LEGACY_ENV_OUTPUT_DIR,
+			DEFAULT_OUTPUT_DIR
+		)
+
+	return _resolve_output_dir(raw_output_dir)
+
 func _read_string_value(user_args: PackedStringArray, prefix: String, environment_key: String, fallback: String) -> String:
 	for arg in user_args:
 		if arg.begins_with(prefix):
@@ -220,6 +256,20 @@ func _sanitize_label(raw_label: String) -> String:
 		else:
 			sanitized += "_"
 	return sanitized.strip_edges()
+
+func _resolve_output_dir(raw_output_dir: String) -> String:
+	var trimmed_output_dir := raw_output_dir.strip_edges()
+	if trimmed_output_dir.is_empty():
+		trimmed_output_dir = DEFAULT_OUTPUT_DIR
+
+	if trimmed_output_dir.begins_with("res://") or trimmed_output_dir.begins_with("user://"):
+		return ProjectSettings.globalize_path(trimmed_output_dir).simplify_path()
+
+	if trimmed_output_dir.is_absolute_path():
+		return trimmed_output_dir.simplify_path()
+
+	var repo_root := ProjectSettings.globalize_path("res://../../")
+	return repo_root.path_join(trimmed_output_dir).simplify_path()
 
 func _sanitize_port(port: int, fallback: int) -> int:
 	if port <= 0 or port > 65535:

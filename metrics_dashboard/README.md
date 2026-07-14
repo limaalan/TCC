@@ -39,6 +39,51 @@ No Windows, os launchers locais equivalentes sao:
 .\start_metrics_server.ps1 -StartDashboard -RecordMetrics
 ```
 
+O cliente nao envia UDP para a dashboard e nao grava CSV proprio. Ele apenas reporta FPS para o servidor por RPC, e o servidor continua sendo a fonte oficial do stream UDP.
+
+## Payload UDP esperado
+
+O payload continua compativel com a dashboard atual e com a lista `peers`, mas agora inclui os campos extras abaixo:
+
+```json
+{
+  "schema_version": 2,
+  "source": "godot_server",
+  "role": "server",
+  "timestamp_ms": 1783340100000,
+  "server_pid": 12345,
+  "players_count": 2,
+  "lobbies_count": 1,
+  "server_physics_process_ms": 1.4,
+  "server_physics_process_ms_sum": 1.8,
+  "sent_kib_per_sec": 12.4,
+  "received_kib_per_sec": 4.8,
+  "sent_packets_per_sec": 64.0,
+  "received_packets_per_sec": 31.0,
+  "peers": [
+    {
+      "peer_id": 2,
+      "rtt_ms": 32.0,
+      "last_rtt_ms": 31.0,
+      "rtt_variance_ms": 3.5,
+      "packet_loss_percent": 0.0,
+      "app_ping_ms": 34.0,
+      "client_fps": 59.8
+    }
+  ],
+  "client_fps": [
+    { "peer_id": 2, "fps": 59.8 }
+  ]
+}
+```
+
+## CSVs gerados
+
+Quando `--record-metrics` estiver ativo, o servidor passa a gerar dois CSVs em `user://network_metrics/`:
+
+- `server_network_metrics_<timestamp>[_label].csv`: uma linha agregada por amostra.
+- `server_client_fps_metrics_<timestamp>[_label].csv`: uma linha por peer em cada amostra.
+
 ## Notas
 
 - A dashboard Python e um processo separado; ela nao e habilitada por uma flag interna da Godot.
