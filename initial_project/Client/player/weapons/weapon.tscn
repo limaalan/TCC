@@ -1,15 +1,28 @@
-[gd_scene load_steps=5 format=3 uid="uid://cmftcvlth4s58"]
+[gd_scene load_steps=8 format=3 uid="uid://cmftcvlth4s58"]
 
 [ext_resource type="Script" uid="uid://ba4x00d0q1vw" path="res://player/weapons/weapon.gd" id="1_qwq0i"]
+[ext_resource type="Texture2D" path="res://player/weapons/fx/muzzle_flash_confetti.png" id="2_muzzle_flash"]
+
+[sub_resource type="Curve" id="Curve_muzzle_scale"]
+_data = [Vector2(0, 0.65), 0.0, 3.2, 0, 0, Vector2(0.25, 1.08), 0.0, 0.0, 0, 0, Vector2(1, 0.9), -0.25, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_muzzle_scale"]
+curve = SubResource("Curve_muzzle_scale")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3nvix"]
-angle_min = 1.0728835e-05
-angle_max = 90.000015
+angle_min = -12.0
+angle_max = 12.0
 gravity = Vector3(0, 0, 0)
+scale_min = 0.9
+scale_max = 1.1
+scale_curve = SubResource("CurveTexture_muzzle_scale")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3nvix"]
+transparency = 2
+alpha_scissor_threshold = 0.45
 shading_mode = 0
-albedo_color = Color(1, 0.9647059, 0.63529414, 1)
+albedo_texture = ExtResource("2_muzzle_flash")
 billboard_mode = 3
 billboard_keep_scale = true
 particles_anim_h_frames = 1
@@ -18,7 +31,7 @@ particles_anim_loop = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_qwq0i"]
 material = SubResource("StandardMaterial3D_3nvix")
-size = Vector2(0.2, 0.2)
+size = Vector2(0.42, 0.42)
 
 [node name="WeaponTemplate" type="Node3D"]
 script = ExtResource("1_qwq0i")
@@ -28,8 +41,8 @@ script = ExtResource("1_qwq0i")
 [node name="ShootParticles" type="GPUParticles3D" parent="Muzzle"]
 cast_shadow = 0
 emitting = false
-amount = 4
-lifetime = 0.02
+amount = 1
+lifetime = 0.09
 one_shot = true
 explosiveness = 1.0
 local_coords = true

@@ -13,16 +13,13 @@ func setup(p_data: WeaponPresentationData) -> void:
 
 func _ready()->void:
 	shoot_light.hide()
-	shoot_particles.finished.connect(shoot_light.hide) 
-	#Quando a animação do flash terminar, também desliga a luz
 
 func play_shoot_fx(is_local := false )->void:
 	if data == null:
 		push_warning("Weapon has no presentation data.")
 		return
 
-	shoot_light.show()
-	shoot_particles.emitting = true
+	shoot_particles.restart()
 			
 	var audio_position = global_position if not is_local else Vector3.ZERO
 	AudioManager.play_sfx(data.shoot_sfx , audio_position, data.pitch_randomness)
