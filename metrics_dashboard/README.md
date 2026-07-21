@@ -27,7 +27,7 @@ godot --path initial_project/Server --headless res://game/main_game.tscn -- --po
 Se quiser manter o CSV ao mesmo tempo:
 
 ```bash
-godot --path initial_project/Server --headless res://game/main_game.tscn -- --port=7777 --record-metrics --stream-metrics --metrics-interval=1.0 --metrics-stream-host=127.0.0.1 --metrics-stream-port=8765
+godot --path initial_project/Server --headless res://game/main_game.tscn -- --port=7777 --record-metrics --stream-metrics --metrics-interval=1.0 --metrics-output-dir=metrics-logs --metrics-stream-host=127.0.0.1 --metrics-stream-port=8765
 ```
 
 No Windows, os launchers locais equivalentes sao:
@@ -40,6 +40,8 @@ No Windows, os launchers locais equivalentes sao:
 ```
 
 O cliente nao envia UDP para a dashboard e nao grava CSV proprio. Ele apenas reporta FPS para o servidor por RPC, e o servidor continua sendo a fonte oficial do stream UDP.
+
+Por padrao, os CSVs ficam em `metrics-logs/` na raiz do repositorio. Se quiser mudar isso, use `--metrics-output-dir=<caminho>` ou `TCC_METRICS_OUTPUT_DIR`. Caminhos relativos sao resolvidos a partir da raiz do repositorio.
 
 ## Payload UDP esperado
 
@@ -79,7 +81,7 @@ O payload continua compativel com a dashboard atual e com a lista `peers`, mas a
 
 ## CSVs gerados
 
-Quando `--record-metrics` estiver ativo, o servidor passa a gerar dois CSVs em `user://network_metrics/`:
+Quando `--record-metrics` estiver ativo, o servidor passa a gerar dois CSVs em `metrics-logs/` na raiz do repositorio por padrao:
 
 - `server_network_metrics_<timestamp>[_label].csv`: uma linha agregada por amostra.
 - `server_client_fps_metrics_<timestamp>[_label].csv`: uma linha por peer em cada amostra.
@@ -87,7 +89,7 @@ Quando `--record-metrics` estiver ativo, o servidor passa a gerar dois CSVs em `
 ## Notas
 
 - A dashboard Python e um processo separado; ela nao e habilitada por uma flag interna da Godot.
-- O CSV continua sendo gravado em `user://network_metrics/`.
+- O CSV vai para `metrics-logs/` por padrao, mas o diretorio e configuravel.
 - Se o dashboard Python nao estiver ativo, o servidor continua rodando normalmente.
 - O dashboard mantem apenas uma janela curta em memoria; o historico completo continua no CSV.
 - As flags `--network-metrics` e `--metrics` permanecem apenas como compatibilidade temporaria.
