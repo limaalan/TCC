@@ -17,9 +17,10 @@ O contrato oficial de observabilidade do servidor passa a ser:
 - `--record-metrics`
 - `--stream-metrics`
 - `--metrics-interval=1.0`
+- `--metrics-output-dir=metrics-logs`
 - `--metrics-stream-host=127.0.0.1`
 - `--metrics-stream-port=8765`
 
-Sem flags de observabilidade o servidor sobe normal, sem CSV e sem stream UDP. Os arquivos CSV continuam sendo gravados em `user://network_metrics/` quando `--record-metrics` estiver ativo.
+Sem flags de observabilidade o servidor sobe normal, sem CSV e sem stream UDP. Quando `--record-metrics` estiver ativo, os arquivos CSV sao gravados por padrao em `metrics-logs/` na raiz do repositorio. O diretorio tambem pode ser sobrescrito com `--metrics-output-dir=<caminho>` ou `TCC_METRICS_OUTPUT_DIR`.
 
 As flags antigas `--network-metrics` e `--metrics` permanecem apenas por compatibilidade temporaria. A documentacao completa de build, deploy e scripts de inicializacao esta em `implementation_plan/15_runtime_observabilidade_e_comandos_servidor.md`.

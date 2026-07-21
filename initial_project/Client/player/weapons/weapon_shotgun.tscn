@@ -6,13 +6,7 @@
 [node name="WeaponShotgun" instance=ExtResource("1_efq3t")]
 
 [node name="Muzzle" parent="." index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08767229, -1.0544438)
-
-[node name="ShootParticles" parent="Muzzle" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.086206436)
-
-[node name="ShootLight" parent="Muzzle" index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0021202564)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08767229, -1.1406503)
 
 [node name="shotgun_variation" parent="." index="1" instance=ExtResource("2_ubbhc")]
 transform = Transform3D(-1.5298985e-08, 0, 0.35, 0, 0.35, 0, -0.35, 0, -1.5298985e-08, 0, 0, 0)
