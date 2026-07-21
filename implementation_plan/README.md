@@ -19,6 +19,7 @@ Este diretorio reune a documentacao gerada a partir da analise de `TCC.md` e dos
 - `13_skill_validacao_arquitetura_paths.md`: skill/documento para checagem de paths e limites entre os projetos Client e Server.
 - `14_documentacao_tecnica_metricas_rede.md`: documentacao tecnica resumida da coleta de metricas de rede.
 - `15_runtime_observabilidade_e_comandos_servidor.md`: contrato operacional de flags, exemplos de build/export e modelos de scripts para subir servidor e dashboard.
+- `16_plano_muzzle_fx_por_arma.md`: arquitetura de cenas de muzzle FX por arma, selecionadas via `WeaponPresentationData` e executadas por uma interface comum.
 
 ## Escopo Da Analise
 
