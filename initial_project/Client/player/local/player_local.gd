@@ -19,6 +19,7 @@ const WeaponCatalog = preload("res://shared/weapons/weapon_catalog.gd")
 @export var max_jumps := 2
 @export var gravity := 0.2
 @export var mouse_sensitivity := 0.005
+@export var gamepad_look_sensitivity := 2.5
 
 @onready var head: Node3D = $Head
 @onready var foot_step_timer: Timer = $FootStepTimer
@@ -50,6 +51,7 @@ func pause() -> void:
 	set_processing_enabled(false)
 	is_paused = true
 	pause_screen.show()
+	pause_screen.call_deferred("focus_default_control")
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
@@ -79,6 +81,7 @@ func set_processing_enabled(enabled: bool) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	handle_gamepad_look(delta)
 	move()
 	choose_anim()
 	check_shoot_input()
@@ -214,6 +217,21 @@ func _input(event) -> void:
 		look_around(event.relative)
 
 
+func handle_gamepad_look(delta: float) -> void:
+	var look_input := Input.get_vector(
+		ClientNames.INPUT_LOOK_LEFT,
+		ClientNames.INPUT_LOOK_RIGHT,
+		ClientNames.INPUT_LOOK_UP,
+		ClientNames.INPUT_LOOK_DOWN
+	)
+	if look_input.is_zero_approx():
+		return
+
+	rotate_y(-look_input.x * gamepad_look_sensitivity * delta)
+	head.rotate_x(-look_input.y * gamepad_look_sensitivity * delta)
+	head.rotation.x = clampf(head.rotation.x, -PI / 2, PI / 2)
+
+
 func check_throw_grenade_input() -> void:
 	if Input.is_action_just_pressed(ClientNames.INPUT_THROW_GRENADE):
 		get_tree().call_group(ClientNames.GROUP_LOBBY, ClientNames.METHOD_TRY_THROW_GRENADE)
@@ -286,9 +304,10 @@ func update_health_bar(current_health: int, max_health: int, changed_amount: int
 	get_tree().call_group(ClientNames.GROUP_HEALTH_CHANGE_MASK, ClientNames.METHOD_UPDATE_MASK, current_health / float(max_health))
 
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if event.is_action_pressed(ClientNames.INPUT_UI_CANCEL):
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(ClientNames.INPUT_PAUSE):
 		pause() if not is_paused else unpause()
+		get_viewport().set_input_as_handled()
 
 
 func _on_grenade_detection_area_area_entered(area: Area3D) -> void:

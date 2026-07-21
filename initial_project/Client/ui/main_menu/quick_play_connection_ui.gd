@@ -32,6 +32,7 @@ func activate(mode_label: String = "")->void:
 		cancel_button.hide()
 		status_label.text = "Voce nao esta conectado ao servidor, tente novamente."
 	show()
+	(close_button if close_button.visible else cancel_button).call_deferred("grab_focus")
 
 func on_lobby_clients_updated(connected_clients:int, max_clients:int)-> void:
 	if selected_mode_label.is_empty():
@@ -43,6 +44,18 @@ func on_cant_connect_to_lobby()->void:
 	status_label.text = "Nao foi possivel conectar-se ao lobby."
 	cancel_button.hide()
 	close_button.show()
+	close_button.call_deferred("grab_focus")
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible or not event.is_action_pressed(ClientNames.INPUT_UI_CANCEL):
+		return
+
+	if cancel_button.visible:
+		_on_cancel_button_pressed()
+	elif close_button.visible:
+		_on_close_button_pressed()
+	get_viewport().set_input_as_handled()
 
 func _on_close_button_pressed() -> void:
 	hide()

@@ -6,6 +6,7 @@ const ServerLocator = preload("res://server/server_locator.gd")
 
 @onready var match_mode_option_button: OptionButton = %MatchModeOptionButton
 @onready var player_name_line_edit: LineEdit = %PlayerNameLineEdit
+@onready var play_button: Button = $VBoxContainer/PlayButton
 
 func _ready()->void:
 	if (FileAccess.file_exists(NAME_SAVE_PATH)):
@@ -14,6 +15,7 @@ func _ready()->void:
 
 	setup_match_mode_options()
 	AudioManager.play_music(AudioManager.MusicKeys.MenuMusic)
+	play_button.call_deferred("grab_focus")
 
 func setup_match_mode_options() -> void:
 	match_mode_option_button.clear()

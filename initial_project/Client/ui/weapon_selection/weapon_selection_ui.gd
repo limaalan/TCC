@@ -9,6 +9,7 @@ const WeaponRegistry = preload("res://player/weapons/weapon_registry.gd")
 @onready var smg_label: Label = %SMGLabel
 @onready var shotgun_icon: TextureRect = %ShotgunIcon
 @onready var shotgun_label: Label = %ShotgunLabel
+@onready var pistol_button: Button = $BackGroundTexture/HBoxContainer/PistolPanel/PistolButton
 
 
 func _ready() -> void:
@@ -19,6 +20,7 @@ func _ready() -> void:
 func activate() ->void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	show()
+	pistol_button.call_deferred("grab_focus")
 	auto_select_timer.start()
 
 
