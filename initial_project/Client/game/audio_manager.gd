@@ -21,6 +21,8 @@ const MUSIC_BUS := &"Music"
 const SFX_BUS := &"SFX"
 const MUSIC_TARGET_VOLUME_DB := -16.0
 const MUSIC_SILENT_VOLUME_DB := -60.0
+
+@export var audio_library: AudioLibrary
 @onready var music_player: AudioStreamPlayer = $MusicPlayer
 
 var music_transition_tween :Tween
@@ -29,12 +31,10 @@ func _ready()->void:
 	music_player.volume_db = MUSIC_SILENT_VOLUME_DB
 	
 func play_music(music_key: MusicKeys)->void:
-	var stream :AudioStream 
-	match music_key:
-		MusicKeys.MenuMusic:
-			stream = load("res://assets/audio/music/Shrooter_Music_Menu.ogg")
-		MusicKeys.BattleMusic:
-			stream = load("res://assets/audio/music/Shrooter_Music_Gameplay.ogg")
+	var stream := get_music_stream(music_key)
+	if stream == null:
+		push_warning("Music is not configured for key: %s" % music_key)
+		return
 	
 	if music_transition_tween != null :
 		music_transition_tween.kill()
@@ -60,29 +60,11 @@ func play_music(music_key: MusicKeys)->void:
 	
 #Pitch random pro som não ficar repetivo ( tiro da arma )
 func play_sfx(sfx_key : SFXKeys, position:= Vector3.ZERO , pitch_rand := 0.0)->void:
-	var stream:AudioStream
-	match sfx_key:
-		SFXKeys.UIClick:
-			stream = load("res://assets/audio/sfx/ui_click.ogg")
-		SFXKeys.PickupHealth:
-			stream = load("res://assets/audio/sfx/pickup_health.ogg")
-		SFXKeys.PickupGrenade:
-			stream = load("res://assets/audio/sfx/pickup_grenade.ogg")
-		SFXKeys.ShootPistol:
-			stream = load("res://assets/audio/sfx/pistol_shot.ogg")
-		SFXKeys.ShootSMG:
-			stream = load("res://assets/audio/sfx/smg_shot.ogg")
-		SFXKeys.ShootShotgun:
-			stream = load("res://assets/audio/sfx/shotgun_shot.ogg")
-		SFXKeys.Footstep:
-			stream = load("res://assets/audio/sfx/footstep.ogg")
-		SFXKeys.JumpLand:
-			stream = load("res://assets/audio/sfx/jump_land.ogg")	
-		SFXKeys.GrenadeThrow:
-			stream = load("res://assets/audio/sfx/grenade_throw.ogg")
-		SFXKeys.GrenadeExplode:
-			stream = load("res://assets/audio/sfx/grenade_explosion.ogg")
-			
+	var stream := get_sfx_stream(sfx_key)
+	if stream == null:
+		push_warning("SFX is not configured for key: %s" % sfx_key)
+		return
+
 	var sfx_player
 	if position == Vector3.ZERO:
 		sfx_player = AudioStreamPlayer.new()
@@ -96,3 +78,45 @@ func play_sfx(sfx_key : SFXKeys, position:= Vector3.ZERO , pitch_rand := 0.0)->v
 	sfx_player.finished.connect(sfx_player.queue_free)
 	add_child(sfx_player)
 	sfx_player.play()
+
+
+func get_music_stream(music_key: MusicKeys) -> AudioStream:
+	if audio_library == null:
+		return null
+
+	match music_key:
+		MusicKeys.MenuMusic:
+			return audio_library.menu_music
+		MusicKeys.BattleMusic:
+			return audio_library.battle_music
+
+	return null
+
+
+func get_sfx_stream(sfx_key: SFXKeys) -> AudioStream:
+	if audio_library == null:
+		return null
+
+	match sfx_key:
+		SFXKeys.UIClick:
+			return audio_library.ui_click_sound
+		SFXKeys.PickupHealth:
+			return audio_library.health_pickup_sound
+		SFXKeys.PickupGrenade:
+			return audio_library.grenade_pickup_sound
+		SFXKeys.ShootPistol:
+			return audio_library.pistol_sound
+		SFXKeys.ShootSMG:
+			return audio_library.smg_sound
+		SFXKeys.ShootShotgun:
+			return audio_library.shotgun_sound
+		SFXKeys.Footstep:
+			return audio_library.footstep_sound
+		SFXKeys.JumpLand:
+			return audio_library.jump_sound
+		SFXKeys.GrenadeThrow:
+			return audio_library.grenade_throw_sound
+		SFXKeys.GrenadeExplode:
+			return audio_library.grenade_explosion_sound
+
+	return null
