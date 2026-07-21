@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1t0br17nhq3m"]
+
+[ext_resource type="PackedScene" uid="uid://cquppeeguyks6" path="res://assets/meus_assets/fire_rate_pickup/import/fire_rate_pickup.glb" id="1_isub0"]
+
+[node name="fire_rate_pickup" instance=ExtResource("1_isub0")]
+transform = Transform3D(0.45, 0, 0, 0, -1.9670125e-08, -0.45, 0, 0.45, -1.9670125e-08, 0, 0, 0)

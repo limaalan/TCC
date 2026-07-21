@@ -1,9 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://b664f2slpt7q1"]
+[gd_scene load_steps=3 format=3 uid="uid://b664f2slpt7q1"]
 
 [ext_resource type="Script" uid="uid://dsw55vmp08w3d" path="res://game/audio_manager.gd" id="1_lg7t1"]
+[ext_resource type="Resource" path="res://game/audio/default_audio_library.tres" id="2_audio_library"]
 
 [node name="AudioManager" type="Node"]
 script = ExtResource("1_lg7t1")
+audio_library = ExtResource("2_audio_library")
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
 volume_db = -16.0

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TCC Metrics Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Local Observer</p>
+          <h1>Realtime Network Metrics</h1>
+          <p class="hero-copy">
+            Live telemetry from the Godot dedicated server, streamed over UDP to this local dashboard.
+          </p>
+        </div>
+        <div class="status-panel">
+          <p class="status-label">Stream status</p>
+          <p id="status-text" class="status-text">Waiting for samples...</p>
+          <p id="status-meta" class="status-meta">No UDP packets received yet.</p>
+        </div>
+      </section>
+
+      <section id="cards" class="cards-grid">
+        <article class="metric-card"><span>Players</span><strong id="card-players">-</strong></article>
+        <article class="metric-card"><span>Lobbies</span><strong id="card-lobbies">-</strong></article>
+        <article class="metric-card"><span>Avg RTT</span><strong id="card-rtt-avg">-</strong></article>
+        <article class="metric-card"><span>Max RTT</span><strong id="card-rtt-max">-</strong></article>
+        <article class="metric-card"><span>Avg Loss</span><strong id="card-loss-avg">-</strong></article>
+        <article class="metric-card"><span>Max Loss</span><strong id="card-loss-max">-</strong></article>
+        <article class="metric-card"><span>Sent KiB/s</span><strong id="card-sent-kib-per-sec">-</strong></article>
+        <article class="metric-card"><span>Recv KiB/s</span><strong id="card-recv-kib-per-sec">-</strong></article>
+        <article class="metric-card"><span>Sent pkt/s</span><strong id="card-sent-pps">-</strong></article>
+        <article class="metric-card"><span>Recv pkt/s</span><strong id="card-recv-pps">-</strong></article>
+        <article class="metric-card"><span>Server Physics</span><strong id="card-server-physics">-</strong></article>
+        <article class="metric-card"><span>Avg Client FPS</span><strong id="card-client-fps-avg">-</strong></article>
+        <article class="metric-card"><span>Min Client FPS</span><strong id="card-client-fps-min">-</strong></article>
+        <article class="metric-card"><span>CPU</span><strong id="card-cpu">-</strong></article>
+        <article class="metric-card"><span>Memory</span><strong id="card-memory">-</strong></article>
+        <article class="metric-card"><span>PID</span><strong id="card-pid">-</strong></article>
+      </section>
+
+      <section class="charts-grid">
+        <article class="chart-card">
+          <div class="chart-heading">
+            <h2>RTT</h2>
+            <p>Average and max round-trip time</p>
+          </div>
+          <div id="chart-rtt" class="chart-body chart-empty">Waiting for samples...</div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-heading">
+            <h2>Packet Loss</h2>
+            <p>Average and max packet loss percent</p>
+          </div>
+          <div id="chart-loss" class="chart-body chart-empty">Waiting for samples...</div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-heading">
+            <h2>Traffic</h2>
+            <p>Sent and received throughput</p>
+          </div>
+          <div id="chart-traffic" class="chart-body chart-empty">Waiting for samples...</div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-heading">
+            <h2>Packets</h2>
+            <p>Sent and received packets per second</p>
+          </div>
+          <div id="chart-packets" class="chart-body chart-empty">Waiting for samples...</div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-heading">
+            <h2>Server Physics</h2>
+            <p>Latest measured duration of the server lobby physics step</p>
+          </div>
+          <div id="chart-server-physics" class="chart-body chart-empty">Waiting for samples...</div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-heading">
+            <h2>Process Health</h2>
+            <p>CPU and memory reported by the local Python monitor</p>
+          </div>
+          <div id="chart-process" class="chart-body chart-empty">Waiting for samples...</div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-heading">
+            <h2>Client FPS</h2>
+            <p>FPS reported by each connected client</p>
+          </div>
+          <div id="chart-client-fps" class="chart-body chart-empty">Waiting for FPS samples...</div>
+        </article>
+      </section>
+
+      <section class="peers-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Peer table</p>
+            <h2>Connected peers</h2>
+          </div>
+          <p class="panel-copy">Latest per-peer RTT, variance, packet loss, app ping, and FPS values.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Peer</th>
+                <th>RTT (ms)</th>
+                <th>Last RTT (ms)</th>
+                <th>Variance (ms)</th>
+                <th>Loss (%)</th>
+                <th>App Ping (ms)</th>
+                <th>FPS</th>
+              </tr>
+            </thead>
+            <tbody id="peers-body">
+              <tr>
+                <td colspan="7" class="empty-row">Waiting for metrics...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script src="/static/dashboard.js"></script>
+  </body>
+</html>

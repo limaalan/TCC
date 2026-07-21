@@ -44,33 +44,40 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_koth")
 
-[node name="KothInfoContainer" type="VBoxContainer" parent="."]
+[node name="TopMargin" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.61200005
-anchor_right = 0.5
-anchor_bottom = 0.61200005
-offset_left = -246.0
-offset_top = -366.70004
-offset_right = 246.0
-offset_bottom = -249.20004
-theme_override_constants/separation = 21
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 112.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
 
-[node name="ModeObjectiveLabel" type="Label" parent="KothInfoContainer"]
+[node name="TopRow" type="HBoxContainer" parent="TopMargin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="KothInfoContainer" type="VBoxContainer" parent="TopMargin/TopRow"]
+custom_minimum_size = Vector2(760, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 12
+
+[node name="ModeObjectiveLabel" type="Label" parent="TopMargin/TopRow/KothInfoContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "Primeiro time a chegar a 200"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="KothInfoContainer"]
+[node name="BarsRow" type="HBoxContainer" parent="TopMargin/TopRow/KothInfoContainer"]
 layout_mode = 2
-theme_override_constants/separation = 80
+theme_override_constants/separation = 12
 
-[node name="BlueTeamProgressBar" type="ProgressBar" parent="KothInfoContainer/HBoxContainer"]
+[node name="BlueTeamProgressBar" type="ProgressBar" parent="TopMargin/TopRow/KothInfoContainer/BarsRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 12)
+custom_minimum_size = Vector2(160, 12)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
@@ -80,9 +87,13 @@ max_value = 200.0
 value = 61.15
 show_percentage = false
 
-[node name="RedTeamProgressBar" type="ProgressBar" parent="KothInfoContainer/HBoxContainer"]
+[node name="CenterSpacer" type="Control" parent="TopMargin/TopRow/KothInfoContainer/BarsRow"]
+custom_minimum_size = Vector2(160, 12)
+layout_mode = 2
+
+[node name="RedTeamProgressBar" type="ProgressBar" parent="TopMargin/TopRow/KothInfoContainer/BarsRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 12)
+custom_minimum_size = Vector2(160, 12)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
@@ -92,7 +103,7 @@ value = 55.27
 fill_mode = 1
 show_percentage = false
 
-[node name="HillStateLabel" type="Label" parent="KothInfoContainer"]
+[node name="HillStateLabel" type="Label" parent="TopMargin/TopRow/KothInfoContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 6

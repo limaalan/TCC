@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://mj47j3c1d2oy"]
+
+[ext_resource type="PackedScene" uid="uid://xcu0ms2vtlxv" path="res://assets/meus_assets/andaime/andaime_base.tscn" id="1_ifpb4"]
+[ext_resource type="PackedScene" uid="uid://bethkpqq7t1s4" path="res://assets/meus_assets/andaime/tabua_andaime.tscn" id="2_df6yv"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="andaime" parent="." instance=ExtResource("1_ifpb4")]
+
+[node name="tabua_andaime" parent="." instance=ExtResource("2_df6yv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.7498994, 0)

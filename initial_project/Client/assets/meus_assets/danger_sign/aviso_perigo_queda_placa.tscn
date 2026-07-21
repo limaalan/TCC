@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://58ju2j2u3j52"]
+
+[ext_resource type="PackedScene" uid="uid://dqmceobwvhy8l" path="res://assets/meus_assets/danger_sign/import/aviso_perigo_queda_placa.glb" id="1_adax2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_adax2"]
+size = Vector3(0.09472656, 2.0214844, 3.9804688)
+
+[node name="aviso_perigo_queda_placa" instance=ExtResource("1_adax2")]
+
+[node name="ExactCollisions" type="StaticBody3D" parent="." index="1"]
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="ExactCollisions" index="0"]
+shape = SubResource("BoxShape3D_adax2")

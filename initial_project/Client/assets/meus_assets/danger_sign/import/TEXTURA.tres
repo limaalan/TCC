@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://lht5l4wj7pgd"]
+
+[ext_resource type="Texture2D" uid="uid://bekqt5x8rb83w" path="res://assets/meus_assets/danger_sign/import/aviso_perigo_queda_fall_hazard_sign.png" id="1_toaxr"]
+
+[resource]
+resource_name = "TEXTURA"
+cull_mode = 2
+albedo_texture = ExtResource("1_toaxr")
+roughness = 0.5
