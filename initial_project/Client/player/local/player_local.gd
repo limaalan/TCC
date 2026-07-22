@@ -91,6 +91,10 @@ func _physics_process(delta: float) -> void:
 
 
 func check_shoot_input() -> void:
+	if not GamepadFocusGuard.accepts_input():
+		weapon_holder.end_trigger_pressed()
+		return
+
 	if Input.is_action_just_pressed(ClientNames.INPUT_SHOOT):
 		weapon_holder.start_trigger_pressed()
 	elif Input.is_action_just_released(ClientNames.INPUT_SHOOT):
@@ -98,12 +102,37 @@ func check_shoot_input() -> void:
 
 
 func check_weapon_switch_input() -> void:
+	if not GamepadFocusGuard.accepts_input():
+		return
+
 	if Input.is_action_just_pressed(ClientNames.INPUT_WEAPON_SLOT_1):
 		try_switch_weapon_slot(1)
 	elif Input.is_action_just_pressed(ClientNames.INPUT_WEAPON_SLOT_2):
 		try_switch_weapon_slot(2)
 	elif Input.is_action_just_pressed(ClientNames.INPUT_WEAPON_SLOT_3):
 		try_switch_weapon_slot(3)
+	elif Input.is_action_just_pressed(ClientNames.INPUT_WEAPON_PREVIOUS):
+		cycle_weapon(-1)
+	elif Input.is_action_just_pressed(ClientNames.INPUT_WEAPON_NEXT):
+		cycle_weapon(1)
+
+
+func cycle_weapon(direction: int) -> void:
+	var slots: Array[int] = []
+	for weapon_definition in WeaponCatalog.get_all_weapons():
+		slots.append(weapon_definition.slot)
+
+	if slots.is_empty():
+		return
+
+	slots.sort()
+	var current_weapon_definition := WeaponCatalog.get_weapon(weapon_id)
+	var current_slot_index := slots.find(current_weapon_definition.slot)
+	if current_slot_index < 0:
+		current_slot_index = 0
+
+	var next_slot_index := wrapi(current_slot_index + direction, 0, slots.size())
+	try_switch_weapon_slot(slots[next_slot_index])
 
 
 func try_switch_weapon_slot(slot: int) -> void:
@@ -181,11 +210,14 @@ func handle_footsteps(direction: Vector3) -> void:
 
 
 func move() -> void:
-	var input_dir := Input.get_vector(ClientNames.INPUT_MOVE_LEFT, ClientNames.INPUT_MOVE_RIGHT, ClientNames.INPUT_MOVE_FORWARD, ClientNames.INPUT_MOVE_BACKWARD)
+	var has_input_focus := GamepadFocusGuard.accepts_input()
+	var input_dir := Vector2.ZERO
+	if has_input_focus:
+		input_dir = Input.get_vector(ClientNames.INPUT_MOVE_LEFT, ClientNames.INPUT_MOVE_RIGHT, ClientNames.INPUT_MOVE_FORWARD, ClientNames.INPUT_MOVE_BACKWARD)
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
 	if is_on_floor():
-		is_sprinting = Input.is_action_pressed(ClientNames.INPUT_SPRINT)
+		is_sprinting = has_input_focus and Input.is_action_pressed(ClientNames.INPUT_SPRINT)
 
 		if not is_grounded:
 			is_grounded = true
@@ -201,7 +233,7 @@ func move() -> void:
 		if is_grounded:
 			is_grounded = false
 
-	if Input.is_action_just_pressed(ClientNames.INPUT_JUMP) and can_jump():
+	if has_input_focus and Input.is_action_just_pressed(ClientNames.INPUT_JUMP) and can_jump():
 		jump()
 
 	var speed := normal_speed if not is_sprinting else sprint_speed
@@ -213,11 +245,14 @@ func move() -> void:
 
 
 func _input(event) -> void:
-	if event is InputEventMouseMotion:
+	if GamepadFocusGuard.accepts_input() and event is InputEventMouseMotion:
 		look_around(event.relative)
 
 
 func handle_gamepad_look(delta: float) -> void:
+	if not GamepadFocusGuard.accepts_input():
+		return
+
 	var look_input := Input.get_vector(
 		ClientNames.INPUT_LOOK_LEFT,
 		ClientNames.INPUT_LOOK_RIGHT,
@@ -233,6 +268,9 @@ func handle_gamepad_look(delta: float) -> void:
 
 
 func check_throw_grenade_input() -> void:
+	if not GamepadFocusGuard.accepts_input():
+		return
+
 	if Input.is_action_just_pressed(ClientNames.INPUT_THROW_GRENADE):
 		get_tree().call_group(ClientNames.GROUP_LOBBY, ClientNames.METHOD_TRY_THROW_GRENADE)
 
@@ -305,7 +343,7 @@ func update_health_bar(current_health: int, max_health: int, changed_amount: int
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(ClientNames.INPUT_PAUSE):
+	if GamepadFocusGuard.accepts_input() and event.is_action_pressed(ClientNames.INPUT_PAUSE):
 		pause() if not is_paused else unpause()
 		get_viewport().set_input_as_handled()
 
