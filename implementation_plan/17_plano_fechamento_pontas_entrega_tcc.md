@@ -80,7 +80,7 @@ O jogo pode funcionar na maquina atual e ainda falhar em um clone limpo.
 
 ### Conexao Publica Incompleta
 
-O Client usa `127.0.0.1` como endereco padrao e cria o peer durante `_ready()`. Existe suporte a argumento `--server-address`, mas nao ha fluxo amigavel para informar, salvar, trocar e tentar novamente o endereco do servidor.
+O Client agora usa o endereco persistido em `user://settings.cfg` como unica fonte de verdade em execucao. `default_settings.cfg` serve apenas para preencher esse arquivo no primeiro uso da build e deve receber o IP da VPS antes da exportacao. Se nenhum endereco estiver configurado, o Client nao tenta conectar e avisa o jogador no menu.
 
 ### Matchmaking Arriscado Para A Apresentacao
 
@@ -103,6 +103,32 @@ Os CSVs existentes possuem apenas amostras com zero jogadores. A infraestrutura 
 O trabalho deve seguir os gates abaixo em ordem. Nao iniciar o gate seguinte enquanto o criterio de saida do atual nao for cumprido.
 
 Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encontrados durante um gate devem ser corrigidos apenas quando bloquearem seu criterio de saida.
+
+## Pendencias Pequenas Antes Da Limpeza Grande
+
+As tarefas abaixo podem avancar em paralelo antes do refactor de build reproduzivel e da limpeza geral. A ordem esta organizada da menor para a maior dificuldade.
+
+| Ordem | Dificuldade | Pendencia | Descricao Rapida | Pode Comecar Antes Da #119? |
+| --- | --- | --- | --- | --- |
+| 1 | Muito baixa | [#133 - Atualizar controles no relatorio](https://github.com/limaalan/TCC/issues/133) | Corrigir os vetores, a figura e a tabela do TCC para refletirem tres armas, granada, L3, Start/Menu e os bindings finais. | Sim; os arquivos do relatorio ficam fora do projeto Godot. |
+| 2 | Baixa | Textos e foco basico da [#103](https://github.com/limaalan/TCC/issues/103) | Padronizar a interface em portugues, revisar `Voltar`, `ui_cancel` e o foco ao abrir/fechar telas. | Sim; e trabalho em cenas e scripts. |
+| 3 | Baixa a media | [#132 - Tela Como jogar](https://github.com/limaalan/TCC/issues/132) | Criar dois cards responsivos, um para teclado/mouse e outro para gamepad, alem de resumos curtos de TDM e KOTH. | Parcialmente; a cena pode ser criada agora, mas os exports finais dependem de #63/#119. |
+| 4 | Media | Estrutura de creditos da [#123](https://github.com/limaalan/TCC/issues/123) | Criar a tela e registrar autor, curso, tecnologias e espaco para atribuicoes de terceiros. | Sim para a estrutura; o conteudo final depende da auditoria. |
+| 5 | Media | [#134 - Identidade final da release](https://github.com/limaalan/TCC/issues/134) | Definir nome final, titulo da janela, icone, splash e versao visivel. | Parcialmente; nome e icone raiz podem avancar, novos assets de runtime dependem de #63/#119. |
+| 6 | Media | Capa, menu, pausa e 16:9 da [#103](https://github.com/limaalan/TCC/issues/103) | Aplicar capa, hierarquia visual e validar 720p/1080p com mouse, teclado e controle. | O layout pode avancar; a integracao da arte final deve esperar a politica de assets. |
+| 7 | Media a alta | Auditoria de licencas e creditos da [#123](https://github.com/limaalan/TCC/issues/123) | Inventariar origem, autor e licenca de audio, HDR, fontes, modelos, texturas e icones. | Sim; e levantamento documental independente do refactor. |
+| 8 | Alta | Paleta completa da [#121](https://github.com/limaalan/TCC/issues/121) | Centralizar e aplicar as cores em menu, HUD, times, pickups, powerups, mapas e VFX. | Pode iniciar como guia, mas a aplicacao completa atravessa muitos assets. |
+
+### Decisao Para A Imagem De Controles
+
+Nao reconstruir teclado, mouse e gamepad tecla por tecla usando dezenas de nos `Control`. Os arquivos vetoriais originais devem ser atualizados e exportados em duas imagens com fundo transparente:
+
+- uma imagem para teclado e mouse;
+- uma imagem para gamepad.
+
+A UI da Godot deve montar somente os cards responsivos ao redor dessas imagens usando `Container`, `TextureRect`, titulos, textos auxiliares e botao de voltar. Isso preserva a qualidade visual dos vetores, reduz o tempo de implementacao e continua permitindo foco, navegacao por controle e adaptacao para 720p/1080p.
+
+Novos exports dentro de `initial_project/Client/assets/` continuam ignorados pelo `.gitignore`. A integracao definitiva dessas imagens e da capa deve acontecer junto da solucao das issues #63 e #119, evitando assets que funcionam apenas na maquina local.
 
 ## Gate 0 - Fechar O Trabalho Em Andamento
 
@@ -212,6 +238,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 - Mapear tiro, pulo, sprint, granada e pausa.
 - Habilitar foco e navegacao de gamepad no menu, selecao de arma e pausa.
 - Adicionar indicacao visual de foco.
+- Adicionar acesso a tela `Como jogar` pelo menu principal e pela pausa.
 - Testar uma partida completa com um controle fisico.
 
 ### Criterio De Saida
@@ -223,6 +250,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 
 - Executar [#77 - Adicionar suporte basico a controle/gamepad](https://github.com/limaalan/TCC/issues/77).
 - Ampliar a #77 para incluir foco e navegacao real da UI; nao criar issue duplicada.
+- Executar [#132 - Adicionar tela Como jogar com controles e objetivos dos modos](https://github.com/limaalan/TCC/issues/132).
 
 ## Gate 5 - Fechar A Identidade Visual
 
@@ -234,6 +262,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 4. Repaginar a pistola.
 5. Repaginar a SMG.
 6. Aplicar o tema no menu, HUD, Highrise e VFX de maior destaque.
+7. Padronizar nome, icone, splash, capa e versao da release.
 
 ### Escopo Da Paleta
 
@@ -259,6 +288,7 @@ O fluxo atual mapeia caminhada e corrida para a mesma animacao `hover_walk`. O p
 - Menu, gameplay e tela de KOTH parecem pertencer ao mesmo jogo.
 - Pistola e SMG possuem silhuetas distintas e usam a paleta.
 - Jogador remoto nao apresenta transicoes visualmente quebradas nos estados basicos.
+- Capa, titulo da janela, icone e pagina publica usam a mesma identidade.
 - Existem tres screenshots finais aprovadas: menu, combate e KOTH.
 
 ### GitHub
@@ -270,6 +300,7 @@ O fluxo atual mapeia caminhada e corrida para a mesma animacao `hover_walk`. O p
 - [#105 - Melhorar cenario do mapa Highrise](https://github.com/limaalan/TCC/issues/105) e P1: fazer apenas se a leitura visual do mapa continuar fraca.
 - Issue: [#121 - Definir e aplicar paleta de cores do jogo](https://github.com/limaalan/TCC/issues/121).
 - Issue: [#122 - Repaginar modelos da pistola e SMG](https://github.com/limaalan/TCC/issues/122).
+- Issue: [#134 - Aplicar identidade final da release no Client](https://github.com/limaalan/TCC/issues/134).
 
 ## Gate 6 - Substituir E Licenciar O Audio
 
@@ -399,6 +430,7 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 - diagrama da arquitetura final;
 - fluxo Client/Server/lobby;
 - screenshots do menu, gameplay e KOTH;
+- figura e tabela atualizadas dos controles finais;
 - tabela proposta x resultado;
 - tabela de testes;
 - tabela e graficos das metricas;
@@ -414,6 +446,7 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 ### GitHub
 
 - Ampliar e executar [#99 - Escrita do relatorio](https://github.com/limaalan/TCC/issues/99); nao criar issue duplicada.
+- Executar [#133 - Atualizar secao de controles do relatorio para a build final](https://github.com/limaalan/TCC/issues/133) como recorte verificavel da #99.
 
 ## Gate 10 - Preparar A Apresentacao E Os Planos De Contingencia
 
@@ -462,11 +495,14 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 | [#102](https://github.com/limaalan/TCC/issues/102) Coleta de metricas | Implementada no codigo atual | Validar coleta e encerrar; criar issue de experimento |
 | [#103](https://github.com/limaalan/TCC/issues/103) Menu e pausa | Parte do polimento | Executar depois da paleta |
 | [#104](https://github.com/limaalan/TCC/issues/104) Sonoplastia | Bloqueador de licenca | Executar no Gate 6 |
-| [#105](https://github.com/limaalan/TCC/issues/105) Cenario Highrise | P1 | Fazer apenas se necessario apos o passe visual principal |
+| [#105](https://github.com/limaalan/TCC/issues/105) Cenario Highrise | Implementada em feature branch | Validar, integrar e encerrar; a #130 foi fechada como duplicada |
 | [#106](https://github.com/limaalan/TCC/issues/106) Modelo/animacao | Parcialmente implementada | Reescrever para polimento das animacoes finais |
 | [#107](https://github.com/limaalan/TCC/issues/107) Importar animacoes | Parcialmente implementada | Validar integracao e encerrar |
 | [#108](https://github.com/limaalan/TCC/issues/108) Expressoes faciais | Fora do recorte | Encerrar como `not planned` |
 | [#116](https://github.com/limaalan/TCC/issues/116) Actions deploy Server | Melhoria posterior | Adiar ate o deploy manual estar fechado |
+| [#132](https://github.com/limaalan/TCC/issues/132) Tela Como jogar | Polimento funcional pequeno | Executar com dois cards e exports vetoriais transparentes |
+| [#133](https://github.com/limaalan/TCC/issues/133) Controles no relatorio | Pendencia academica pequena | Executar em paralelo e vincular a #99 |
+| [#134](https://github.com/limaalan/TCC/issues/134) Identidade da release | Polimento de apresentacao | Definir nome, icone, splash e versao antes da release publica |
 
 ## Issues Criadas Para O Fechamento
 
@@ -552,19 +588,44 @@ As issues abaixo foram criadas no GitHub e vinculadas ao milestone 9, referente 
 
 **Criterios:** ensaio completo realizado e demonstracao recuperavel sem build/deploy ao vivo.
 
+### [#132 - Adicionar Tela Como Jogar Com Controles E Objetivos](https://github.com/limaalan/TCC/issues/132)
+
+**Prioridade:** P1 pequeno
+
+**Objetivo:** disponibilizar no menu e na pausa dois cards de controles, mais uma explicacao curta de TDM e KOTH.
+
+**Criterios:** imagens transparentes atualizadas, navegacao completa por controle e leitura correta em 720p/1080p.
+
+### [#133 - Atualizar Secao De Controles Do Relatorio](https://github.com/limaalan/TCC/issues/133)
+
+**Prioridade:** P0 academico pequeno
+
+**Objetivo:** atualizar figura e tabela do TCC para os bindings realmente entregues.
+
+**Criterios:** figura, tabela e `Input Map` sem contradicoes; PDF compilando com a nova imagem.
+
+### [#134 - Aplicar Identidade Final Da Release No Client](https://github.com/limaalan/TCC/issues/134)
+
+**Prioridade:** P1 de apresentacao
+
+**Objetivo:** unificar nome, titulo da janela, icone, splash, capa, versao e pagina publica.
+
+**Criterios:** nenhum nome conflitante ou icone generico na build distribuida.
+
 ## Ordem Linear Resumida
 
 1. #118 - terminar muzzle FX e congelar features.
 2. #63 + #119 - garantir clone limpo e build reproduzivel.
 3. #74 + #76 - fechar IP, reconexao e mensagens.
 4. #75 revisada + #120 - fechar perfil da demonstracao.
-5. #77 - suporte completo a controle.
-6. #121 + #106/#107 + #122 + #103 - fechar passe artistico.
-7. #104 + #123 - substituir audio e documentar licencas.
-8. #65 revisada + #124 + #126 - release candidate e pagina publica.
-9. #102 validada + #125 - experimento e analise.
-10. #99 - relatorio final.
-11. #127 - ensaio, congelamento e apresentacao.
+5. #77 + #132 - suporte completo a controle e tela Como jogar.
+6. #133 - atualizar cedo as figuras e a tabela de controles do relatorio.
+7. #121 + #106/#107 + #122 + #103 + #134 - fechar passe artistico e identidade da release.
+8. #104 + #123 - substituir audio e documentar licencas.
+9. #65 revisada + #124 + #126 - release candidate e pagina publica.
+10. #102 validada + #125 - experimento e analise.
+11. #99 - relatorio final.
+12. #127 - ensaio, congelamento e apresentacao.
 
 ## Definicao Final De Pronto
 
@@ -574,6 +635,8 @@ O projeto esta pronto para entrega quando:
 - um terceiro baixa o Client e conecta ao servidor remoto sem ajuda tecnica;
 - TDM e KOTH terminam corretamente em build exportado;
 - o jogo pode ser usado por teclado/mouse e controle;
+- existe uma tela Como jogar coerente com os bindings e uma secao atualizada no relatorio;
+- nome, icone, splash, capa e versao identificam a mesma release;
 - arte e audio da release possuem identidade e licencas conhecidas;
 - existe uma release publica com QR code;
 - o experimento de metricas possui dados, graficos e conclusao;
