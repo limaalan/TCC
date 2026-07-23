@@ -5,11 +5,19 @@ class_name MatchEndInfoUI
 @onready var red_team_score_label: Label = %RedTeamScoreLabel
 @onready var blue_team_player_info_container: VBoxContainer = %BlueTeamPlayerInfoContainer
 @onready var red_team_player_info_container: VBoxContainer = %RedTeamPlayerInfoContainer
+@onready var exit_button: Button = $MarginContainer/VBoxContainer/ExitButton
 
 var player_info_row_container_scene := preload("res://ui/match_end_info/player_info_row_container.tscn")
 
 func _ready() -> void:
 	Input.mouse_mode=Input.MOUSE_MODE_VISIBLE
+	exit_button.call_deferred("grab_focus")
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(ClientNames.INPUT_UI_CANCEL):
+		_on_exit_button_pressed()
+		get_viewport().set_input_as_handled()
 	
 func show_score_infos(end_match_data: Dictionary)->void:
 	if not NetPayloads.is_end_match(end_match_data):

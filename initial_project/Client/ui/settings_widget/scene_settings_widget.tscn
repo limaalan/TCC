@@ -97,7 +97,7 @@ text = "Tela cheia"
 [node name="FullscreenCheckBox" type="CheckBox" parent="FullscreenContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-focus_mode = 0
+focus_mode = 2
 
 [connection signal="value_changed" from="MasterVolumeContainer/MasterVolumeSlider" to="." method="_on_master_volume_changed"]
 [connection signal="value_changed" from="MusicVolumeContainer/MusicVolumeSlider" to="." method="_on_music_volume_changed"]
