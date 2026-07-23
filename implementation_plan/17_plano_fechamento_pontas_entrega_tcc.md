@@ -123,7 +123,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 
 ### GitHub
 
-- Nova issue sugerida: `Finalizar muzzle FX especifico por arma`.
+- Issue: [#118 - Finalizar muzzle FX especifico por arma](https://github.com/limaalan/TCC/issues/118).
 
 ## Gate 1 - Tornar O Build Reproduzivel
 
@@ -152,7 +152,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 
 - Executar [#63 - Garantir assets do Client no build final](https://github.com/limaalan/TCC/issues/63).
 - Usar apenas a parte essencial de [#92 - Criar validacao de estrutura dos arquivos](https://github.com/limaalan/TCC/issues/92); a automacao completa pode esperar.
-- Nova issue sugerida: `Higienizar artefatos de build e reduzir o pacote final`.
+- Issue: [#119 - Higienizar artefatos de build e reduzir o pacote final](https://github.com/limaalan/TCC/issues/119).
 
 ## Gate 2 - Fechar A Conexao Publica
 
@@ -201,7 +201,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 
 - Reescrever [#75 - Permitir configurar partida por parametros do Server](https://github.com/limaalan/TCC/issues/75) para o estado atual: Highrise, presets atuais, quantidade de lobbies e jogadores por lobby.
 - [#83 - Criar scripts batch para iniciar Server com presets](https://github.com/limaalan/TCC/issues/83) e opcional; o deploy real e Linux.
-- Nova issue sugerida: `Criar perfil de servidor para demonstracao publica`.
+- Issue: [#120 - Criar perfil de servidor para demonstracao publica](https://github.com/limaalan/TCC/issues/120).
 
 ## Gate 4 - Adicionar Suporte A Controle
 
@@ -268,8 +268,8 @@ O fluxo atual mapeia caminhada e corrida para a mesma animacao `hover_walk`. O p
 - Executar [#103 - Refatorar main menu e tela de pause](https://github.com/limaalan/TCC/issues/103) somente depois de definir a paleta.
 - Aproveitar o escopo necessario de [#62 - Criar modelos 3D minimos](https://github.com/limaalan/TCC/issues/62), removendo dependencias de plataforma movel se ela continuar fora do recorte.
 - [#105 - Melhorar cenario do mapa Highrise](https://github.com/limaalan/TCC/issues/105) e P1: fazer apenas se a leitura visual do mapa continuar fraca.
-- Nova issue sugerida: `Definir e aplicar paleta de cores do jogo`.
-- Nova issue sugerida: `Repaginar modelos da pistola e SMG`.
+- Issue: [#121 - Definir e aplicar paleta de cores do jogo](https://github.com/limaalan/TCC/issues/121).
+- Issue: [#122 - Repaginar modelos da pistola e SMG](https://github.com/limaalan/TCC/issues/122).
 
 ## Gate 6 - Substituir E Licenciar O Audio
 
@@ -293,7 +293,7 @@ O fluxo atual mapeia caminhada e corrida para a mesma animacao `hover_walk`. O p
 
 - Executar [#104 - Refatorar sonoplastia do jogo](https://github.com/limaalan/TCC/issues/104).
 - [#48 - Limpar AudioManager para AudioEventData](https://github.com/limaalan/TCC/issues/48) nao bloqueia a licenca nem a release; adiar ou encerrar como `not planned` se o AudioLibrary atual for suficiente.
-- Nova issue sugerida: `Auditar licencas de todos os assets e criar THIRD_PARTY_NOTICES`.
+- Issue: [#123 - Auditar licencas de assets e criar THIRD_PARTY_NOTICES](https://github.com/limaalan/TCC/issues/123).
 
 ## Gate 7 - Gerar A Release Candidate
 
@@ -321,8 +321,8 @@ O fluxo atual mapeia caminhada e corrida para a mesma animacao `hover_walk`. O p
 - Atualizar [#65 - Rodar smoke test final](https://github.com/limaalan/TCC/issues/65): powerups ja existem e plataforma movel nao deve bloquear a release.
 - Encerrar [#64 - Atualizar prototype map](https://github.com/limaalan/TCC/issues/64) como `not planned` se Highrise for confirmado como mapa final.
 - Verificar os criterios e encerrar [#91 - Criar mapa KOTH](https://github.com/limaalan/TCC/issues/91) se o Highrise atual ja os cumprir.
-- Nova issue sugerida: `Publicar Client Windows e pagina de download da apresentacao`.
-- Nova issue sugerida: `Consolidar documentacao tecnica da release final`.
+- Issue: [#124 - Publicar Client Windows e pagina de download da apresentacao](https://github.com/limaalan/TCC/issues/124).
+- Issue: [#126 - Consolidar documentacao tecnica da release final](https://github.com/limaalan/TCC/issues/126).
 
 ## Gate 8 - Executar E Analisar O Experimento
 
@@ -368,7 +368,7 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 ### GitHub
 
 - [#102 - Adicionar coleta de metricas](https://github.com/limaalan/TCC/issues/102) parece implementada; validar e encerrar a issue.
-- Nova issue sugerida: `Executar experimento e analisar metricas com aumento de jogadores e lobbies`.
+- Issue: [#125 - Executar experimento e analisar metricas com aumento de jogadores e lobbies](https://github.com/limaalan/TCC/issues/125).
 
 ## Gate 9 - Escrever O Relatorio Final
 
@@ -437,7 +437,7 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 ### GitHub
 
 - [#116 - Criar GitHub Actions para deploy do Server](https://github.com/limaalan/TCC/issues/116) e melhoria posterior; nao deve bloquear um deploy manual ja funcional.
-- Nova issue sugerida: `Preparar kit de apresentacao e planos de contingencia`.
+- Issue: [#127 - Preparar kit de apresentacao e planos de contingencia](https://github.com/limaalan/TCC/issues/127).
 
 ## Cruzamento Completo Com As Issues Abertas
 
@@ -468,11 +468,11 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 | [#108](https://github.com/limaalan/TCC/issues/108) Expressoes faciais | Fora do recorte | Encerrar como `not planned` |
 | [#116](https://github.com/limaalan/TCC/issues/116) Actions deploy Server | Melhoria posterior | Adiar ate o deploy manual estar fechado |
 
-## Novas Issues Sugeridas
+## Issues Criadas Para O Fechamento
 
-As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` servem apenas para referencia neste plano.
+As issues abaixo foram criadas no GitHub e vinculadas ao milestone 9, referente ao fechamento e a entrega do TCC.
 
-### S1 - Finalizar Muzzle FX Especifico Por Arma
+### [#118 - Finalizar Muzzle FX Especifico Por Arma](https://github.com/limaalan/TCC/issues/118)
 
 **Prioridade:** P0
 
@@ -480,7 +480,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** pistola, SMG e shotgun validadas; nenhuma cena faltando; smoke test do Client aprovado.
 
-### S2 - Higienizar Artefatos De Build E Reduzir O Pacote Final
+### [#119 - Higienizar Artefatos De Build E Reduzir O Pacote Final](https://github.com/limaalan/TCC/issues/119)
 
 **Prioridade:** P0
 
@@ -488,7 +488,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** Git limpo de artefatos, export reproduzivel e tamanho final documentado.
 
-### S3 - Criar Perfil De Servidor Para Demonstracao Publica
+### [#120 - Criar Perfil De Servidor Para Demonstracao Publica](https://github.com/limaalan/TCC/issues/120)
 
 **Prioridade:** P0
 
@@ -496,7 +496,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** perfil inicia por comando conhecido, suporta a capacidade definida e foi testado por 30 minutos.
 
-### S4 - Definir E Aplicar Paleta De Cores Do Jogo
+### [#121 - Definir E Aplicar Paleta De Cores Do Jogo](https://github.com/limaalan/TCC/issues/121)
 
 **Prioridade:** P1
 
@@ -504,7 +504,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** guia de paleta versionado e tres screenshots visualmente coerentes.
 
-### S5 - Repaginar Modelos Da Pistola E SMG
+### [#122 - Repaginar Modelos Da Pistola E SMG](https://github.com/limaalan/TCC/issues/122)
 
 **Prioridade:** P1
 
@@ -512,7 +512,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** modelos importados, escala/pivo corretos, muzzle alinhado e leitura boa em primeira pessoa.
 
-### S6 - Auditar Licencas De Assets E Criar THIRD_PARTY_NOTICES
+### [#123 - Auditar Licencas De Assets E Criar THIRD_PARTY_NOTICES](https://github.com/limaalan/TCC/issues/123)
 
 **Prioridade:** P0
 
@@ -520,7 +520,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** nenhum asset sem origem, creditos incluidos e arquivos incompativeis substituidos.
 
-### S7 - Publicar Client Windows E Pagina De Download
+### [#124 - Publicar Client Windows E Pagina De Download](https://github.com/limaalan/TCC/issues/124)
 
 **Prioridade:** P0
 
@@ -528,7 +528,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** download por terceiro, instrucoes completas, QR code testado e backup local.
 
-### S8 - Executar Experimento E Analisar Metricas
+### [#125 - Executar Experimento E Analisar Metricas](https://github.com/limaalan/TCC/issues/125)
 
 **Prioridade:** P0 academico
 
@@ -536,7 +536,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** dados brutos preservados, analise reproduzivel e resultados inseriveis no TCC.
 
-### S9 - Consolidar Documentacao Tecnica Da Release Final
+### [#126 - Consolidar Documentacao Tecnica Da Release Final](https://github.com/limaalan/TCC/issues/126)
 
 **Prioridade:** P1
 
@@ -544,7 +544,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** documentos refletem Highrise, dois modos, servidor autoritativo, municao, powerups e deploy real.
 
-### S10 - Preparar Kit De Apresentacao E Planos De Contingencia
+### [#127 - Preparar Kit De Apresentacao E Planos De Contingencia](https://github.com/limaalan/TCC/issues/127)
 
 **Prioridade:** P0 de apresentacao
 
@@ -554,17 +554,17 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 ## Ordem Linear Resumida
 
-1. S1 - terminar muzzle FX e congelar features.
-2. #63 + S2 - garantir clone limpo e build reproduzivel.
+1. #118 - terminar muzzle FX e congelar features.
+2. #63 + #119 - garantir clone limpo e build reproduzivel.
 3. #74 + #76 - fechar IP, reconexao e mensagens.
-4. #75 revisada + S3 - fechar perfil da demonstracao.
+4. #75 revisada + #120 - fechar perfil da demonstracao.
 5. #77 - suporte completo a controle.
-6. S4 + #106/#107 + S5 + #103 - fechar passe artistico.
-7. #104 + S6 - substituir audio e documentar licencas.
-8. #65 revisada + S7 + S9 - release candidate e pagina publica.
-9. #102 validada + S8 - experimento e analise.
+6. #121 + #106/#107 + #122 + #103 - fechar passe artistico.
+7. #104 + #123 - substituir audio e documentar licencas.
+8. #65 revisada + #124 + #126 - release candidate e pagina publica.
+9. #102 validada + #125 - experimento e analise.
 10. #99 - relatorio final.
-11. S10 - ensaio, congelamento e apresentacao.
+11. #127 - ensaio, congelamento e apresentacao.
 
 ## Definicao Final De Pronto
 
