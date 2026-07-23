@@ -65,6 +65,7 @@ shadow_bias = 0.05
 environment = SubResource("Environment_ixy6o")
 
 [node name="HighRiseCityBackground" parent="." instance=ExtResource("8_city_background")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.17272663, 0)
 
 [node name="HighRisePlayableArea" parent="." instance=ExtResource("1_mygbh")]
 
