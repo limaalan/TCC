@@ -1,6 +1,8 @@
 extends Control
 const ServerLocator = preload("res://server/server_locator.gd")
 
+signal active_changed(is_active: bool)
+
 @onready var status_label: Label = %StatusLabel
 @onready var close_button: Button = %CloseButton
 @onready var cancel_button: Button = %CancelButton
@@ -39,6 +41,7 @@ func activate(mode_label: String = "")->void:
 		cancel_button.hide()
 		status_label.text = "Você não está conectado ao servidor. Tente novamente."
 	show()
+	active_changed.emit(true)
 	(close_button if close_button.visible else cancel_button).call_deferred("grab_focus")
 
 func on_lobby_clients_updated(connected_clients:int, max_clients:int)-> void:
@@ -66,11 +69,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_close_button_pressed() -> void:
 	hide()
+	active_changed.emit(false)
 	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 
 func _on_cancel_button_pressed() -> void:
 	selected_mode_label = ""
 	hide()
+	active_changed.emit(false)
 	var server := ServerLocator.get_server(get_tree())
 	if server != null:
 		server.cancel_quick_play_search()

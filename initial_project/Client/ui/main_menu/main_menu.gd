@@ -6,13 +6,16 @@ const ServerLocator = preload("res://server/server_locator.gd")
 @onready var player_name_line_edit: LineEdit = %PlayerNameLineEdit
 @onready var server_warning_label: Label = %ServerWarningLabel
 @onready var play_button: Button = $VBoxContainer/PlayButton
+@onready var exit_button: Button = $VBoxContainer/ExitButton
 @onready var settings_button: Button = %SettingsButton
 @onready var settings_screen = %SettingsScreen
+@onready var quick_play_connection_ui = $QuickPlayConnectionUI
 
 func _ready()->void:
 	player_name_line_edit.text = SettingsManager.player_name
 	_update_server_warning()
 	SettingsManager.server_endpoint_changed.connect(_on_server_endpoint_changed)
+	quick_play_connection_ui.active_changed.connect(_on_quick_play_active_changed)
 
 	setup_match_mode_options()
 	AudioManager.play_music(AudioManager.MusicKeys.MenuMusic)
@@ -50,7 +53,7 @@ func _on_play_button_pressed() -> void:
 		return
 
 	server.try_connect_client_to_lobby(player_name, match_preset_id)
-	$QuickPlayConnectionUI.activate(match_mode_label)
+	quick_play_connection_ui.activate(match_mode_label)
 	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
 
 func _on_exit_button_pressed() -> void:
@@ -67,3 +70,25 @@ func _on_server_endpoint_changed(_address: String, _port: int) -> void:
 
 func _update_server_warning() -> void:
 	server_warning_label.visible = SettingsManager.server_address.strip_edges().is_empty()
+
+
+func _on_quick_play_active_changed(is_active: bool) -> void:
+	var menu_controls: Array[Control] = [
+		match_mode_option_button,
+		player_name_line_edit,
+		play_button,
+		exit_button,
+		settings_button,
+	]
+
+	for control in menu_controls:
+		control.focus_mode = Control.FOCUS_NONE if is_active else Control.FOCUS_ALL
+
+	match_mode_option_button.disabled = is_active
+	play_button.disabled = is_active
+	exit_button.disabled = is_active
+	settings_button.disabled = is_active
+	player_name_line_edit.editable = not is_active
+
+	if not is_active:
+		play_button.call_deferred("grab_focus")
