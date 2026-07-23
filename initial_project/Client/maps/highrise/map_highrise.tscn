@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bhhwyppkn5rp8"]
+[gd_scene load_steps=12 format=3 uid="uid://bhhwyppkn5rp8"]
 
 [ext_resource type="PackedScene" uid="uid://difmbyjy32p0l" path="res://maps/highrise/highRisePlayableArea.tscn" id="1_mygbh"]
 [ext_resource type="Script" uid="uid://d4js4ps8hh8uw" path="res://shared/game_map.gd" id="1_u0lkw"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://ipn7xeoq3v0c" path="res://player/spawn_point/player_spawn_point.gd" id="5_pg82g"]
 [ext_resource type="PackedScene" uid="uid://r1fsrv56vckp" path="res://ui/weapon_selection/weapon_selection_ui.tscn" id="6_1jxcs"]
 [ext_resource type="PackedScene" uid="uid://o6acxrwqfn0x" path="res://ui/match_info/match_info_ui.tscn" id="7_nxa1b"]
+[ext_resource type="PackedScene" path="res://maps/highrise/background/highrise_city_background.tscn" id="8_city_background"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_lngba"]
 panorama = ExtResource("3_6jufm")
@@ -62,6 +63,8 @@ shadow_bias = 0.05
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="WorldSettings"]
 environment = SubResource("Environment_ixy6o")
+
+[node name="HighRiseCityBackground" parent="." instance=ExtResource("8_city_background")]
 
 [node name="HighRisePlayableArea" parent="." instance=ExtResource("1_mygbh")]
 
