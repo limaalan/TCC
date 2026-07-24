@@ -4,7 +4,6 @@ const NetworkConfig = preload("res://shared/network_config.gd")
 
 const SETTINGS_PATH := "user://settings.cfg"
 const DEFAULT_SETTINGS_PATH := "res://default_settings.cfg"
-const LEGACY_PLAYER_NAME_PATH := "user://player_name.dat"
 const PLAYER_NAME_MAX_LENGTH := 16
 
 const MASTER_BUS := &"Master"
@@ -110,11 +109,7 @@ func load_settings() -> void:
 	server_address = String(config.get_value("network", "server_address", "")).strip_edges()
 	server_port = NetworkConfig.sanitize_port(int(config.get_value("network", "server_port", server_port)))
 
-	var migrated_player_name := false
-	if not config.has_section_key("profile", "player_name"):
-		migrated_player_name = _migrate_legacy_player_name()
-
-	if loaded_default_settings or migrated_player_name:
+	if loaded_default_settings:
 		save_settings()
 
 
@@ -136,15 +131,3 @@ func save_settings() -> void:
 func _apply_fullscreen_setting() -> void:
 	var mode := DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen_enabled else DisplayServer.WINDOW_MODE_WINDOWED
 	DisplayServer.window_set_mode(mode)
-
-
-func _migrate_legacy_player_name() -> bool:
-	if not FileAccess.file_exists(LEGACY_PLAYER_NAME_PATH):
-		return false
-
-	var file := FileAccess.open(LEGACY_PLAYER_NAME_PATH, FileAccess.READ)
-	if file == null:
-		return false
-
-	player_name = file.get_as_text().strip_edges().left(PLAYER_NAME_MAX_LENGTH)
-	return true

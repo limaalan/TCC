@@ -66,7 +66,7 @@ Observações:
 
 - O server deve imprimir `Servidor iniciado.`.
 - Cada client deve imprimir `conectou-se ao servidor` ao conectar.
-- `--user-data-dir` evita conflito no `user://player_name.dat` entre duas instâncias locais.
+- `--user-data-dir` evita conflito no `user://settings.cfg` entre duas instâncias locais.
 - O cliente ainda usa `127.0.0.1`, então este teste só cobre servidor local até o endereço ser configurável.
 
 ## Checklist Manual De Smoke Test
@@ -78,7 +78,7 @@ Rodar este checklist em toda build candidata.
 | 1 | Iniciar Server via CLI/headless | Server inicia sem erro e fica rodando |
 | 2 | Iniciar Client 1 | Client conecta ao server e menu aparece |
 | 3 | Iniciar Client 2 | Client conecta ao server e menu aparece |
-| 4 | Escolher nomes diferentes | Nome é salvo em `user://player_name.dat` de cada user dir |
+| 4 | Escolher nomes diferentes | Nome é salvo em `profile/player_name` no `user://settings.cfg` de cada user dir |
 | 5 | Client 1 clica Play | Quick play mostra busca `1/2` |
 | 6 | Client 2 clica Play | Lobby fica locked e inicia carregamento |
 | 7 | Ambos carregam mapa | Client troca para o mapa farm e toca música de batalha |
