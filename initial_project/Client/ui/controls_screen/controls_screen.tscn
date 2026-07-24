@@ -1,0 +1,135 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://ui/controls_screen/controls_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://ui/controls_screen/images/controller_layout.png" id="2_controller"]
+
+[node name="ControlsScreen" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_script")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0.88)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(760, 540)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Controles"
+horizontal_alignment = 1
+
+[node name="Tabs" type="TabContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 420)
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="KeyboardMouse" type="MarginContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="CenterContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/KeyboardMouse"]
+layout_mode = 2
+
+[node name="BindingsColumn" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/KeyboardMouse/Content"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/KeyboardMouse/Content/BindingsColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Ações"
+
+[node name="KeyboardBindings" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/KeyboardMouse/Content/BindingsColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Controller" type="MarginContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/Controller"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="ControllerTextureRect" type="TextureRect" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/Controller/Content"]
+custom_minimum_size = Vector2(485, 0)
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_controller")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Separator" type="VSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/Controller/Content"]
+layout_mode = 2
+
+[node name="BindingsColumn" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/Controller/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/Controller/Content/BindingsColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Ações"
+
+[node name="ControllerBindings" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Tabs/Controller/Content/BindingsColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="BottomBar" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="BackButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/BottomBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+text = "Voltar"
+
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/BottomBar/BackButton" to="." method="_on_back_button_pressed"]

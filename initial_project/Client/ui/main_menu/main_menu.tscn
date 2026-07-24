@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://n20766avlehg" path="res://ui/main_menu/main_menu.gd" id="1_r785l"]
 [ext_resource type="Texture2D" uid="uid://byukgpq4ekqs4" path="res://assets/textures/bg_black_and_white.png" id="2_3848r"]
 [ext_resource type="Script" uid="uid://lna88f213mp" path="res://ui/main_menu/quick_play_connection_ui.gd" id="3_omy8q"]
-[ext_resource type="PackedScene" uid="uid://4a7egmd7mp37" path="res://ui/settings_widget/scene_settings_widget.tscn" id="4_i5wg5"]
+[ext_resource type="PackedScene" path="res://ui/settings_screen/settings_screen.tscn" id="4_i5wg5"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -35,6 +35,15 @@ grow_vertical = 2
 theme_override_constants/separation = 16
 alignment = 1
 
+[node name="ServerWarningLabel" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 0.65, 0.2, 1)
+theme_override_font_sizes/font_size = 18
+text = "Servidor não configurado — abra ⚙ Configurações."
+horizontal_alignment = 1
+
 [node name="MatchModeOptionButton" type="OptionButton" parent="VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(256, 32)
@@ -58,6 +67,7 @@ text = "Exit"
 
 [node name="QuickPlayConnectionUI" type="Control" parent="."]
 visible = false
+z_index = 10
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -73,7 +83,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.58431375)
+color = Color(0, 0, 0, 0.82)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="QuickPlayConnectionUI"]
 layout_mode = 1
@@ -82,60 +92,80 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 32
+theme_override_constants/separation = 20
 alignment = 1
 
 [node name="StatusLabel" type="Label" parent="QuickPlayConnectionUI/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(560, 72)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 40
-text = "Test"
+theme_override_font_sizes/font_size = 28
+text = "Conectando-se ao lobby..."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
 
 [node name="CloseButton" type="Button" parent="QuickPlayConnectionUI/VBoxContainer"]
+unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(256, 64)
+custom_minimum_size = Vector2(240, 48)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 32
-text = "Close"
+theme_override_font_sizes/font_size = 22
+text = "Fechar"
 
 [node name="CancelButton" type="Button" parent="QuickPlayConnectionUI/VBoxContainer"]
-custom_minimum_size = Vector2(256, 64)
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 48)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 32
-text = "Cancel"
+theme_override_font_sizes/font_size = 22
+text = "Cancelar"
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="TopMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 1.0
 grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 32
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 32
+offset_bottom = 76.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
 
-[node name="PlayerNameLineEdit" type="LineEdit" parent="MarginContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(256, 32)
+[node name="TopBar" type="HBoxContainer" parent="TopMarginContainer"]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-placeholder_text = "Player Name"
-max_length = 256
+theme_override_constants/separation = 12
+
+[node name="PlayerNameLineEdit" type="LineEdit" parent="TopMarginContainer/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 36)
+layout_mode = 2
+placeholder_text = "Nome do jogador"
+max_length = 16
 context_menu_enabled = false
 shortcut_keys_enabled = false
 
-[node name="SettingsWidget" parent="MarginContainer" instance=ExtResource("4_i5wg5")]
+[node name="Spacer" type="Control" parent="TopMarginContainer/TopBar"]
 layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 8
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="SettingsButton" type="Button" parent="TopMarginContainer/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(172, 36)
+layout_mode = 2
+tooltip_text = "Abrir configurações"
+text = "⚙  Configurações"
+
+[node name="SettingsScreen" parent="." instance=ExtResource("4_i5wg5")]
+unique_name_in_owner = true
+z_index = 20
+layout_mode = 1
 
 [connection signal="pressed" from="VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="TopMarginContainer/TopBar/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="QuickPlayConnectionUI/VBoxContainer/CloseButton" to="QuickPlayConnectionUI" method="_on_close_button_pressed"]
 [connection signal="pressed" from="QuickPlayConnectionUI/VBoxContainer/CancelButton" to="QuickPlayConnectionUI" method="_on_cancel_button_pressed"]

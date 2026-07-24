@@ -10,6 +10,11 @@ const FOOTSTEP_SFX_RUN_INTERVAL := 0.37
 const FOOTSTEP_SFX_PITCH_RANDOM := 0.2
 const WeaponAmmoInventory = preload("res://shared/weapons/weapon_ammo_inventory.gd")
 const WeaponCatalog = preload("res://shared/weapons/weapon_catalog.gd")
+const RESUME_CONFLICT_ACTIONS: Array[StringName] = [
+	ClientNames.INPUT_JUMP,
+	ClientNames.INPUT_SHOOT,
+	ClientNames.INPUT_THROW_GRENADE,
+]
 
 @export var grenade_amount_label: Label
 @export var ammo_amount_label: Label
@@ -34,6 +39,7 @@ var jumps_used := 0
 var current_anim: String
 var nearby_grenades: Array[Grenade] = []
 var ammo_inventory := WeaponAmmoInventory.new()
+var blocked_actions_after_resume := {}
 
 
 func _ready() -> void:
@@ -56,6 +62,7 @@ func pause() -> void:
 
 
 func unpause() -> void:
+	_block_pressed_gameplay_actions()
 	if not is_frozen:
 		set_processing_enabled(true)
 	is_paused = false
@@ -92,6 +99,10 @@ func _physics_process(delta: float) -> void:
 
 func check_shoot_input() -> void:
 	if not GamepadFocusGuard.accepts_input():
+		weapon_holder.end_trigger_pressed()
+		return
+
+	if _is_action_blocked_after_resume(ClientNames.INPUT_SHOOT):
 		weapon_holder.end_trigger_pressed()
 		return
 
@@ -233,7 +244,12 @@ func move() -> void:
 		if is_grounded:
 			is_grounded = false
 
-	if has_input_focus and Input.is_action_just_pressed(ClientNames.INPUT_JUMP) and can_jump():
+	if (
+		has_input_focus
+		and not _is_action_blocked_after_resume(ClientNames.INPUT_JUMP)
+		and Input.is_action_just_pressed(ClientNames.INPUT_JUMP)
+		and can_jump()
+	):
 		jump()
 
 	var speed := normal_speed if not is_sprinting else sprint_speed
@@ -271,8 +287,27 @@ func check_throw_grenade_input() -> void:
 	if not GamepadFocusGuard.accepts_input():
 		return
 
+	if _is_action_blocked_after_resume(ClientNames.INPUT_THROW_GRENADE):
+		return
+
 	if Input.is_action_just_pressed(ClientNames.INPUT_THROW_GRENADE):
 		get_tree().call_group(ClientNames.GROUP_LOBBY, ClientNames.METHOD_TRY_THROW_GRENADE)
+
+
+func _block_pressed_gameplay_actions() -> void:
+	for action in RESUME_CONFLICT_ACTIONS:
+		if Input.is_action_pressed(action):
+			blocked_actions_after_resume[action] = true
+
+
+func _is_action_blocked_after_resume(action: StringName) -> bool:
+	if not blocked_actions_after_resume.has(action):
+		return false
+
+	if not Input.is_action_pressed(action):
+		blocked_actions_after_resume.erase(action)
+
+	return blocked_actions_after_resume.has(action)
 
 
 func show_nearby_grenades() -> void:

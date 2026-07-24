@@ -1,5 +1,4 @@
 extends Node
-const NetworkConfig = preload("res://shared/network_config.gd")
 const Lobby = preload("res://server/lobby.gd")
 const ClientMetricsReporter = preload("res://server/client_metrics_reporter.gd")
 signal on_lobby_clients_updated(connected_clients:int, max_clients:int)
@@ -15,20 +14,44 @@ var metrics_reporter := ClientMetricsReporter.new()
 var latest_app_ping_ms := -1.0
 
 func _ready() -> void:
-	var server_address := NetworkConfig.get_server_address()
-	var server_port := NetworkConfig.get_server_port()
-	var error := peer.create_client(server_address, server_port)
-	if error != OK:
-		print("Cliente falhou ao conectar em %s:%s" % [server_address, server_port])
-		return
-	print("Cliente tentando conectar em %s:%s" % [server_address, server_port])
-
-	multiplayer.multiplayer_peer = peer
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	add_child(metrics_reporter)
 	metrics_reporter.setup(self)
+	SettingsManager.server_endpoint_changed.connect(_on_server_endpoint_changed)
+	call_deferred("_connect_using_saved_settings")
+
+
+func reconnect_to_server(server_address: String, server_port: int) -> void:
+	clock_sync_timer.stop()
+	metrics_reporter.stop()
+	latest_app_ping_ms = -1.0
+
+	if peer.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
+		peer.close()
+
+	peer = ENetMultiplayerPeer.new()
+	var error := peer.create_client(server_address, server_port)
+	if error != OK:
+		print("Cliente falhou ao conectar em %s:%s" % [server_address, server_port])
+		return
+
+	multiplayer.multiplayer_peer = peer
+	print("Cliente tentando conectar em %s:%s" % [server_address, server_port])
+
+
+func _connect_using_saved_settings() -> void:
+	var server_address := SettingsManager.server_address.strip_edges()
+	if server_address.is_empty():
+		push_warning("Nenhum servidor configurado. Defina o endereço nas configurações do cliente.")
+		return
+
+	reconnect_to_server(server_address, SettingsManager.server_port)
+
+
+func _on_server_endpoint_changed(_address: String, _port: int) -> void:
+	_connect_using_saved_settings()
 
 func _on_connected_to_server()-> void:
 	clock_sync_timer.start()
@@ -56,6 +79,10 @@ func send_client_fps(fps: float) -> void:
 	c_report_client_fps.rpc_id(1, fps)
 
 func try_connect_client_to_lobby(player_name: String, match_preset_id: StringName)-> void:
+	if not is_connected_to_server():
+		on_cant_connect_to_lobby.emit()
+		return
+
 	c_try_connect_client_to_lobby.rpc_id(1, player_name, match_preset_id)
 
 @rpc("any_peer", "call_remote", "reliable")

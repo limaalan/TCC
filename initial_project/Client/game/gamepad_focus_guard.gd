@@ -5,8 +5,11 @@ var _application_has_focus := true
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_application_has_focus = get_window().has_focus()
-	_apply_gui_input_state()
+	call_deferred("_sync_focus_from_window")
+
+
+func _process(_delta: float) -> void:
+	_sync_focus_from_window()
 
 
 func accepts_input() -> bool:
@@ -30,8 +33,19 @@ func _input(event: InputEvent) -> void:
 
 
 func _set_application_focus(has_focus: bool) -> void:
+	if _application_has_focus == has_focus:
+		return
+
 	_application_has_focus = has_focus
 	_apply_gui_input_state()
+
+
+func _sync_focus_from_window() -> void:
+	var window := get_window()
+	if not is_instance_valid(window):
+		return
+
+	_set_application_focus(window.has_focus())
 
 
 func _apply_gui_input_state() -> void:
