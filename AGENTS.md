@@ -27,7 +27,7 @@
 - The current map flow is hardcoded to the farm maps:
   - Server loads `res://maps/server_map_farm.tscn`
   - Client loads `res://maps/map_farm.tscn`
-- The client main menu saves the player name to `user://player_name.dat`.
+- The client persists the player name under `profile/player_name` in `user://settings.cfg`.
 
 ## Godot-Specific Gotchas
 - Client UI/game flow depends heavily on scene groups with exact names: `LocalGameSceneManager`, `PlayerLocal`, `WeaponSelectionUI`, and `MatchInfoUi`.
