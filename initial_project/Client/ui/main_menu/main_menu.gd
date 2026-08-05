@@ -7,6 +7,7 @@ const ServerLocator = preload("res://server/server_locator.gd")
 @onready var server_warning_label: Label = %ServerWarningLabel
 @onready var play_button: Button = $VBoxContainer/PlayButton
 @onready var exit_button: Button = $VBoxContainer/ExitButton
+@onready var credits_button: Button = $VBoxContainer/CreditsButton
 @onready var settings_button: Button = %SettingsButton
 @onready var settings_screen = %SettingsScreen
 @onready var quick_play_connection_ui = $QuickPlayConnectionUI
@@ -60,6 +61,15 @@ func _on_exit_button_pressed() -> void:
 	get_tree().quit()
 
 
+func _on_credits_button_pressed() -> void:
+	AudioManager.play_sfx(AudioManager.SFXKeys.UIClick)
+	get_tree().call_group(
+		ClientNames.GROUP_LOCAL_GAME_SCENE_MANAGER,
+		ClientNames.METHOD_CHANGE_SCENE,
+		"res://ui/credits_screen/credits_screen.tscn",
+	)
+
+
 func _on_settings_button_pressed() -> void:
 	settings_screen.open_screen(settings_button, true)
 
@@ -78,6 +88,7 @@ func _on_quick_play_active_changed(is_active: bool) -> void:
 		player_name_line_edit,
 		play_button,
 		exit_button,
+		credits_button,
 		settings_button,
 	]
 
@@ -87,6 +98,7 @@ func _on_quick_play_active_changed(is_active: bool) -> void:
 	match_mode_option_button.disabled = is_active
 	play_button.disabled = is_active
 	exit_button.disabled = is_active
+	credits_button.disabled = is_active
 	settings_button.disabled = is_active
 	player_name_line_edit.editable = not is_active
 

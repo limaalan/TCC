@@ -1,0 +1,524 @@
+[gd_scene load_steps=23 format=3]
+
+[ext_resource type="Script" path="res://ui/credits_screen/credits_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/textures/bg_black_and_white.png" id="2_background"]
+[ext_resource type="Texture2D" path="res://ui/credits_screen/images/reticule.png" id="3_project_icon"]
+[ext_resource type="Texture2D" path="res://ui/credits_screen/images/graduate-cap.png" id="4_academic_icon"]
+[ext_resource type="Texture2D" path="res://ui/credits_screen/images/round-star.png" id="5_thanks_icon"]
+[ext_resource type="Texture2D" path="res://ui/credits_screen/images/cog.png" id="6_tech_icon"]
+[ext_resource type="Texture2D" path="res://ui/credits_screen/images/logo_utfpr.png" id="7_logo"]
+[ext_resource type="Texture2D" path="res://ui/credits_screen/images/github_invertocat_black.png" id="8_github"]
+
+[sub_resource type="StyleBoxFlat" id="StylePanel"]
+bg_color = Color(0.025, 0.055, 0.095, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.48, 0.76, 0.8)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBackButtonNormal"]
+bg_color = Color(0.035, 0.065, 0.11, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.48, 0.68, 0.75)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBackButtonHover"]
+bg_color = Color(0.07, 0.16, 0.25, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.7, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxLine" id="StyleSeparator"]
+color = Color(0.3, 0.52, 0.68, 0.7)
+thickness = 1
+
+[sub_resource type="Shader" id="IconMaskShader"]
+code = "shader_type canvas_item;\n\nuniform vec4 icon_color : source_color = vec4(1.0);\n\nvoid fragment() {\n\tfloat mask = texture(TEXTURE, UV).r;\n\tCOLOR = vec4(icon_color.rgb, icon_color.a * mask);\n}\n"
+
+[sub_resource type="ShaderMaterial" id="ProjectIconMaterial"]
+shader = SubResource("IconMaskShader")
+shader_parameter/icon_color = Color(0.02, 0.52, 0.78, 1)
+
+[sub_resource type="ShaderMaterial" id="AcademicIconMaterial"]
+shader = SubResource("IconMaskShader")
+shader_parameter/icon_color = Color(0.56, 0.18, 0.84, 1)
+
+[sub_resource type="ShaderMaterial" id="ThanksIconMaterial"]
+shader = SubResource("IconMaskShader")
+shader_parameter/icon_color = Color(0.95, 0.55, 0.02, 1)
+
+[sub_resource type="ShaderMaterial" id="TechnologyIconMaterial"]
+shader = SubResource("IconMaskShader")
+shader_parameter/icon_color = Color(0.28, 0.65, 0.06, 1)
+
+[sub_resource type="Theme" id="CreditsTheme"]
+Label/colors/font_color = Color(0.9, 0.94, 0.98, 1)
+
+[sub_resource type="Shader" id="LogoFadeShader"]
+code = "shader_type canvas_item;\n\nvoid fragment() {\n\tconst float aspect_ratio = 3.25;\n\tvec2 point = (UV - vec2(0.5)) * vec2(aspect_ratio, 1.0);\n\tvec2 half_size = vec2(aspect_ratio * 0.5, 0.5);\n\tfloat radius = 0.12;\n\tvec2 rounded = abs(point) - (half_size - vec2(radius));\n\tfloat distance_to_shape = length(max(rounded, vec2(0.0))) + min(max(rounded.x, rounded.y), 0.0) - radius;\n\tfloat rounded_alpha = 1.0 - smoothstep(-0.006, 0.006, distance_to_shape);\n\n\tfloat horizontal_distance = abs(UV.x - 0.5) * 2.0;\n\tfloat center_light = 1.0 - smoothstep(0.08, 1.0, horizontal_distance);\n\tcenter_light = pow(center_light, 0.55);\n\tvec3 edge_color = vec3(0.12, 0.23, 0.34);\n\tvec3 center_color = vec3(0.97, 0.98, 0.99);\n\tvec3 card_color = mix(edge_color, center_color, center_light);\n\n\tCOLOR = vec4(card_color, 0.97 * rounded_alpha);\n}\n"
+
+[sub_resource type="ShaderMaterial" id="LogoFadeMaterial"]
+shader = SubResource("LogoFadeShader")
+
+[sub_resource type="StyleBoxFlat" id="StyleRepositoryButtonNormal"]
+bg_color = Color(0.84, 0.89, 0.92, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.05, 0.42, 0.62, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleRepositoryButtonHover"]
+bg_color = Color(0.94, 0.97, 0.98, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.65, 0.9, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="CreditsScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="BackgroundTextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BackgroundDim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0.012, 0.028, 0.78)
+
+[node name="ScreenMargins" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="CenterContainer" type="MarginContainer" parent="ScreenMargins"]
+layout_mode = 2
+
+[node name="CreditsPanel" type="PanelContainer" parent="ScreenMargins/CenterContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+theme = SubResource("CreditsTheme")
+theme_override_styles/panel = SubResource("StylePanel")
+
+[node name="PanelMargins" type="MarginContainer" parent="ScreenMargins/CenterContainer/CreditsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 42
+theme_override_constants/margin_bottom = 18
+
+[node name="PanelLayout" type="VBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.08, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 38
+text = "CRÉDITOS"
+horizontal_alignment = 1
+
+[node name="HeaderSeparator" type="HSeparator" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleSeparator")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+scroll_deadzone = 4
+
+[node name="Content" type="VBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="ProjectSection" type="HBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="TextureRect" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ProjectSection"]
+material = SubResource("ProjectIconMaterial")
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+texture = ExtResource("3_project_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="VBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ProjectSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 3
+
+[node name="ProjectHeadingLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ProjectSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.68, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "PROJETO"
+
+[node name="ProjectNameLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ProjectSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Jump’n’Shoot"
+
+[node name="ProjectDescriptionLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ProjectSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.76, 0.82, 0.9, 1)
+theme_override_font_sizes/font_size = 15
+text = "Jogo multiplayer desenvolvido como Trabalho de Conclusão de Curso"
+autowrap_mode = 2
+
+[node name="Separator1" type="HSeparator" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleSeparator")
+
+[node name="AcademicSection" type="HBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="TextureRect" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection"]
+material = SubResource("AcademicIconMaterial")
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+texture = ExtResource("4_academic_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="VBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="AcademicHeadingLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.69, 0.38, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "ACADÊMICO"
+
+[node name="InstitutionLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "Universidade Tecnológica Federal do Paraná"
+autowrap_mode = 2
+
+[node name="CampusLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Campus Campo Mourão"
+
+[node name="CourseLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Bacharelado em Ciência da Computação"
+autowrap_mode = 2
+
+[node name="InfoSpacer" type="Control" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection/Text"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+
+[node name="AuthorLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Autor: Alan Lima Marques"
+
+[node name="AdvisorLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Orientador: Prof. Rogério A. Gonçalves"
+autowrap_mode = 2
+
+[node name="YearLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/AcademicSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "2026"
+
+[node name="Separator2" type="HSeparator" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleSeparator")
+
+[node name="ThanksSection" type="HBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="TextureRect" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ThanksSection"]
+material = SubResource("ThanksIconMaterial")
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+texture = ExtResource("5_thanks_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="VBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ThanksSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="ThanksHeadingLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ThanksSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.68, 0.08, 1)
+theme_override_font_sizes/font_size = 18
+text = "AGRADECIMENTOS"
+
+[node name="ThanksGroupsContainer" type="GridContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ThanksSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/h_separation = 40
+theme_override_constants/v_separation = 12
+columns = 2
+
+[node name="ThanksMessageLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ThanksSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.76, 0.82, 0.9, 1)
+text = "Este projeto só foi possível graças ao apoio e colaboração de todos."
+autowrap_mode = 2
+
+[node name="Separator3" type="HSeparator" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleSeparator")
+
+[node name="TechnologiesSection" type="HBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Icon" type="TextureRect" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/TechnologiesSection"]
+material = SubResource("TechnologyIconMaterial")
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+texture = ExtResource("6_tech_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="VBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/TechnologiesSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="TechnologiesHeadingLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/TechnologiesSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.47, 0.78, 0.2, 1)
+theme_override_font_sizes/font_size = 18
+text = "TECNOLOGIAS E FERRAMENTAS"
+
+[node name="TechnologiesItemsLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/TechnologiesSection/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Godot  •  Blender  •  Python  •  Stable Audio Open"
+autowrap_mode = 2
+
+[node name="Separator4" type="HSeparator" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleSeparator")
+
+[node name="SourceSection" type="HBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="SourceIconLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/SourceSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.02, 0.52, 0.75, 1)
+theme_override_font_sizes/font_size = 28
+text = "</>"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SourceContent" type="VBoxContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/SourceSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="SourceHeadingLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/SourceSection/SourceContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.02, 0.52, 0.75, 1)
+theme_override_font_sizes/font_size = 21
+text = "CÓDIGO-FONTE"
+
+[node name="RepositoryButton" type="Button" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/SourceSection/SourceContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 58)
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 2
+theme_override_colors/font_color = Color(0.035, 0.075, 0.105, 1)
+theme_override_colors/font_hover_color = Color(0.035, 0.075, 0.105, 1)
+theme_override_colors/font_pressed_color = Color(0.035, 0.075, 0.105, 1)
+theme_override_colors/font_focus_color = Color(0.035, 0.075, 0.105, 1)
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("StyleRepositoryButtonNormal")
+theme_override_styles/hover = SubResource("StyleRepositoryButtonHover")
+theme_override_styles/pressed = SubResource("StyleRepositoryButtonHover")
+theme_override_styles/focus = SubResource("StyleRepositoryButtonHover")
+text = "limaalan/TCC   ›"
+icon = ExtResource("8_github")
+icon_max_width = 42
+expand_icon = true
+
+[node name="Separator5" type="HSeparator" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleSeparator")
+
+[node name="ClosingMessageLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.68, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Obrigado por jogar!"
+horizontal_alignment = 1
+
+[node name="LogoCenter" type="CenterContainer" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+layout_mode = 2
+
+[node name="LogoPanel" type="Control" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/LogoCenter"]
+custom_minimum_size = Vector2(390, 120)
+layout_mode = 2
+
+[node name="LogoBackdrop" type="ColorRect" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/LogoCenter/LogoPanel"]
+material = SubResource("LogoFadeMaterial")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="Logo" type="TextureRect" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/LogoCenter/LogoPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = -45.0
+offset_right = 130.0
+offset_bottom = 45.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("7_logo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BottomSpacer" type="Control" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="CaretOverlay" type="Control" parent="ScreenMargins/CenterContainer/CreditsPanel"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ScrollCaret" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/CaretOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -36.0
+offset_top = -22.0
+offset_right = -8.0
+offset_bottom = 22.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.12, 0.68, 1, 0.95)
+theme_override_font_sizes/font_size = 30
+text = "⌄"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackButton" type="Button" parent="."]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 1
+offset_left = 34.0
+offset_top = 30.0
+offset_right = 166.0
+offset_bottom = 70.0
+focus_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBackButtonNormal")
+theme_override_styles/hover = SubResource("StyleBackButtonHover")
+theme_override_styles/pressed = SubResource("StyleBackButtonHover")
+theme_override_styles/focus = SubResource("StyleBackButtonHover")
+text = "←  Voltar"
+
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/SourceSection/SourceContent/RepositoryButton" to="." method="_on_repository_button_pressed"]
