@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cmachpc5ng6tf"]
+
+[resource]
+resource_name = "Azul"
+cull_mode = 2
+albedo_color = Color(0.14068964, 0.50907713, 0.9176502, 1)
+roughness = 0.5

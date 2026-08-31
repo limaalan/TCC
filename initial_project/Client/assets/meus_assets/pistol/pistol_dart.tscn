@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ds0ab1ai86xtw"]
+
+[ext_resource type="PackedScene" uid="uid://b76vpv0ibv3t2" path="res://assets/meus_assets/pistol/pistol_dart1.glb" id="1_bh7i6"]
+
+[node name="pistol_dart" instance=ExtResource("1_bh7i6")]
+
+[node name="Cube_003" parent="." index="0"]
+transform = Transform3D(-3.278354e-08, 0, -0.75, 0, 0.75, 0, 0.75, 0, -3.278354e-08, 0, 0, 0)
