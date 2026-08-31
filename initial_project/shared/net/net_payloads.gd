@@ -7,6 +7,7 @@ const END_MATCH_VERSION := 1
 const HILL_STATE_VERSION := 1
 const MATCH_META_VERSION := 1
 const OBJECTIVE_VISUAL_SPAWN_VERSION := 1
+const SPECIAL_PLATFORM_SPAWN_VERSION := 1
 
 
 static func make_player_state(pos: Vector3, rot_y: float, rot_x: float, anim: Variant) -> Dictionary:
@@ -163,6 +164,53 @@ static func is_objective_visual_spawn(data: Dictionary) -> bool:
 		return false
 
 	if not data.has(NetKeys.POS) or not data[NetKeys.POS] is Vector3:
+		return false
+
+	return true
+
+
+static func make_special_platform_spawn(
+	platform_id: String,
+	platform_type: int,
+	platform_transform: Transform3D,
+	vertical_velocity: float,
+	horizontal_velocity: float,
+	use_forward_direction: bool
+) -> Dictionary:
+	return {
+		NetKeys.VERSION: SPECIAL_PLATFORM_SPAWN_VERSION,
+		NetKeys.PLATFORM_ID: platform_id,
+		NetKeys.PLATFORM_TYPE: platform_type,
+		NetKeys.PLATFORM_TRANSFORM: platform_transform,
+		NetKeys.VERTICAL_VELOCITY: vertical_velocity,
+		NetKeys.HORIZONTAL_VELOCITY: horizontal_velocity,
+		NetKeys.USE_FORWARD_DIRECTION: use_forward_direction,
+	}
+
+
+static func is_special_platform_spawn(data: Dictionary) -> bool:
+	if not _has_exact_version(data, SPECIAL_PLATFORM_SPAWN_VERSION):
+		return false
+
+	if not data.has(NetKeys.PLATFORM_ID) or not data[NetKeys.PLATFORM_ID] is String:
+		return false
+
+	if String(data[NetKeys.PLATFORM_ID]).is_empty():
+		return false
+
+	if not data.has(NetKeys.PLATFORM_TYPE) or not data[NetKeys.PLATFORM_TYPE] is int:
+		return false
+
+	if not data.has(NetKeys.PLATFORM_TRANSFORM) or not data[NetKeys.PLATFORM_TRANSFORM] is Transform3D:
+		return false
+
+	if not data.has(NetKeys.VERTICAL_VELOCITY) or not _is_number(data[NetKeys.VERTICAL_VELOCITY]):
+		return false
+
+	if not data.has(NetKeys.HORIZONTAL_VELOCITY) or not _is_number(data[NetKeys.HORIZONTAL_VELOCITY]):
+		return false
+
+	if not data.has(NetKeys.USE_FORWARD_DIRECTION) or not data[NetKeys.USE_FORWARD_DIRECTION] is bool:
 		return false
 
 	return true

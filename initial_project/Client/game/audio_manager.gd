@@ -29,6 +29,12 @@ var music_transition_tween :Tween
 
 func _ready()->void:
 	music_player.volume_db = MUSIC_SILENT_VOLUME_DB
+	music_player.finished.connect(_on_music_finished)
+
+
+func _on_music_finished() -> void:
+	if music_player.stream != null:
+		music_player.play()
 	
 func play_music(music_key: MusicKeys)->void:
 	var stream := get_music_stream(music_key)

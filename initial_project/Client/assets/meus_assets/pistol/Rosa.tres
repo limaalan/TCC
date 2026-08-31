@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dxicis2wies2a"]
+
+[resource]
+resource_name = "Rosa"
+cull_mode = 2
+albedo_color = Color(0.8902014, 0.3529387, 0.505878, 1)
+roughness = 0.5

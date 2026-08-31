@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://cwnx3stpmqul" path="res://assets/meshes/buildings/container.glb" id="3_6dda7"]
 [ext_resource type="PackedScene" uid="uid://r1fsrv56vckp" path="res://ui/weapon_selection/weapon_selection_ui.tscn" id="3_wdk2m"]
 [ext_resource type="PackedScene" uid="uid://o6acxrwqfn0x" path="res://ui/match_info/match_info_ui.tscn" id="4_6dda7"]
-[ext_resource type="PackedScene" uid="uid://cviqfokw5wq2h" path="res://platforms/jump_pad.tscn" id="5_gm0j8"]
 
 [sub_resource type="Environment" id="Environment_83w8i"]
 background_mode = 1
@@ -417,12 +416,6 @@ shape = SubResource("BoxShape3D_cfmtw")
 [node name="Objectives" type="Node3D" parent="."]
 
 [node name="SpecialPlatforms" type="Node3D" parent="."]
-
-[node name="BlueSideJumpPad" parent="SpecialPlatforms" instance=ExtResource("5_gm0j8")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.5)
-
-[node name="RedSideJumpPad" parent="SpecialPlatforms" instance=ExtResource("5_gm0j8")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
 
 [node name="WeaponSelectionUI" parent="." instance=ExtResource("3_wdk2m")]
 

@@ -42,7 +42,7 @@ func _apply_preview_state() -> void:
 
 	match preview_state:
 		PreviewState.IDLE:
-			_play_animation(char_player, "idle")
+			_play_animation(char_player, "Idle")
 			_play_animation(rings_player, "idle")
 		PreviewState.RUN:
 			_play_animation(char_player, "hover_walk")

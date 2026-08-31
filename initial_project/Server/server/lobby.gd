@@ -28,6 +28,7 @@ const RESPAWN_MIN_PLAYER_DISTANCE_SQ := RESPAWN_MIN_PLAYER_DISTANCE * RESPAWN_MI
 const BaseGameMode = preload("res://game_modes/base_game_mode.gd")
 const HillZone = preload("res://game_modes/objectives/hill_zone.gd")
 const KingOfTheHillMode = preload("res://game_modes/king_of_the_hill_mode.gd")
+const JumpPad = preload("res://platforms/jump_pad.gd")
 const NetworkEntity = preload("res://shared/network_entity.gd")
 const TeamDeathmatchMode = preload("res://game_modes/team_deathmatch_mode.gd")
 const WeaponDefinition = preload("res://shared/weapons/weapon_definition.gd")
@@ -306,6 +307,7 @@ func c_map_ready()->void:
 		)
 
 	send_objective_visuals_to_client(client_id)
+	send_special_platforms_to_client(client_id)
 	
 	waiting_players_ready = true
 	check_players_ready(start_weapon_selection)
@@ -343,6 +345,41 @@ func send_objective_visuals_to_client(client_id: int) -> void:
 
 @rpc("authority", "call_remote", "reliable")
 func s_spawn_objective_visual(objective_visual_spawn: Dictionary) -> void:
+	pass
+
+
+func send_special_platforms_to_client(client_id: int) -> void:
+	var loaded_map := get_node_or_null("Map") as GameMap
+	if loaded_map == null:
+		push_warning("Cannot send special platforms without a loaded GameMap.")
+		return
+
+	var sent_platform_ids := {}
+	for platform in loaded_map.get_special_platforms():
+		if not platform is JumpPad:
+			continue
+
+		var jump_pad := platform as JumpPad
+		var platform_id := String(jump_pad.name)
+		if platform_id.is_empty() or sent_platform_ids.has(platform_id):
+			push_warning("Ignoring JumpPad with invalid or duplicate platform id '%s'." % platform_id)
+			continue
+
+		sent_platform_ids[platform_id] = true
+		var map_local_transform := loaded_map.global_transform.affine_inverse() * jump_pad.global_transform
+		var platform_spawn := NetPayloads.make_special_platform_spawn(
+			platform_id,
+			GameEnums.SpecialPlatformType.JUMP_PAD,
+			map_local_transform,
+			jump_pad.vertical_velocity,
+			jump_pad.horizontal_velocity,
+			jump_pad.use_forward_direction
+		)
+		s_spawn_special_platform.rpc_id(client_id, platform_spawn)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_spawn_special_platform(platform_spawn: Dictionary) -> void:
 	pass
 
 func get_spawn_points_for_team(team: int) -> Array[PlayerSpawnPoint]:

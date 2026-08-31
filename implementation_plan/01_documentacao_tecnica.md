@@ -35,7 +35,7 @@ O lobby do servidor carrega `res://maps/server_map_farm.tscn`. O lobby do client
 
 O servidor implementa uma fila simples de quick play. A capacidade atual é intencionalmente pequena: `MAX_LOBBIES = 1` e `MAX_PLAYERS_PER_LOBBY = 2`. Quando dois clientes entram, o lobby é bloqueado e os clientes criam o lobby local.
 
-O cliente mostra uma interface de conexão rápida, informa se está procurando outro jogador e permite cancelar a busca antes do lobby ser bloqueado. O nome do jogador é salvo em `user://player_name.dat`.
+O cliente mostra uma interface de conexão rápida, informa se está procurando outro jogador e permite cancelar a busca antes do lobby ser bloqueado. O nome do jogador é salvo em `profile/player_name` dentro de `user://settings.cfg`.
 
 ### Carregamento De Partida
 

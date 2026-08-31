@@ -1,0 +1,174 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+TextServer: Added interface "Dummy"
+TextServer: Added interface "ICU / HarfBuzz / Graphite (Built-in)"
+Unrecognized output string "misc2" in mapping:
+030000000d0f00000202000000000000,Horipad O Nintendo Switch 2 Controller,a:b1,b:b0,back:b8,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b4,leftstick:b10,lefttrigger:b6,leftx:a0,lefty:a1,misc1:b13,misc2:b14,rightshoulder:b5,rightstick:b11,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b3,y:b2,platform:Windows,
+Unrecognized output string "misc2" in mapping:
+030000000d0f00009601000000000000,Horipad Steam,a:b0,b:b1,back:b10,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b6,leftstick:b13,lefttrigger:b8,leftx:a0,lefty:a1,misc2:b2,paddle1:b5,paddle2:b15,paddle3:b18,paddle4:b19,rightshoulder:b7,rightstick:b14,righttrigger:b9,rightx:a3,righty:a4,start:b11,x:b3,y:b4,platform:Windows,
+Unrecognized output string "misc2" in mapping:
+030000007e0500006920000000000000,Nintendo Switch 2 Pro Controller,a:b0,b:b1,back:b14,dpdown:b8,dpleft:b10,dpright:b9,dpup:b11,guide:b16,leftshoulder:b12,leftstick:b15,lefttrigger:b13,leftx:a0,lefty:a1~,misc1:b17,misc2:b20,paddle1:b18,paddle2:b19,rightshoulder:b4,rightstick:b7,righttrigger:b5,rightx:a2,righty:a3~,start:b6,x:b2,y:b3,platform:Windows,
+Using "default" pen tablet driver...
+
+TextServer: Primary interface set to: "ICU / HarfBuzz / Graphite (Built-in)".
+Loading resource: res://default_bus_layout.tres
+CORE API HASH: 937899573
+EDITOR API HASH: 1777164193
+SceneTreeFTI: traversal method DEFAULT
+Loading resource: res://server/server.tscn
+Loading resource: res://server/server.gd
+Loading resource: res://game_modes/objectives/hill_zone_visual.tscn
+Loading resource: res://game_modes/objectives/hill_zone_visual.gd
+Loading resource: res://game_modes/objectives/captureZoneDomeMaterial.tres
+Loading resource: res://game_modes/objectives/captureZoneDomeShader.gdshader
+Loading resource: res://game_modes/objectives/captureZoneFloorMaterial.tres
+Loading resource: res://player/grenade/grenade.tscn
+Loading resource: res://player/grenade/grenade.gd
+Loading resource: res://assets/meus_assets/grenade/tomato.tscn
+Loading resource: res://assets/meus_assets/grenade/import/tomato.glb
+Loading resource: res://.godot/imported/tomato.glb-39d2b1b6aa1715c5070eaf994a4d7548.scn
+Loading resource: res://player/local/player_local.tscn
+Loading resource: res://player/local/player_local.gd
+Loading resource: res://player/player_info/health_gradient.tres
+Loading resource: res://player/weapons/data/pistol_presentation.tres
+Loading resource: res://player/weapons/weapon_pistol.tscn
+Loading resource: res://player/weapons/weapon.tscn
+Loading resource: res://assets/meus_assets/pistol/pistol.tscn
+Loading resource: res://assets/meus_assets/pistol/import/pistol.glb
+Loading resource: res://.godot/imported/pistol.glb-4568586e5e034b7822e98cb2e005c33d.scn
+Loading resource: res://assets/textures/icon_pistol.png
+Loading resource: res://.godot/imported/icon_pistol.png-3d4060e3538a003c43be6e969b2d0422.ctex
+Loading resource: res://player/weapons/data/smg_presentation.tres
+Loading resource: res://player/weapons/weapon_smg.tscn
+Loading resource: res://assets/meus_assets/smg/smg.tscn
+Loading resource: res://assets/meus_assets/smg/import/smg.glb
+Loading resource: res://.godot/imported/smg.glb-ddc0651e1487ea0b9e8df3b477abe9b4.scn
+Loading resource: res://assets/textures/icon_smg.png
+Loading resource: res://.godot/imported/icon_smg.png-b553d33b6e885ce21dcd7e3237df46a9.ctex
+Loading resource: res://player/weapons/data/shotgun_presentation.tres
+Loading resource: res://player/weapons/weapon_shotgun.tscn
+Loading resource: res://assets/meus_assets/shotgun/shotgun_variation.tscn
+Loading resource: res://assets/meus_assets/shotgun/import/shotgun_variation.glb
+Loading resource: res://.godot/imported/shotgun_variation.glb-860d218383355e3f3e87c3e43fec89e2.scn
+Loading resource: res://assets/meus_assets/shotgun/import/shotgun_variation_textura_espiral.png
+Loading resource: res://.godot/imported/shotgun_variation_textura_espiral.png-171b9bbe1ae259bf2ad41683ffbeeaa0.s3tc.ctex
+Loading resource: res://assets/textures/icon_shotgun.png
+Loading resource: res://.godot/imported/icon_shotgun.png-37c5095db21a2370d1f45a6dabf006a7.ctex
+Loading resource: res://player/local/camera_shake_component.gd
+Loading resource: res://ui/hud/hud.tscn
+Loading resource: res://assets/textures/health_change_mask.png
+Loading resource: res://.godot/imported/health_change_mask.png-daa52b8ef78547efc92c8c5321816a5c.ctex
+Loading resource: res://player/player_info/health_bar.tscn
+Loading resource: res://assets/textures/grenade_icon.png
+Loading resource: res://.godot/imported/grenade_icon.png-92a4413283567f5de70e2b583c420f11.ctex
+Loading resource: res://ui/hud/health_change_mask.gd
+Loading resource: res://ui/hud/grenade_prompts_control.gd
+Loading resource: res://ui/hud/grenade_prompt.tscn
+Loading resource: res://ui/hud/grenade_prompt.gd
+Loading resource: res://player/local/pause_screen.gd
+Loading resource: res://ui/settings_widget/scene_settings_widget.tscn
+Loading resource: res://ui/settings_widget/scene_settings_widget.gd
+Loading resource: res://player/remote/player_remote.tscn
+Loading resource: res://player/remote/player_remote.gd
+Loading resource: res://assets/materials/red_team_material.tres
+Loading resource: res://assets/materials/blue_team_material.tres
+Loading resource: res://assets/materials/player_skin1.tres
+Loading resource: res://assets/materials/player_skin2.tres
+Loading resource: res://assets/materials/player_skin3.tres
+Loading resource: res://player/player_info/player_info.tscn
+Loading resource: res://player/character/character_visual.tscn
+Loading resource: res://assets/meus_assets/char/complete_char.tscn
+Loading resource: res://assets/meus_assets/char/char_body.tscn
+Loading resource: res://assets/meus_assets/char/char.glb
+Loading resource: res://.godot/imported/char.glb-ab4b0f3b86c51ab809ba0851f0f1aab3.scn
+Loading resource: res://assets/meus_assets/char/char_char.jpg
+Loading resource: res://.godot/imported/char_char.jpg-eed3aafa2e395f7f0c71e619183f29a4.s3tc.ctex
+Loading resource: res://assets/meus_assets/char/rings.tscn
+Loading resource: res://assets/meus_assets/char/char_rings.glb
+Loading resource: res://.godot/imported/char_rings.glb-5593399526d0a71ec69141424433b6a0.scn
+Loading resource: res://assets/meus_assets/char/complete_char.gd
+Loading resource: res://player/character/default_player_bone_aim_config.tres
+Loading resource: res://player/bullet_hit_fx/bullet_hit_fx_environment.tscn
+Loading resource: res://assets/textures/circle_32.png
+Loading resource: res://.godot/imported/circle_32.png-1f93c02320731d0bd583452090f46824.s3tc.ctex
+Loading resource: res://player/bullet_hit_fx/bullet_hit_fx.gd
+Loading resource: res://player/bullet_hit_fx/bullet_hit_fx_player.tscn
+Loading resource: res://player/pickups/pickup.tscn
+Loading resource: res://player/pickups/pickup.gd
+Loading resource: res://player/pickups/data/health_pickup_presentation.tres
+Loading resource: res://player/pickups/pickup_presentation_data.gd
+Loading resource: res://assets/meus_assets/health_pickup/health_pickup.tscn
+Loading resource: res://assets/meus_assets/health_pickup/import/health_pickup.glb
+Loading resource: res://.godot/imported/health_pickup.glb-455bce62704b26bd7399fe1c3d4ff3d4.scn
+Loading resource: res://assets/meus_assets/health_pickup/import/dark_green.001.tres
+Loading resource: res://assets/meus_assets/health_pickup/import/yellow.001.tres
+Loading resource: res://assets/meus_assets/health_pickup/import/face_texture.002.tres
+Loading resource: res://assets/meus_assets/health_pickup/import/health_pickup_ammo_pickup_happy_face.png
+Loading resource: res://.godot/imported/health_pickup_ammo_pickup_happy_face.png-7530790626cd478d02726998bd619733.s3tc.ctex
+Loading resource: res://assets/meus_assets/health_pickup/import/red.002.tres
+Loading resource: res://assets/meus_assets/health_pickup/import/light_green.002.tres
+Loading resource: res://assets/materials/pickup_ready_material.tres
+Loading resource: res://assets/materials/pickup_not_ready_material.tres
+Loading resource: res://player/pickups/data/grenade_pickup_presentation.tres
+Loading resource: res://player/pickups/data/ammo_pickup_presentation.tres
+Loading resource: res://assets/meus_assets/ammo_pickup/ammo_pickup.tscn
+Loading resource: res://assets/meus_assets/ammo_pickup/import/ammo_pickup.glb
+Loading resource: res://.godot/imported/ammo_pickup.glb-2c99b00c5374c9e7b08a28ffbc155e7e.scn
+Loading resource: res://assets/meus_assets/ammo_pickup/import/light_blue.001.tres
+Loading resource: res://assets/meus_assets/ammo_pickup/import/yellow.002.tres
+Loading resource: res://assets/meus_assets/ammo_pickup/import/red.001.tres
+Loading resource: res://assets/meus_assets/ammo_pickup/import/green.001.tres
+Loading resource: res://assets/meus_assets/ammo_pickup/import/purple.001.tres
+Loading resource: res://assets/meus_assets/ammo_pickup/import/face_texture.001.tres
+Loading resource: res://assets/meus_assets/ammo_pickup/import/ammo_pickup_happy_face.png
+Loading resource: res://.godot/imported/ammo_pickup_happy_face.png-c6faebb342a3ee3a0ac4aa2f9680b0f1.s3tc.ctex
+Loading resource: res://player/pickups/data/damage_powerup_pickup_presentation.tres
+Loading resource: res://assets/meus_assets/damage_pickup/damage_pickup.tscn
+Loading resource: res://assets/meus_assets/damage_pickup/import/damage_pickup.glb
+Loading resource: res://.godot/imported/damage_pickup.glb-9062f67843645c110f7808de1bb6b942.scn
+Loading resource: res://assets/meus_assets/damage_pickup/import/outer.tres
+Loading resource: res://assets/meus_assets/damage_pickup/import/inner.tres
+Loading resource: res://assets/meus_assets/damage_pickup/import/face.tres
+Loading resource: res://assets/meus_assets/damage_pickup/import/damage_pickup_happy_face.png
+Loading resource: res://.godot/imported/damage_pickup_happy_face.png-2b86a2266264efdd95034077ca95f73e.s3tc.ctex
+Loading resource: res://player/pickups/data/fire_rate_powerup_pickup_presentation.tres
+Loading resource: res://assets/meus_assets/fire_rate_pickup/fire_rate_pickup.tscn
+Loading resource: res://assets/meus_assets/fire_rate_pickup/import/fire_rate_pickup.glb
+Loading resource: res://.godot/imported/fire_rate_pickup.glb-4183ca5b4a88f049cfa1c74fe6e96b05.scn
+Loading resource: res://assets/meus_assets/fire_rate_pickup/import/azul.tres
+Loading resource: res://assets/meus_assets/fire_rate_pickup/import/azul_claro.tres
+Loading resource: res://assets/meus_assets/fire_rate_pickup/import/Material.001.tres
+Loading resource: res://assets/meus_assets/fire_rate_pickup/import/rosto.tres
+Loading resource: res://assets/meus_assets/fire_rate_pickup/import/fire_rate_pickup_happy_face_alpha.png
+Loading resource: res://.godot/imported/fire_rate_pickup_happy_face_alpha.png-19cc3922d33e1e342a88948eafdc5d21.s3tc.ctex
+Loading resource: res://player/grenade/grenade_explosion_fx.tscn
+Loading resource: res://player/grenade/grenade_explosion_fx.gd
+Loading resource: res://game/audio_manager.tscn
+Loaded system CA certificates
+Loading resource: res://game/main_game.tscn
+Loading resource: res://game/local_game_scene_manager.gd
+Loading resource: res://ui/match_end_info/player_info_row_container.tscn
+Loading resource: res://ui/match_end_info/player_info_row_container.gd
+Cliente tentando conectar em 127.0.0.1:7777
+Loading resource: res://ui/main_menu/main_menu.tscn
+Loading resource: res://ui/main_menu/main_menu.gd
+Loading resource: res://assets/textures/bg_black_and_white.png
+Loading resource: res://.godot/imported/bg_black_and_white.png-21fb7fa8d437d7b055ea65f219ddca9f.ctex
+Loading resource: res://ui/main_menu/quick_play_connection_ui.gd
+Loading resource: res://assets/audio/music/Shrooter_Music_Menu.ogg
+Loading resource: res://.godot/imported/Shrooter_Music_Menu.ogg-447b3b4eabce4a463456084b329fbd71.oggvorbisstr
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+   at: cleanup (core/object/object.cpp:2514)
+Leaked instance: OggPacketSequence:9223372097554745105 - Resource path: res://assets/audio/music/Shrooter_Music_Menu.ogg::OggPacketSequence_8ia1f
+Leaked instance: AudioStreamOggVorbis:9223372097571522322 - Resource path: res://assets/audio/music/Shrooter_Music_Menu.ogg
+Leaked instance: AudioStreamPlaybackOggVorbis:9223372097873512217
+Leaked instance: OggPacketSequencePlayback:9223372097890289434
+Hint: Leaked instances typically happen when nodes are removed from the scene tree (with `remove_child()`) but not freed (with `free()` or `queue_free()`).
+ERROR: 2 resources still in use at exit.
+   at: clear (core/io/resource.cpp:790)
+Resource still in use: res://assets/audio/music/Shrooter_Music_Menu.ogg::OggPacketSequence_8ia1f (OggPacketSequence)
+Resource still in use: res://assets/audio/music/Shrooter_Music_Menu.ogg (AudioStreamOggVorbis)
+Orphan StringName: Music (static: 0, total: 1)
+StringName: 1 unclaimed string names at exit.

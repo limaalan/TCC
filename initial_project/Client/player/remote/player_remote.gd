@@ -7,10 +7,19 @@ const PlayerBoneAimConfig = preload("res://shared/player/player_bone_aim_config.
 const ANIM_BLEND_TIME := 0.2
 const RED_MATERIAL: StandardMaterial3D = preload("res://assets/materials/red_team_material.tres")
 const BLUE_MATERIAL: StandardMaterial3D = preload("res://assets/materials/blue_team_material.tres")
-const SKIN_MATERIALS := [
-	preload("res://assets/materials/player_skin1.tres"),
-	preload("res://assets/materials/player_skin2.tres"),
-	preload("res://assets/materials/player_skin3.tres"),
+const BLUE_SKIN_COLORS: Array[Color] = [
+	Color("6FA8FF"),
+	Color("4F93F5"),
+	Color("4CB8E6"),
+	Color("6F8BE8"),
+	Color("8C78D9"),
+]
+const RED_SKIN_COLORS: Array[Color] = [
+	Color("9A3A35"),
+	Color("B95042"),
+	Color("CD6940"),
+	Color("D98A46"),
+	Color("D7A85A"),
 ]
 
 @export var character_visual: CharacterVisual
@@ -19,6 +28,8 @@ const SKIN_MATERIALS := [
 
 var bone_aim_cache := {}
 var display_name := ""
+var skin_color := Color.WHITE
+var skin_color_team := GameEnums.NO_TEAM
 
 func _ready() -> void:
 	super()
@@ -42,8 +53,13 @@ func update_player_colors() -> void:
 		return
 
 	var team_material := BLUE_MATERIAL if team == GameEnums.Team.BLUE else RED_MATERIAL
-	character_visual.apply_team_material(team_material)
-	character_visual.apply_skin_material(SKIN_MATERIALS.pick_random())
+	if skin_color_team != team:
+		skin_color_team = team
+		skin_color = (BLUE_SKIN_COLORS if team == GameEnums.Team.BLUE else RED_SKIN_COLORS).pick_random()
+
+	var team_variant_material := team_material.duplicate() as StandardMaterial3D
+	team_variant_material.albedo_color = skin_color
+	character_visual.apply_team_material(team_variant_material)
 
 
 func set_rot_x_visuals(rot_x: float) -> void:
@@ -73,6 +89,12 @@ func set_anim(anim_name: String) -> void:
 
 func update_name_tag() -> void:
 	name_tag_player.text = display_name
+
+
+func update_health_bar(current_health: int, max_health: int, changed_amount: int) -> void:
+	super(current_health, max_health, changed_amount)
+	if character_visual != null:
+		character_visual.update_face_health(current_health, max_health, changed_amount)
 
 
 func play_shoot_fx() -> void:

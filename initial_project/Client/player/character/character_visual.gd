@@ -1,12 +1,12 @@
 extends Node3D
 class_name CharacterVisual
 
-const FALLBACK_ANIMATION := &"idle"
-const LOOPED_CHAR_ANIMATIONS: Array[StringName] = [&"idle", &"air", &"hover_walk"]
+const FALLBACK_ANIMATION := &"Idle"
+const LOOPED_CHAR_ANIMATIONS: Array[StringName] = [&"Idle", &"air", &"hover_walk"]
 const LOOPED_RINGS_ANIMATIONS: Array[StringName] = [&"idle", &"hover_walk"]
 const CHAR_ANIMATION_MAP := {
-	&"Idle": &"idle",
-	&"Idle_Shoot": &"idle",
+	&"Idle": &"Idle",
+	&"Idle_Shoot": &"Idle",
 	&"Jump_Idle": &"air",
 	&"Walk_Shoot": &"hover_walk",
 	&"Run_Shoot": &"hover_walk",
@@ -24,13 +24,16 @@ const RINGS_ANIMATION_MAP := {
 @export var skeleton_path: NodePath
 @export var team_color_mesh_paths: Array[NodePath] = []
 @export var team_color_surface_slots: PackedInt32Array = PackedInt32Array()
-@export var skin_mesh_path: NodePath
-@export var skin_surface_slot := 1
+@export var face_mesh_path: NodePath
+@export var face_surface_slot := 2
 
 var current_game_animation: StringName = &""
 
+@onready var face_controller = $FaceController
+
 func _ready() -> void:
 	_configure_gameplay_animation_loops()
+	face_controller.setup(get_node_or_null(face_mesh_path) as MeshInstance3D, face_surface_slot)
 
 
 func get_skeleton() -> Skeleton3D:
@@ -81,15 +84,8 @@ func apply_team_material(material: Material) -> void:
 		mesh.set_surface_override_material(surface_slot, material)
 
 
-func apply_skin_material(material: Material) -> void:
-	var mesh := get_node_or_null(skin_mesh_path) as MeshInstance3D
-	if mesh == null or mesh.mesh == null:
-		return
-
-	if skin_surface_slot < 0 or skin_surface_slot >= mesh.mesh.get_surface_count():
-		return
-
-	mesh.set_surface_override_material(skin_surface_slot, material)
+func update_face_health(current_health: int, max_health: int, changed_amount: int) -> void:
+	face_controller.update_health(current_health, max_health, changed_amount)
 
 
 func _get_char_animation_player() -> AnimationPlayer:

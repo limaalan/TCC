@@ -2,6 +2,8 @@
 .godot/
 build/
 /android/
+/initial_project/Client/ShrooterClient.exe
+/initial_project/Client/ShrooterClient.console.exe
 imgs/referencias
 initial_project/Client/assets/**
 !initial_project/Client/assets/meus_assets

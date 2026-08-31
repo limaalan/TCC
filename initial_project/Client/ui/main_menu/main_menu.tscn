@@ -1,9 +1,46 @@
-[gd_scene load_steps=5 format=3 uid="uid://dcjptc5h2hwgq"]
+[gd_scene load_steps=14 format=3 uid="uid://dcjptc5h2hwgq"]
 
-[ext_resource type="Script" uid="uid://n20766avlehg" path="res://ui/main_menu/main_menu.gd" id="1_r785l"]
-[ext_resource type="Texture2D" uid="uid://byukgpq4ekqs4" path="res://assets/textures/bg_black_and_white.png" id="2_3848r"]
-[ext_resource type="Script" uid="uid://lna88f213mp" path="res://ui/main_menu/quick_play_connection_ui.gd" id="3_omy8q"]
-[ext_resource type="PackedScene" uid="uid://4a7egmd7mp37" path="res://ui/settings_widget/scene_settings_widget.tscn" id="4_i5wg5"]
+[ext_resource type="Script" uid="uid://n20766avlehg" path="res://ui/main_menu/main_menu.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://byukgpq4ekqs4" path="res://assets/textures/bg_black_and_white.png" id="2_background"]
+[ext_resource type="Script" uid="uid://lna88f213mp" path="res://ui/main_menu/quick_play_connection_ui.gd" id="3_connection"]
+[ext_resource type="PackedScene" path="res://ui/settings_screen/settings_screen.tscn" id="4_settings"]
+[ext_resource type="Theme" uid="uid://dwgmi4o4jnbvf" path="res://ui/shared/navigation_theme.tres" id="5_theme"]
+[ext_resource type="Texture2D" uid="uid://cd0vb3iypuod0" path="res://ui/shared/icons/character.png" id="6_character"]
+[ext_resource type="Texture2D" uid="uid://dn42apoec1236" path="res://ui/shared/icons/cog.png" id="7_cog"]
+[ext_resource type="Texture2D" uid="uid://cj7vtnv4nrkou" path="res://ui/shared/icons/radar-sweep.png" id="8_radar"]
+[ext_resource type="Texture2D" uid="uid://bxj6xutn73aoy" path="res://ui/shared/icons/round-star.png" id="9_star"]
+[ext_resource type="Texture2D" uid="uid://8ec7f785j2v5" path="res://ui/shared/icons/exit-door.png" id="10_exit"]
+[ext_resource type="Texture2D" uid="uid://cmmp74vb2k32b" path="res://ui/shared/icons/go-back-arrow.png" id="11_back"]
+
+[sub_resource type="StyleBoxFlat" id="BrandPanel"]
+bg_color = Color(0.025, 0.075, 0.18, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.306, 0.773, 1, 0.9)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+expand_margin_left = 6.0
+shadow_color = Color(0.015, 0.06, 0.16, 0.65)
+shadow_size = 8
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="ModalPanel"]
+bg_color = Color(0.024, 0.075, 0.18, 0.99)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.306, 0.773, 1, 1)
+corner_radius_top_left = 26
+corner_radius_top_right = 26
+corner_radius_bottom_right = 26
+corner_radius_bottom_left = 26
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 18
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -12,7 +49,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_r785l")
+theme = ExtResource("5_theme")
+script = ExtResource("1_script")
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="."]
 layout_mode = 1
@@ -21,92 +59,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_3848r")
+mouse_filter = 2
+texture = ExtResource("2_background")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="MatchModeOptionButton" type="OptionButton" parent="VBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(256, 32)
-layout_mode = 2
-size_flags_horizontal = 4
-focus_mode = 0
-
-[node name="PlayButton" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(96, 32)
-layout_mode = 2
-size_flags_horizontal = 4
-focus_mode = 0
-text = "Quickplay"
-
-[node name="ExitButton" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(96, 32)
-layout_mode = 2
-size_flags_horizontal = 4
-focus_mode = 0
-text = "Exit"
-
-[node name="QuickPlayConnectionUI" type="Control" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("3_omy8q")
-
-[node name="ColorRect" type="ColorRect" parent="QuickPlayConnectionUI"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 0.58431375)
-
-[node name="VBoxContainer" type="VBoxContainer" parent="QuickPlayConnectionUI"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 32
-alignment = 1
-
-[node name="StatusLabel" type="Label" parent="QuickPlayConnectionUI/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 40
-text = "Test"
-
-[node name="CloseButton" type="Button" parent="QuickPlayConnectionUI/VBoxContainer"]
-visible = false
-custom_minimum_size = Vector2(256, 64)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 32
-text = "Close"
-
-[node name="CancelButton" type="Button" parent="QuickPlayConnectionUI/VBoxContainer"]
-custom_minimum_size = Vector2(256, 64)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 32
-text = "Cancel"
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="BackgroundDim" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -114,28 +72,210 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 32
-theme_override_constants/margin_right = 32
+color = Color(0, 0.012, 0.035, 0.77)
+
+[node name="ScreenMargins" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 42
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 42
 theme_override_constants/margin_bottom = 32
 
-[node name="PlayerNameLineEdit" type="LineEdit" parent="MarginContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(256, 32)
+[node name="ScreenLayout" type="VBoxContainer" parent="ScreenMargins"]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-placeholder_text = "Player Name"
-max_length = 256
+theme_override_constants/separation = 26
+
+[node name="TopBar" type="HBoxContainer" parent="ScreenMargins/ScreenLayout"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="BrandPanel" type="PanelContainer" parent="ScreenMargins/ScreenLayout/TopBar"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("BrandPanel")
+
+[node name="Layout" type="HBoxContainer" parent="ScreenMargins/ScreenLayout/TopBar/BrandPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Character" type="TextureRect" parent="ScreenMargins/ScreenLayout/TopBar/BrandPanel/Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(58, 58)
+layout_direction = 2
+layout_mode = 2
+texture = ExtResource("6_character")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PlayerNameLineEdit" type="LineEdit" parent="ScreenMargins/ScreenLayout/TopBar/BrandPanel/Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(238, 54)
+layout_mode = 2
+theme_type_variation = &"NavigationField"
+placeholder_text = "Nome do jogador"
+max_length = 16
 context_menu_enabled = false
 shortcut_keys_enabled = false
 
-[node name="SettingsWidget" parent="MarginContainer" instance=ExtResource("4_i5wg5")]
+[node name="TopSpacer" type="Control" parent="ScreenMargins/ScreenLayout/TopBar"]
 layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 8
+size_flags_horizontal = 3
+mouse_filter = 2
 
-[connection signal="pressed" from="VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
-[connection signal="pressed" from="QuickPlayConnectionUI/VBoxContainer/CloseButton" to="QuickPlayConnectionUI" method="_on_close_button_pressed"]
-[connection signal="pressed" from="QuickPlayConnectionUI/VBoxContainer/CancelButton" to="QuickPlayConnectionUI" method="_on_cancel_button_pressed"]
+[node name="SettingsButton" type="Button" parent="ScreenMargins/ScreenLayout/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(222, 58)
+layout_mode = 2
+tooltip_text = "Abrir configurações"
+theme_type_variation = &"SecondaryButton"
+theme_override_constants/icon_max_width = 30
+theme_override_font_sizes/font_size = 22
+text = "Configurações"
+icon = ExtResource("7_cog")
+
+[node name="MenuCenter" type="CenterContainer" parent="ScreenMargins/ScreenLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScreenMargins/ScreenLayout/MenuCenter"]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="ServerWarningLabel" type="Label" parent="ScreenMargins/ScreenLayout/MenuCenter/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.08, 1)
+theme_override_font_sizes/font_size = 18
+text = "Servidor não configurado — abra Configurações."
+horizontal_alignment = 1
+
+[node name="MatchModeOptionButton" type="OptionButton" parent="ScreenMargins/ScreenLayout/MenuCenter/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(620, 78)
+layout_mode = 2
+theme_type_variation = &"NavigationSelect"
+theme_override_font_sizes/font_size = 28
+
+[node name="PlayButton" type="Button" parent="ScreenMargins/ScreenLayout/MenuCenter/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(650, 104)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+theme_override_constants/icon_max_width = 46
+theme_override_font_sizes/font_size = 43
+text = "Quickplay"
+icon = ExtResource("8_radar")
+
+[node name="CreditsButton" type="Button" parent="ScreenMargins/ScreenLayout/MenuCenter/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(620, 70)
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+theme_override_constants/icon_max_width = 32
+theme_override_font_sizes/font_size = 28
+text = "Créditos"
+icon = ExtResource("9_star")
+
+[node name="ExitButton" type="Button" parent="ScreenMargins/ScreenLayout/MenuCenter/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(620, 70)
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+theme_override_constants/icon_max_width = 32
+theme_override_font_sizes/font_size = 28
+text = "Sair"
+icon = ExtResource("10_exit")
+
+[node name="QuickPlayConnectionUI" type="Control" parent="."]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_connection")
+
+[node name="Backdrop" type="ColorRect" parent="QuickPlayConnectionUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0.01, 0.03, 0.84)
+
+[node name="CenterContainer" type="CenterContainer" parent="QuickPlayConnectionUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="QuickPlayConnectionUI/CenterContainer"]
+custom_minimum_size = Vector2(560, 250)
+layout_mode = 2
+theme_override_styles/panel = SubResource("ModalPanel")
+
+[node name="Margins" type="MarginContainer" parent="QuickPlayConnectionUI/CenterContainer/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 28
+
+[node name="VBoxContainer" type="VBoxContainer" parent="QuickPlayConnectionUI/CenterContainer/Panel/Margins"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="StatusLabel" type="Label" parent="QuickPlayConnectionUI/CenterContainer/Panel/Margins/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(460, 72)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "Conectando-se ao lobby..."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseButton" type="Button" parent="QuickPlayConnectionUI/CenterContainer/Panel/Margins/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(240, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"SecondaryButton"
+theme_override_constants/icon_max_width = 24
+theme_override_font_sizes/font_size = 21
+text = "Fechar"
+icon = ExtResource("11_back")
+
+[node name="CancelButton" type="Button" parent="QuickPlayConnectionUI/CenterContainer/Panel/Margins/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"SecondaryButton"
+theme_override_font_sizes/font_size = 21
+text = "Cancelar"
+
+[node name="SettingsScreen" parent="." instance=ExtResource("4_settings")]
+unique_name_in_owner = true
+z_index = 20
+layout_mode = 1
+
+[connection signal="pressed" from="ScreenMargins/ScreenLayout/TopBar/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="ScreenMargins/ScreenLayout/MenuCenter/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="ScreenMargins/ScreenLayout/MenuCenter/VBoxContainer/CreditsButton" to="." method="_on_credits_button_pressed"]
+[connection signal="pressed" from="ScreenMargins/ScreenLayout/MenuCenter/VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="QuickPlayConnectionUI/CenterContainer/Panel/Margins/VBoxContainer/CloseButton" to="QuickPlayConnectionUI" method="_on_close_button_pressed"]
+[connection signal="pressed" from="QuickPlayConnectionUI/CenterContainer/Panel/Margins/VBoxContainer/CancelButton" to="QuickPlayConnectionUI" method="_on_cancel_button_pressed"]

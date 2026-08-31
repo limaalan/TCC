@@ -80,7 +80,7 @@ O jogo pode funcionar na maquina atual e ainda falhar em um clone limpo.
 
 ### Conexao Publica Incompleta
 
-O Client usa `127.0.0.1` como endereco padrao e cria o peer durante `_ready()`. Existe suporte a argumento `--server-address`, mas nao ha fluxo amigavel para informar, salvar, trocar e tentar novamente o endereco do servidor.
+O Client agora usa o endereco persistido em `user://settings.cfg` como unica fonte de verdade em execucao. `default_settings.cfg` serve apenas para preencher esse arquivo no primeiro uso da build e deve receber o IP da VPS antes da exportacao. Se nenhum endereco estiver configurado, o Client nao tenta conectar e avisa o jogador no menu.
 
 ### Matchmaking Arriscado Para A Apresentacao
 
@@ -104,6 +104,32 @@ O trabalho deve seguir os gates abaixo em ordem. Nao iniciar o gate seguinte enq
 
 Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encontrados durante um gate devem ser corrigidos apenas quando bloquearem seu criterio de saida.
 
+## Pendencias Pequenas Antes Da Limpeza Grande
+
+As tarefas abaixo podem avancar em paralelo antes do refactor de build reproduzivel e da limpeza geral. A ordem esta organizada da menor para a maior dificuldade.
+
+| Ordem | Dificuldade | Pendencia | Descricao Rapida | Pode Comecar Antes Da #119? |
+| --- | --- | --- | --- | --- |
+| 1 | Muito baixa | [#133 - Atualizar controles no relatorio](https://github.com/limaalan/TCC/issues/133) | Corrigir os vetores, a figura e a tabela do TCC para refletirem tres armas, granada, L3, Start/Menu e os bindings finais. | Sim; os arquivos do relatorio ficam fora do projeto Godot. |
+| 2 | Baixa | Textos e foco basico da [#103](https://github.com/limaalan/TCC/issues/103) | Padronizar a interface em portugues, revisar `Voltar`, `ui_cancel` e o foco ao abrir/fechar telas. | Sim; e trabalho em cenas e scripts. |
+| 3 | Baixa a media | [#132 - Tela Como jogar](https://github.com/limaalan/TCC/issues/132) | Criar dois cards responsivos, um para teclado/mouse e outro para gamepad, alem de resumos curtos de TDM e KOTH. | Parcialmente; a cena pode ser criada agora, mas os exports finais dependem de #63/#119. |
+| 4 | Media | Estrutura de creditos da [#123](https://github.com/limaalan/TCC/issues/123) | Criar a tela e registrar autor, curso, tecnologias e espaco para atribuicoes de terceiros. | Sim para a estrutura; o conteudo final depende da auditoria. |
+| 5 | Media | [#134 - Identidade final da release](https://github.com/limaalan/TCC/issues/134) | Definir nome final, titulo da janela, icone, splash e versao visivel. | Parcialmente; nome e icone raiz podem avancar, novos assets de runtime dependem de #63/#119. |
+| 6 | Media | Capa, menu, pausa e 16:9 da [#103](https://github.com/limaalan/TCC/issues/103) | Aplicar capa, hierarquia visual e validar 720p/1080p com mouse, teclado e controle. | O layout pode avancar; a integracao da arte final deve esperar a politica de assets. |
+| 7 | Media a alta | Auditoria de licencas e creditos da [#123](https://github.com/limaalan/TCC/issues/123) | Inventariar origem, autor e licenca de audio, HDR, fontes, modelos, texturas e icones. | Sim; e levantamento documental independente do refactor. |
+| 8 | Alta | Paleta completa da [#121](https://github.com/limaalan/TCC/issues/121) | Centralizar e aplicar as cores em menu, HUD, times, pickups, powerups, mapas e VFX. | Pode iniciar como guia, mas a aplicacao completa atravessa muitos assets. |
+
+### Decisao Para A Imagem De Controles
+
+Nao reconstruir teclado, mouse e gamepad tecla por tecla usando dezenas de nos `Control`. Os arquivos vetoriais originais devem ser atualizados e exportados em duas imagens com fundo transparente:
+
+- uma imagem para teclado e mouse;
+- uma imagem para gamepad.
+
+A UI da Godot deve montar somente os cards responsivos ao redor dessas imagens usando `Container`, `TextureRect`, titulos, textos auxiliares e botao de voltar. Isso preserva a qualidade visual dos vetores, reduz o tempo de implementacao e continua permitindo foco, navegacao por controle e adaptacao para 720p/1080p.
+
+Novos exports dentro de `initial_project/Client/assets/` continuam ignorados pelo `.gitignore`. A integracao definitiva dessas imagens e da capa deve acontecer junto da solucao das issues #63 e #119, evitando assets que funcionam apenas na maquina local.
+
 ## Gate 0 - Fechar O Trabalho Em Andamento
 
 ### Trabalho
@@ -123,7 +149,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 
 ### GitHub
 
-- Nova issue sugerida: `Finalizar muzzle FX especifico por arma`.
+- Issue: [#118 - Finalizar muzzle FX especifico por arma](https://github.com/limaalan/TCC/issues/118).
 
 ## Gate 1 - Tornar O Build Reproduzivel
 
@@ -152,7 +178,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 
 - Executar [#63 - Garantir assets do Client no build final](https://github.com/limaalan/TCC/issues/63).
 - Usar apenas a parte essencial de [#92 - Criar validacao de estrutura dos arquivos](https://github.com/limaalan/TCC/issues/92); a automacao completa pode esperar.
-- Nova issue sugerida: `Higienizar artefatos de build e reduzir o pacote final`.
+- Issue: [#119 - Higienizar artefatos de build e reduzir o pacote final](https://github.com/limaalan/TCC/issues/119).
 
 ## Gate 2 - Fechar A Conexao Publica
 
@@ -201,7 +227,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 
 - Reescrever [#75 - Permitir configurar partida por parametros do Server](https://github.com/limaalan/TCC/issues/75) para o estado atual: Highrise, presets atuais, quantidade de lobbies e jogadores por lobby.
 - [#83 - Criar scripts batch para iniciar Server com presets](https://github.com/limaalan/TCC/issues/83) e opcional; o deploy real e Linux.
-- Nova issue sugerida: `Criar perfil de servidor para demonstracao publica`.
+- Issue: [#120 - Criar perfil de servidor para demonstracao publica](https://github.com/limaalan/TCC/issues/120).
 
 ## Gate 4 - Adicionar Suporte A Controle
 
@@ -212,6 +238,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 - Mapear tiro, pulo, sprint, granada e pausa.
 - Habilitar foco e navegacao de gamepad no menu, selecao de arma e pausa.
 - Adicionar indicacao visual de foco.
+- Adicionar acesso a tela `Como jogar` pelo menu principal e pela pausa.
 - Testar uma partida completa com um controle fisico.
 
 ### Criterio De Saida
@@ -223,6 +250,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 
 - Executar [#77 - Adicionar suporte basico a controle/gamepad](https://github.com/limaalan/TCC/issues/77).
 - Ampliar a #77 para incluir foco e navegacao real da UI; nao criar issue duplicada.
+- Executar [#132 - Adicionar tela Como jogar com controles e objetivos dos modos](https://github.com/limaalan/TCC/issues/132).
 
 ## Gate 5 - Fechar A Identidade Visual
 
@@ -234,6 +262,7 @@ Nao adicionar nova feature que nao esteja explicitamente neste plano. Bugs encon
 4. Repaginar a pistola.
 5. Repaginar a SMG.
 6. Aplicar o tema no menu, HUD, Highrise e VFX de maior destaque.
+7. Padronizar nome, icone, splash, capa e versao da release.
 
 ### Escopo Da Paleta
 
@@ -259,6 +288,7 @@ O fluxo atual mapeia caminhada e corrida para a mesma animacao `hover_walk`. O p
 - Menu, gameplay e tela de KOTH parecem pertencer ao mesmo jogo.
 - Pistola e SMG possuem silhuetas distintas e usam a paleta.
 - Jogador remoto nao apresenta transicoes visualmente quebradas nos estados basicos.
+- Capa, titulo da janela, icone e pagina publica usam a mesma identidade.
 - Existem tres screenshots finais aprovadas: menu, combate e KOTH.
 
 ### GitHub
@@ -268,8 +298,9 @@ O fluxo atual mapeia caminhada e corrida para a mesma animacao `hover_walk`. O p
 - Executar [#103 - Refatorar main menu e tela de pause](https://github.com/limaalan/TCC/issues/103) somente depois de definir a paleta.
 - Aproveitar o escopo necessario de [#62 - Criar modelos 3D minimos](https://github.com/limaalan/TCC/issues/62), removendo dependencias de plataforma movel se ela continuar fora do recorte.
 - [#105 - Melhorar cenario do mapa Highrise](https://github.com/limaalan/TCC/issues/105) e P1: fazer apenas se a leitura visual do mapa continuar fraca.
-- Nova issue sugerida: `Definir e aplicar paleta de cores do jogo`.
-- Nova issue sugerida: `Repaginar modelos da pistola e SMG`.
+- Issue: [#121 - Definir e aplicar paleta de cores do jogo](https://github.com/limaalan/TCC/issues/121).
+- Issue: [#122 - Repaginar modelos da pistola e SMG](https://github.com/limaalan/TCC/issues/122).
+- Issue: [#134 - Aplicar identidade final da release no Client](https://github.com/limaalan/TCC/issues/134).
 
 ## Gate 6 - Substituir E Licenciar O Audio
 
@@ -293,7 +324,7 @@ O fluxo atual mapeia caminhada e corrida para a mesma animacao `hover_walk`. O p
 
 - Executar [#104 - Refatorar sonoplastia do jogo](https://github.com/limaalan/TCC/issues/104).
 - [#48 - Limpar AudioManager para AudioEventData](https://github.com/limaalan/TCC/issues/48) nao bloqueia a licenca nem a release; adiar ou encerrar como `not planned` se o AudioLibrary atual for suficiente.
-- Nova issue sugerida: `Auditar licencas de todos os assets e criar THIRD_PARTY_NOTICES`.
+- Issue: [#123 - Auditar licencas de assets e criar THIRD_PARTY_NOTICES](https://github.com/limaalan/TCC/issues/123).
 
 ## Gate 7 - Gerar A Release Candidate
 
@@ -321,8 +352,8 @@ O fluxo atual mapeia caminhada e corrida para a mesma animacao `hover_walk`. O p
 - Atualizar [#65 - Rodar smoke test final](https://github.com/limaalan/TCC/issues/65): powerups ja existem e plataforma movel nao deve bloquear a release.
 - Encerrar [#64 - Atualizar prototype map](https://github.com/limaalan/TCC/issues/64) como `not planned` se Highrise for confirmado como mapa final.
 - Verificar os criterios e encerrar [#91 - Criar mapa KOTH](https://github.com/limaalan/TCC/issues/91) se o Highrise atual ja os cumprir.
-- Nova issue sugerida: `Publicar Client Windows e pagina de download da apresentacao`.
-- Nova issue sugerida: `Consolidar documentacao tecnica da release final`.
+- Issue: [#124 - Publicar Client Windows e pagina de download da apresentacao](https://github.com/limaalan/TCC/issues/124).
+- Issue: [#126 - Consolidar documentacao tecnica da release final](https://github.com/limaalan/TCC/issues/126).
 
 ## Gate 8 - Executar E Analisar O Experimento
 
@@ -368,7 +399,7 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 ### GitHub
 
 - [#102 - Adicionar coleta de metricas](https://github.com/limaalan/TCC/issues/102) parece implementada; validar e encerrar a issue.
-- Nova issue sugerida: `Executar experimento e analisar metricas com aumento de jogadores e lobbies`.
+- Issue: [#125 - Executar experimento e analisar metricas com aumento de jogadores e lobbies](https://github.com/limaalan/TCC/issues/125).
 
 ## Gate 9 - Escrever O Relatorio Final
 
@@ -399,6 +430,7 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 - diagrama da arquitetura final;
 - fluxo Client/Server/lobby;
 - screenshots do menu, gameplay e KOTH;
+- figura e tabela atualizadas dos controles finais;
 - tabela proposta x resultado;
 - tabela de testes;
 - tabela e graficos das metricas;
@@ -414,6 +446,7 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 ### GitHub
 
 - Ampliar e executar [#99 - Escrita do relatorio](https://github.com/limaalan/TCC/issues/99); nao criar issue duplicada.
+- Executar [#133 - Atualizar secao de controles do relatorio para a build final](https://github.com/limaalan/TCC/issues/133) como recorte verificavel da #99.
 
 ## Gate 10 - Preparar A Apresentacao E Os Planos De Contingencia
 
@@ -437,7 +470,7 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 ### GitHub
 
 - [#116 - Criar GitHub Actions para deploy do Server](https://github.com/limaalan/TCC/issues/116) e melhoria posterior; nao deve bloquear um deploy manual ja funcional.
-- Nova issue sugerida: `Preparar kit de apresentacao e planos de contingencia`.
+- Issue: [#127 - Preparar kit de apresentacao e planos de contingencia](https://github.com/limaalan/TCC/issues/127).
 
 ## Cruzamento Completo Com As Issues Abertas
 
@@ -462,17 +495,20 @@ A dashboard ja observa CPU e memoria por `psutil`, mas esses valores precisam se
 | [#102](https://github.com/limaalan/TCC/issues/102) Coleta de metricas | Implementada no codigo atual | Validar coleta e encerrar; criar issue de experimento |
 | [#103](https://github.com/limaalan/TCC/issues/103) Menu e pausa | Parte do polimento | Executar depois da paleta |
 | [#104](https://github.com/limaalan/TCC/issues/104) Sonoplastia | Bloqueador de licenca | Executar no Gate 6 |
-| [#105](https://github.com/limaalan/TCC/issues/105) Cenario Highrise | P1 | Fazer apenas se necessario apos o passe visual principal |
+| [#105](https://github.com/limaalan/TCC/issues/105) Cenario Highrise | Implementada em feature branch | Validar, integrar e encerrar; a #130 foi fechada como duplicada |
 | [#106](https://github.com/limaalan/TCC/issues/106) Modelo/animacao | Parcialmente implementada | Reescrever para polimento das animacoes finais |
 | [#107](https://github.com/limaalan/TCC/issues/107) Importar animacoes | Parcialmente implementada | Validar integracao e encerrar |
 | [#108](https://github.com/limaalan/TCC/issues/108) Expressoes faciais | Fora do recorte | Encerrar como `not planned` |
 | [#116](https://github.com/limaalan/TCC/issues/116) Actions deploy Server | Melhoria posterior | Adiar ate o deploy manual estar fechado |
+| [#132](https://github.com/limaalan/TCC/issues/132) Tela Como jogar | Polimento funcional pequeno | Executar com dois cards e exports vetoriais transparentes |
+| [#133](https://github.com/limaalan/TCC/issues/133) Controles no relatorio | Pendencia academica pequena | Executar em paralelo e vincular a #99 |
+| [#134](https://github.com/limaalan/TCC/issues/134) Identidade da release | Polimento de apresentacao | Definir nome, icone, splash e versao antes da release publica |
 
-## Novas Issues Sugeridas
+## Issues Criadas Para O Fechamento
 
-As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` servem apenas para referencia neste plano.
+As issues abaixo foram criadas no GitHub e vinculadas ao milestone 9, referente ao fechamento e a entrega do TCC.
 
-### S1 - Finalizar Muzzle FX Especifico Por Arma
+### [#118 - Finalizar Muzzle FX Especifico Por Arma](https://github.com/limaalan/TCC/issues/118)
 
 **Prioridade:** P0
 
@@ -480,7 +516,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** pistola, SMG e shotgun validadas; nenhuma cena faltando; smoke test do Client aprovado.
 
-### S2 - Higienizar Artefatos De Build E Reduzir O Pacote Final
+### [#119 - Higienizar Artefatos De Build E Reduzir O Pacote Final](https://github.com/limaalan/TCC/issues/119)
 
 **Prioridade:** P0
 
@@ -488,7 +524,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** Git limpo de artefatos, export reproduzivel e tamanho final documentado.
 
-### S3 - Criar Perfil De Servidor Para Demonstracao Publica
+### [#120 - Criar Perfil De Servidor Para Demonstracao Publica](https://github.com/limaalan/TCC/issues/120)
 
 **Prioridade:** P0
 
@@ -496,7 +532,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** perfil inicia por comando conhecido, suporta a capacidade definida e foi testado por 30 minutos.
 
-### S4 - Definir E Aplicar Paleta De Cores Do Jogo
+### [#121 - Definir E Aplicar Paleta De Cores Do Jogo](https://github.com/limaalan/TCC/issues/121)
 
 **Prioridade:** P1
 
@@ -504,7 +540,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** guia de paleta versionado e tres screenshots visualmente coerentes.
 
-### S5 - Repaginar Modelos Da Pistola E SMG
+### [#122 - Repaginar Modelos Da Pistola E SMG](https://github.com/limaalan/TCC/issues/122)
 
 **Prioridade:** P1
 
@@ -512,7 +548,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** modelos importados, escala/pivo corretos, muzzle alinhado e leitura boa em primeira pessoa.
 
-### S6 - Auditar Licencas De Assets E Criar THIRD_PARTY_NOTICES
+### [#123 - Auditar Licencas De Assets E Criar THIRD_PARTY_NOTICES](https://github.com/limaalan/TCC/issues/123)
 
 **Prioridade:** P0
 
@@ -520,7 +556,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** nenhum asset sem origem, creditos incluidos e arquivos incompativeis substituidos.
 
-### S7 - Publicar Client Windows E Pagina De Download
+### [#124 - Publicar Client Windows E Pagina De Download](https://github.com/limaalan/TCC/issues/124)
 
 **Prioridade:** P0
 
@@ -528,7 +564,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** download por terceiro, instrucoes completas, QR code testado e backup local.
 
-### S8 - Executar Experimento E Analisar Metricas
+### [#125 - Executar Experimento E Analisar Metricas](https://github.com/limaalan/TCC/issues/125)
 
 **Prioridade:** P0 academico
 
@@ -536,7 +572,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** dados brutos preservados, analise reproduzivel e resultados inseriveis no TCC.
 
-### S9 - Consolidar Documentacao Tecnica Da Release Final
+### [#126 - Consolidar Documentacao Tecnica Da Release Final](https://github.com/limaalan/TCC/issues/126)
 
 **Prioridade:** P1
 
@@ -544,7 +580,7 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** documentos refletem Highrise, dois modos, servidor autoritativo, municao, powerups e deploy real.
 
-### S10 - Preparar Kit De Apresentacao E Planos De Contingencia
+### [#127 - Preparar Kit De Apresentacao E Planos De Contingencia](https://github.com/limaalan/TCC/issues/127)
 
 **Prioridade:** P0 de apresentacao
 
@@ -552,19 +588,44 @@ As issues abaixo nao foram criadas automaticamente. Os codigos `S1` a `S10` serv
 
 **Criterios:** ensaio completo realizado e demonstracao recuperavel sem build/deploy ao vivo.
 
+### [#132 - Adicionar Tela Como Jogar Com Controles E Objetivos](https://github.com/limaalan/TCC/issues/132)
+
+**Prioridade:** P1 pequeno
+
+**Objetivo:** disponibilizar no menu e na pausa dois cards de controles, mais uma explicacao curta de TDM e KOTH.
+
+**Criterios:** imagens transparentes atualizadas, navegacao completa por controle e leitura correta em 720p/1080p.
+
+### [#133 - Atualizar Secao De Controles Do Relatorio](https://github.com/limaalan/TCC/issues/133)
+
+**Prioridade:** P0 academico pequeno
+
+**Objetivo:** atualizar figura e tabela do TCC para os bindings realmente entregues.
+
+**Criterios:** figura, tabela e `Input Map` sem contradicoes; PDF compilando com a nova imagem.
+
+### [#134 - Aplicar Identidade Final Da Release No Client](https://github.com/limaalan/TCC/issues/134)
+
+**Prioridade:** P1 de apresentacao
+
+**Objetivo:** unificar nome, titulo da janela, icone, splash, capa, versao e pagina publica.
+
+**Criterios:** nenhum nome conflitante ou icone generico na build distribuida.
+
 ## Ordem Linear Resumida
 
-1. S1 - terminar muzzle FX e congelar features.
-2. #63 + S2 - garantir clone limpo e build reproduzivel.
+1. #118 - terminar muzzle FX e congelar features.
+2. #63 + #119 - garantir clone limpo e build reproduzivel.
 3. #74 + #76 - fechar IP, reconexao e mensagens.
-4. #75 revisada + S3 - fechar perfil da demonstracao.
-5. #77 - suporte completo a controle.
-6. S4 + #106/#107 + S5 + #103 - fechar passe artistico.
-7. #104 + S6 - substituir audio e documentar licencas.
-8. #65 revisada + S7 + S9 - release candidate e pagina publica.
-9. #102 validada + S8 - experimento e analise.
-10. #99 - relatorio final.
-11. S10 - ensaio, congelamento e apresentacao.
+4. #75 revisada + #120 - fechar perfil da demonstracao.
+5. #77 + #132 - suporte completo a controle e tela Como jogar.
+6. #133 - atualizar cedo as figuras e a tabela de controles do relatorio.
+7. #121 + #106/#107 + #122 + #103 + #134 - fechar passe artistico e identidade da release.
+8. #104 + #123 - substituir audio e documentar licencas.
+9. #65 revisada + #124 + #126 - release candidate e pagina publica.
+10. #102 validada + #125 - experimento e analise.
+11. #99 - relatorio final.
+12. #127 - ensaio, congelamento e apresentacao.
 
 ## Definicao Final De Pronto
 
@@ -574,6 +635,8 @@ O projeto esta pronto para entrega quando:
 - um terceiro baixa o Client e conecta ao servidor remoto sem ajuda tecnica;
 - TDM e KOTH terminam corretamente em build exportado;
 - o jogo pode ser usado por teclado/mouse e controle;
+- existe uma tela Como jogar coerente com os bindings e uma secao atualizada no relatorio;
+- nome, icone, splash, capa e versao identificam a mesma release;
 - arte e audio da release possuem identidade e licencas conhecidas;
 - existe uma release publica com QR code;
 - o experimento de metricas possui dados, graficos e conclusao;
