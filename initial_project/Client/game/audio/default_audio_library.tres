@@ -8,11 +8,11 @@
 [ext_resource type="AudioStream" uid="uid://b8nckntq1s6u1" path="res://assets/audio/grenade_throw.ogg" id="5_pm0u1"]
 [ext_resource type="AudioStream" uid="uid://d3vyqq55atepa" path="res://assets/audio/sfx/smg_shot.ogg" id="6_smg"]
 [ext_resource type="AudioStream" uid="uid://df3w58ijr4xiv" path="res://assets/audio/sfx/footstep.ogg" id="8_footstep"]
-[ext_resource type="AudioStream" uid="uid://bn3urggebw06k" path="res://assets/audio/menu_song.ogg" id="8_qrs5x"]
+[ext_resource type="AudioStream" uid="uid://d7g6yygk35mu" path="res://game/audio/menu_song.ogg" id="8_qrs5x"]
 [ext_resource type="AudioStream" uid="uid://qglbrnq44w2l" path="res://assets/audio/gun_sound_2.ogg" id="9_hqpio"]
 [ext_resource type="AudioStream" uid="uid://qfyxkyii48cd" path="res://assets/audio/sfx/jump_land.ogg" id="9_jump"]
 [ext_resource type="AudioStream" uid="uid://bnaekk26fim3u" path="res://assets/audio/sfx/pickup_health.ogg" id="10_health_pickup"]
-[ext_resource type="AudioStream" uid="uid://cupnyiwgyqwkm" path="res://assets/audio/shotgun_sound.ogg" id="11_bxc72"]
+[ext_resource type="AudioStream" uid="uid://cgo3a5j7m7y8y" path="res://game/audio/shotgun_sound.ogg" id="11_bxc72"]
 
 [resource]
 script = ExtResource("1_audio_library")

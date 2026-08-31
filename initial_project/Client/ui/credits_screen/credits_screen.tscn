@@ -1,13 +1,16 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=23 format=3 uid="uid://cml5qpdardysp"]
 
-[ext_resource type="Script" path="res://ui/credits_screen/credits_screen.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/textures/bg_black_and_white.png" id="2_background"]
-[ext_resource type="Texture2D" path="res://ui/credits_screen/images/reticule.png" id="3_project_icon"]
-[ext_resource type="Texture2D" path="res://ui/credits_screen/images/graduate-cap.png" id="4_academic_icon"]
-[ext_resource type="Texture2D" path="res://ui/credits_screen/images/round-star.png" id="5_thanks_icon"]
-[ext_resource type="Texture2D" path="res://ui/credits_screen/images/cog.png" id="6_tech_icon"]
-[ext_resource type="Texture2D" path="res://ui/credits_screen/images/logo_utfpr.png" id="7_logo"]
-[ext_resource type="Texture2D" path="res://ui/credits_screen/images/github_invertocat_black.png" id="8_github"]
+[ext_resource type="Script" uid="uid://nx0ysigt4hfx" path="res://ui/credits_screen/credits_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://byukgpq4ekqs4" path="res://assets/textures/bg_black_and_white.png" id="2_background"]
+[ext_resource type="Texture2D" uid="uid://bjkxq0xkegkae" path="res://ui/credits_screen/images/reticule.png" id="3_project_icon"]
+[ext_resource type="Texture2D" uid="uid://d16ty1esyruj2" path="res://ui/credits_screen/images/graduate-cap.png" id="4_academic_icon"]
+[ext_resource type="Texture2D" uid="uid://4pwtdyyk7g45" path="res://ui/credits_screen/images/round-star.png" id="5_thanks_icon"]
+[ext_resource type="Texture2D" uid="uid://dismuvrj8k4el" path="res://ui/credits_screen/images/cog.png" id="6_tech_icon"]
+[ext_resource type="Texture2D" uid="uid://bys37x0b66imu" path="res://ui/credits_screen/images/logo_utfpr.png" id="7_logo"]
+[ext_resource type="Texture2D" uid="uid://cqax8pufyeuof" path="res://ui/credits_screen/images/github_invertocat_black.png" id="8_github"]
+
+[sub_resource type="Theme" id="CreditsTheme"]
+Label/colors/font_color = Color(0.9, 0.94, 0.98, 1)
 
 [sub_resource type="StyleBoxFlat" id="StylePanel"]
 bg_color = Color(0.025, 0.055, 0.095, 0.98)
@@ -23,36 +26,19 @@ corner_radius_bottom_left = 18
 shadow_color = Color(0, 0, 0, 0.65)
 shadow_size = 12
 
-[sub_resource type="StyleBoxFlat" id="StyleBackButtonNormal"]
-bg_color = Color(0.035, 0.065, 0.11, 0.92)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.2, 0.48, 0.68, 0.75)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBackButtonHover"]
-bg_color = Color(0.07, 0.16, 0.25, 0.98)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.25, 0.7, 1, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
 [sub_resource type="StyleBoxLine" id="StyleSeparator"]
 color = Color(0.3, 0.52, 0.68, 0.7)
-thickness = 1
 
 [sub_resource type="Shader" id="IconMaskShader"]
-code = "shader_type canvas_item;\n\nuniform vec4 icon_color : source_color = vec4(1.0);\n\nvoid fragment() {\n\tfloat mask = texture(TEXTURE, UV).r;\n\tCOLOR = vec4(icon_color.rgb, icon_color.a * mask);\n}\n"
+code = "shader_type canvas_item;
+
+uniform vec4 icon_color : source_color = vec4(1.0);
+
+void fragment() {
+	float mask = texture(TEXTURE, UV).r;
+	COLOR = vec4(icon_color.rgb, icon_color.a * mask);
+}
+"
 
 [sub_resource type="ShaderMaterial" id="ProjectIconMaterial"]
 shader = SubResource("IconMaskShader")
@@ -69,15 +55,6 @@ shader_parameter/icon_color = Color(0.95, 0.55, 0.02, 1)
 [sub_resource type="ShaderMaterial" id="TechnologyIconMaterial"]
 shader = SubResource("IconMaskShader")
 shader_parameter/icon_color = Color(0.28, 0.65, 0.06, 1)
-
-[sub_resource type="Theme" id="CreditsTheme"]
-Label/colors/font_color = Color(0.9, 0.94, 0.98, 1)
-
-[sub_resource type="Shader" id="LogoFadeShader"]
-code = "shader_type canvas_item;\n\nvoid fragment() {\n\tconst float aspect_ratio = 3.25;\n\tvec2 point = (UV - vec2(0.5)) * vec2(aspect_ratio, 1.0);\n\tvec2 half_size = vec2(aspect_ratio * 0.5, 0.5);\n\tfloat radius = 0.12;\n\tvec2 rounded = abs(point) - (half_size - vec2(radius));\n\tfloat distance_to_shape = length(max(rounded, vec2(0.0))) + min(max(rounded.x, rounded.y), 0.0) - radius;\n\tfloat rounded_alpha = 1.0 - smoothstep(-0.006, 0.006, distance_to_shape);\n\n\tfloat horizontal_distance = abs(UV.x - 0.5) * 2.0;\n\tfloat center_light = 1.0 - smoothstep(0.08, 1.0, horizontal_distance);\n\tcenter_light = pow(center_light, 0.55);\n\tvec3 edge_color = vec3(0.12, 0.23, 0.34);\n\tvec3 center_color = vec3(0.97, 0.98, 0.99);\n\tvec3 card_color = mix(edge_color, center_color, center_light);\n\n\tCOLOR = vec4(card_color, 0.97 * rounded_alpha);\n}\n"
-
-[sub_resource type="ShaderMaterial" id="LogoFadeMaterial"]
-shader = SubResource("LogoFadeShader")
 
 [sub_resource type="StyleBoxFlat" id="StyleRepositoryButtonNormal"]
 bg_color = Color(0.84, 0.89, 0.92, 0.92)
@@ -102,6 +79,56 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
+[sub_resource type="Shader" id="LogoFadeShader"]
+code = "shader_type canvas_item;
+
+void fragment() {
+	const float aspect_ratio = 3.25;
+	vec2 point = (UV - vec2(0.5)) * vec2(aspect_ratio, 1.0);
+	vec2 half_size = vec2(aspect_ratio * 0.5, 0.5);
+	float radius = 0.12;
+	vec2 rounded = abs(point) - (half_size - vec2(radius));
+	float distance_to_shape = length(max(rounded, vec2(0.0))) + min(max(rounded.x, rounded.y), 0.0) - radius;
+	float rounded_alpha = 1.0 - smoothstep(-0.006, 0.006, distance_to_shape);
+
+	float horizontal_distance = abs(UV.x - 0.5) * 2.0;
+	float center_light = 1.0 - smoothstep(0.08, 1.0, horizontal_distance);
+	center_light = pow(center_light, 0.55);
+	vec3 edge_color = vec3(0.12, 0.23, 0.34);
+	vec3 center_color = vec3(0.97, 0.98, 0.99);
+	vec3 card_color = mix(edge_color, center_color, center_light);
+
+	COLOR = vec4(card_color, 0.97 * rounded_alpha);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="LogoFadeMaterial"]
+shader = SubResource("LogoFadeShader")
+
+[sub_resource type="StyleBoxFlat" id="StyleBackButtonNormal"]
+bg_color = Color(0.035, 0.065, 0.11, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.48, 0.68, 0.75)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBackButtonHover"]
+bg_color = Color(0.07, 0.16, 0.25, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.7, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="CreditsScreen" type="Control"]
 layout_mode = 3
@@ -412,19 +439,17 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 58)
 layout_mode = 2
 size_flags_horizontal = 0
-focus_mode = 2
 theme_override_colors/font_color = Color(0.035, 0.075, 0.105, 1)
-theme_override_colors/font_hover_color = Color(0.035, 0.075, 0.105, 1)
-theme_override_colors/font_pressed_color = Color(0.035, 0.075, 0.105, 1)
 theme_override_colors/font_focus_color = Color(0.035, 0.075, 0.105, 1)
+theme_override_colors/font_pressed_color = Color(0.035, 0.075, 0.105, 1)
+theme_override_colors/font_hover_color = Color(0.035, 0.075, 0.105, 1)
 theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("StyleRepositoryButtonNormal")
-theme_override_styles/hover = SubResource("StyleRepositoryButtonHover")
 theme_override_styles/pressed = SubResource("StyleRepositoryButtonHover")
+theme_override_styles/hover = SubResource("StyleRepositoryButtonHover")
 theme_override_styles/focus = SubResource("StyleRepositoryButtonHover")
 text = "limaalan/TCC   ›"
 icon = ExtResource("8_github")
-icon_max_width = 42
 expand_icon = true
 
 [node name="Separator5" type="HSeparator" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content"]
@@ -455,7 +480,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(1, 1, 1, 1)
 
 [node name="Logo" type="TextureRect" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/LogoCenter/LogoPanel"]
 layout_mode = 1
@@ -497,7 +521,6 @@ offset_right = -8.0
 offset_bottom = 22.0
 grow_horizontal = 0
 grow_vertical = 2
-mouse_filter = 2
 theme_override_colors/font_color = Color(0.12, 0.68, 1, 0.95)
 theme_override_font_sizes/font_size = 30
 text = "⌄"
@@ -512,13 +535,12 @@ offset_left = 34.0
 offset_top = 30.0
 offset_right = 166.0
 offset_bottom = 70.0
-focus_mode = 2
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBackButtonNormal")
-theme_override_styles/hover = SubResource("StyleBackButtonHover")
 theme_override_styles/pressed = SubResource("StyleBackButtonHover")
+theme_override_styles/hover = SubResource("StyleBackButtonHover")
 theme_override_styles/focus = SubResource("StyleBackButtonHover")
 text = "←  Voltar"
 
-[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/SourceSection/SourceContent/RepositoryButton" to="." method="_on_repository_button_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
