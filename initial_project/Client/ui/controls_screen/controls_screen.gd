@@ -1,5 +1,9 @@
 extends Control
 
+const UiIconMask = preload("res://ui/shared/icon_mask.gd")
+const BACK_ICON = preload("res://ui/shared/icons/go-back-arrow.png")
+const CYAN := Color("4EC5FF")
+
 const KEYBOARD_MOUSE_BINDINGS := [
 	["Mover", "[W] [A] [S] [D]"],
 	["Mirar", "[Mover mouse]"],
@@ -32,6 +36,7 @@ var _keycap_style := StyleBoxFlat.new()
 
 
 func _ready() -> void:
+	back_button.icon = UiIconMask.tint(BACK_ICON, CYAN, 22)
 	_configure_keycap_style()
 	_populate_bindings(keyboard_bindings, KEYBOARD_MOUSE_BINDINGS)
 	_populate_bindings(controller_bindings, CONTROLLER_BINDINGS)

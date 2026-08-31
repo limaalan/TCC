@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://4a7egmd7mp37"]
+[gd_scene load_steps=3 format=3 uid="uid://4a7egmd7mp37"]
 
 [ext_resource type="Script" uid="uid://bkc7ad8j6dk65" path="res://ui/settings_widget/scene_settings_widget.gd" id="1_4c38t"]
+[ext_resource type="Texture2D" path="res://ui/shared/icons/speaker.png" id="2_speaker"]
 
 [node name="SettingsWidget" type="VBoxContainer"]
 offset_right = 40.0
@@ -32,6 +33,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 36)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"NavigationField"
 placeholder_text = "127.0.0.1"
 max_length = 255
 
@@ -44,15 +46,13 @@ custom_minimum_size = Vector2(105, 0)
 layout_mode = 2
 text = "Porta"
 
-[node name="ServerPortSpinBox" type="SpinBox" parent="NetworkSettingsContainer/PortContainer"]
+[node name="ServerPortLineEdit" type="LineEdit" parent="NetworkSettingsContainer/PortContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(140, 36)
 layout_mode = 2
-min_value = 1.0
-max_value = 65535.0
-value = 7777.0
-allow_greater = false
-allow_lesser = false
+theme_type_variation = &"NavigationField"
+placeholder_text = "7777"
+max_length = 5
 
 [node name="ReconnectHint" type="Label" parent="NetworkSettingsContainer"]
 layout_mode = 2
@@ -62,10 +62,23 @@ autowrap_mode = 2
 [node name="Separator" type="HSeparator" parent="NetworkSettingsContainer"]
 layout_mode = 2
 
-[node name="AudioTitle" type="Label" parent="."]
+[node name="AudioHeader" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SpeakerIcon" type="TextureRect" parent="AudioHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+texture = ExtResource("2_speaker")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AudioTitle" type="Label" parent="AudioHeader"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Áudio e vídeo"
+vertical_alignment = 1
 
 [node name="MasterVolumeContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
