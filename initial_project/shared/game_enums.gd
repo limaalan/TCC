@@ -48,6 +48,10 @@ enum ObjectiveType {
 	HILL_ZONE = 0,
 }
 
+enum SpecialPlatformType {
+	JUMP_PAD = 0,
+}
+
 enum PlatformState {
 	READY = 0,
 	BREAKING = 1,

@@ -1,17 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://cehfayvssa1my"]
+[gd_scene load_steps=5 format=3 uid="uid://cehfayvssa1my"]
 
 [ext_resource type="Script" uid="uid://pvphogpysjxy" path="res://player/character/character_visual.gd" id="1_6t7jt"]
 [ext_resource type="PackedScene" uid="uid://cutoaf4rxko2d" path="res://assets/meus_assets/char/complete_char.tscn" id="2_rbt3e"]
 [ext_resource type="Script" uid="uid://ba3jleujag8nb" path="res://player/weapons/weapon_holder.gd" id="3_qevup"]
+[ext_resource type="Script" uid="uid://bmwb188o4yvj" path="res://player/character/face_controller.gd" id="4_face"]
 
 [node name="CharacterVisual" type="Node3D"]
 script = ExtResource("1_6t7jt")
 char_animation_player_path = NodePath("CompleteChar/char/AnimationPlayer")
 rings_animation_player_path = NodePath("CompleteChar/char/Armature_001/Skeleton3D/RingsAttachment/rings/AnimationPlayer")
 skeleton_path = NodePath("CompleteChar/char/Armature_001/Skeleton3D")
-team_color_mesh_paths = Array[NodePath]([NodePath("CompleteChar/char/Armature_001/Skeleton3D/Braco L_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Braco R_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Corpo_001")])
-team_color_surface_slots = PackedInt32Array(0, 0, 0)
-skin_mesh_path = NodePath("CompleteChar/char/Armature_001/Skeleton3D/Cabeca_001")
+team_color_mesh_paths = Array[NodePath]([NodePath("CompleteChar/char/Armature_001/Skeleton3D/Braco L_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Braco R_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Corpo_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Cabeca_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Cabeca_001")])
+team_color_surface_slots = PackedInt32Array(0, 0, 0, 0, 1)
+face_mesh_path = NodePath("CompleteChar/char/Armature_001/Skeleton3D/Cabeca_001")
 
 [node name="CompleteChar" parent="." instance=ExtResource("2_rbt3e")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7468535, 0)
@@ -24,6 +25,9 @@ bone_idx = 3
 [node name="RemoteWeaponHolder" type="Node3D" parent="CompleteChar/char/Armature_001/Skeleton3D/WeaponBoneAttachment"]
 transform = Transform3D(0.52171844, -0.39731258, 0.016987879, -0.39731258, -0.52196336, -0.0057310313, 0.016987901, -0.0057309624, -0.65575486, 0.010348141, 0.205485, 0.011618312)
 script = ExtResource("3_qevup")
+
+[node name="FaceController" type="Node" parent="."]
+script = ExtResource("4_face")
 
 [editable path="CompleteChar"]
 [editable path="CompleteChar/char"]

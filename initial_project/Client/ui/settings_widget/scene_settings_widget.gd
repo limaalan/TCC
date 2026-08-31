@@ -1,5 +1,9 @@
 extends VBoxContainer
 
+const UiIconMask = preload("res://ui/shared/icon_mask.gd")
+const SPEAKER_ICON = preload("res://ui/shared/icons/speaker.png")
+const ORANGE := Color("FFB814")
+
 @onready var master_volume_slider: HSlider = %MasterVolumeSlider
 @onready var music_volume_slider: HSlider = %MusicVolumeSlider
 @onready var sfx_volume_slider: HSlider = %SfxVolumeSlider
@@ -9,10 +13,12 @@ extends VBoxContainer
 @onready var fullscreen_check_box: CheckBox = %FullscreenCheckBox
 @onready var network_settings_container: VBoxContainer = %NetworkSettingsContainer
 @onready var server_address_line_edit: LineEdit = %ServerAddressLineEdit
-@onready var server_port_spin_box: SpinBox = %ServerPortSpinBox
+@onready var server_port_line_edit: LineEdit = %ServerPortLineEdit
+@onready var speaker_icon: TextureRect = %SpeakerIcon
 
 
 func _ready() -> void:
+	speaker_icon.texture = UiIconMask.tint(SPEAKER_ICON, ORANGE, 28)
 	refresh_from_settings()
 
 
@@ -22,7 +28,7 @@ func refresh_from_settings() -> void:
 	sfx_volume_slider.set_value_no_signal(SettingsManager.sfx_volume * 100.0)
 	fullscreen_check_box.set_pressed_no_signal(SettingsManager.fullscreen_enabled)
 	server_address_line_edit.text = SettingsManager.server_address
-	server_port_spin_box.set_value_no_signal(SettingsManager.server_port)
+	server_port_line_edit.text = str(SettingsManager.server_port)
 
 	_update_volume_label(master_volume_value_label, master_volume_slider.value)
 	_update_volume_label(music_volume_value_label, music_volume_slider.value)
@@ -44,9 +50,13 @@ func apply_pending_settings() -> bool:
 	if not network_settings_container.visible:
 		return true
 
+	var port_text := server_port_line_edit.text.strip_edges()
+	if not port_text.is_valid_int():
+		return false
+
 	return SettingsManager.set_server_endpoint(
 		server_address_line_edit.text,
-		roundi(server_port_spin_box.value)
+		port_text.to_int()
 	)
 
 

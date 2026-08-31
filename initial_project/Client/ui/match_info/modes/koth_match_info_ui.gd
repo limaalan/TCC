@@ -1,6 +1,6 @@
 extends Control
 
-const KOTH_OBJECTIVE_TEXT := "Primeiro time a chegar a %s"
+const KOTH_OBJECTIVE_TEXT := "Meta: %s"
 
 @onready var mode_objective_label: Label = %ModeObjectiveLabel
 @onready var blue_team_progress_bar: ProgressBar = %BlueTeamProgressBar
@@ -9,7 +9,7 @@ const KOTH_OBJECTIVE_TEXT := "Primeiro time a chegar a %s"
 
 var blue_score := 0
 var red_score := 0
-var score_to_win := 1
+var score_to_win := 20
 
 
 func _ready() -> void:

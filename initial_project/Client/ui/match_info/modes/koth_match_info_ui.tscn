@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bqtljtg7kd2wb"]
+[gd_scene load_steps=6 format=3 uid="uid://bqtljtg7kd2wb"]
 
 [ext_resource type="Script" uid="uid://cmn1tovjwtmy7" path="res://ui/match_info/modes/koth_match_info_ui.gd" id="1_koth"]
 
@@ -64,13 +64,6 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 12
 
-[node name="ModeObjectiveLabel" type="Label" parent="TopMargin/TopRow/KothInfoContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Primeiro time a chegar a 200"
-horizontal_alignment = 1
-
 [node name="BarsRow" type="HBoxContainer" parent="TopMargin/TopRow/KothInfoContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
@@ -110,3 +103,15 @@ size_flags_vertical = 6
 theme_override_font_sizes/font_size = 14
 text = "Hill vazia"
 horizontal_alignment = 1
+
+[node name="ModeObjectiveLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 180.0
+offset_bottom = 42.0
+theme_override_colors/font_outline_color = Color(0.02, 0.05, 0.12, 0.9)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Meta: 20"

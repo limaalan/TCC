@@ -3,6 +3,7 @@ class_name Lobby
 const PickupPresentationRegistry = preload("res://player/pickups/pickup_presentation_registry.gd")
 const ServerLocator = preload("res://server/server_locator.gd")
 const HillZoneVisualScene = preload("res://game_modes/objectives/hill_zone_visual.tscn")
+const JumpPadScene = preload("res://platforms/jump_pad.tscn")
 
 const INTERPOLATION_BUFFER_MS := 100 
 
@@ -11,6 +12,7 @@ var world_state_buffer:Array[Dictionary] = []
 var pickups := {}
 var grenades := {}
 var objective_visuals := {}
+var special_platforms := {}
 var current_hill_state := {}
 var match_meta := {}
 var player_names_and_teams := {} # key player ID value outro dicionário com player name e Time
@@ -46,6 +48,12 @@ func clear_loaded_map_runtime_state() -> void:
 		if is_instance_valid(objective_visual):
 			queue_free_child(objective_visual)
 	objective_visuals.clear()
+
+	for special_platform in special_platforms.values():
+		if is_instance_valid(special_platform):
+			queue_free_child(special_platform)
+	special_platforms.clear()
+
 	current_hill_state.clear()
 
 	var loaded_map := get_node_or_null("Map")
@@ -404,6 +412,48 @@ func s_spawn_objective_visual(objective_visual_spawn: Dictionary) -> void:
 
 	if not current_hill_state.is_empty() and objective_visual.has_method(&"update_hill_state"):
 		objective_visual.update_hill_state(current_hill_state)
+
+
+@rpc("authority", "call_remote", "reliable")
+func s_spawn_special_platform(platform_spawn: Dictionary) -> void:
+	if not NetPayloads.is_special_platform_spawn(platform_spawn):
+		push_warning("Invalid special_platform_spawn payload")
+		return
+
+	var loaded_map := get_node_or_null("Map") as GameMap
+	if loaded_map == null or loaded_map.special_platforms_root == null:
+		push_warning("Cannot spawn special platform without a loaded map SpecialPlatforms root.")
+		return
+
+	var platform_id := String(platform_spawn[NetKeys.PLATFORM_ID])
+	if special_platforms.has(platform_id) and is_instance_valid(special_platforms[platform_id]):
+		queue_free_child(special_platforms[platform_id])
+		special_platforms.erase(platform_id)
+
+	var platform: Node3D
+	match int(platform_spawn[NetKeys.PLATFORM_TYPE]):
+		GameEnums.SpecialPlatformType.JUMP_PAD:
+			platform = JumpPadScene.instantiate() as Node3D
+		_:
+			push_warning("Unsupported special platform type '%s'." % platform_spawn[NetKeys.PLATFORM_TYPE])
+			return
+
+	if platform == null:
+		push_warning("Failed to instantiate special platform '%s'." % platform_id)
+		return
+
+	platform.name = "SpecialPlatform_%s" % platform_id
+	loaded_map.special_platforms_root.add_child(platform, true)
+	platform.global_transform = loaded_map.global_transform * platform_spawn[NetKeys.PLATFORM_TRANSFORM]
+
+	if platform is JumpPad:
+		var jump_pad := platform as JumpPad
+		jump_pad.vertical_velocity = float(platform_spawn[NetKeys.VERTICAL_VELOCITY])
+		jump_pad.horizontal_velocity = float(platform_spawn[NetKeys.HORIZONTAL_VELOCITY])
+		jump_pad.use_forward_direction = platform_spawn[NetKeys.USE_FORWARD_DIRECTION]
+
+	special_platforms[platform_id] = platform
+
 
 @rpc("authority", "call_remote", "reliable")
 func s_pickup_cooldown_started(network_id:String)->void:

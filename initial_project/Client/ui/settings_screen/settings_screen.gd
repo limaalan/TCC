@@ -1,16 +1,28 @@
 extends Control
 
+const UiIconMask = preload("res://ui/shared/icon_mask.gd")
+const CONTROLLER_ICON = preload("res://ui/shared/icons/console-controller.png")
+const BACK_ICON = preload("res://ui/shared/icons/go-back-arrow.png")
+const SAVE_ICON = preload("res://ui/shared/icons/save.png")
+const CYAN := Color("4EC5FF")
+const SAVE_ICON_COLOR := Color.WHITE
+
 signal closed
 
 @onready var settings_widget = %SettingsWidget
 @onready var validation_label: Label = %ValidationLabel
 @onready var controls_button: Button = %ControlsButton
+@onready var back_button: Button = %BackButton
+@onready var save_button: Button = %SaveButton
 @onready var controls_screen = %ControlsScreen
 
 var _return_focus: Control
 
 
 func _ready() -> void:
+	controls_button.icon = UiIconMask.tint(CONTROLLER_ICON, CYAN, 22)
+	back_button.icon = UiIconMask.tint(BACK_ICON, CYAN, 22)
+	save_button.icon = UiIconMask.tint(SAVE_ICON, SAVE_ICON_COLOR, 22)
 	hide()
 
 

@@ -8,23 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dismuvrj8k4el" path="res://ui/credits_screen/images/cog.png" id="6_tech_icon"]
 [ext_resource type="Texture2D" uid="uid://bys37x0b66imu" path="res://ui/credits_screen/images/logo_utfpr.png" id="7_logo"]
 [ext_resource type="Texture2D" uid="uid://cqax8pufyeuof" path="res://ui/credits_screen/images/github_invertocat_black.png" id="8_github"]
-
-[sub_resource type="Theme" id="CreditsTheme"]
-Label/colors/font_color = Color(0.9, 0.94, 0.98, 1)
-
-[sub_resource type="StyleBoxFlat" id="StylePanel"]
-bg_color = Color(0.025, 0.055, 0.095, 0.98)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.48, 0.76, 0.8)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_color = Color(0, 0, 0, 0.65)
-shadow_size = 12
+[ext_resource type="Theme" path="res://ui/shared/navigation_theme.tres" id="9_theme"]
 
 [sub_resource type="StyleBoxLine" id="StyleSeparator"]
 color = Color(0.3, 0.52, 0.68, 0.7)
@@ -138,6 +122,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
+theme = ExtResource("9_theme")
 
 [node name="BackgroundTextureRect" type="TextureRect" parent="."]
 layout_mode = 1
@@ -180,8 +165,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 1
-theme = SubResource("CreditsTheme")
-theme_override_styles/panel = SubResource("StylePanel")
+theme_type_variation = &"NavigationSurface"
 
 [node name="PanelMargins" type="MarginContainer" parent="ScreenMargins/CenterContainer/CreditsPanel"]
 layout_mode = 2
