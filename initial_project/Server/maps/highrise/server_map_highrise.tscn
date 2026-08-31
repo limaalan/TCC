@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dh5y5hllhue6x"]
+[gd_scene load_steps=13 format=3 uid="uid://dh5y5hllhue6x"]
 
 [ext_resource type="Script" uid="uid://7roqioywojma" path="res://shared/server_game_map.gd" id="1_server_game_map"]
 [ext_resource type="PackedScene" uid="uid://difmbyjy32p0l" path="res://maps/highrise/highRisePlayableArea.tscn" id="2_playable_area"]
@@ -11,6 +11,7 @@
 [ext_resource type="Resource" path="res://player/pickups/data/ammo_pickup_data.tres" id="7_ofv66"]
 [ext_resource type="Resource" path="res://player/pickups/data/damage_powerup_pickup_data.tres" id="8_powerup_damage"]
 [ext_resource type="Resource" path="res://player/pickups/data/fire_rate_powerup_pickup_data.tres" id="9_powerup_fire_rate"]
+[ext_resource type="PackedScene" uid="uid://ccb4lse76if73" path="res://platforms/jump_pad.tscn" id="12_nmt30"]
 
 [node name="Map" type="Node3D" node_paths=PackedStringArray("spawn_points_root", "pickups_root", "objectives_root", "special_platforms_root")]
 script = ExtResource("1_server_game_map")
@@ -97,6 +98,12 @@ objective_id = &"highrise_hill_main"
 
 [node name="MainDeathZone" parent="SpecialPlatforms" instance=ExtResource("4_death_zone")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -25.984848, 0)
+
+[node name="BlueSideJumpPad" parent="SpecialPlatforms" instance=ExtResource("12_nmt30")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0676503, 3.1737075, 3.5598679)
+
+[node name="RedSideJumpPad" parent="SpecialPlatforms" instance=ExtResource("12_nmt30")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.32308, 6.2258005, -5.3545246)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0.57598835, -0.8174579, 0, 0.8174579, 0.57598835, 1, 2.517725e-08, -3.573222e-08, -19.788496, 9.828215, 0)
