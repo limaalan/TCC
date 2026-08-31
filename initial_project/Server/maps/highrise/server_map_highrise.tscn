@@ -65,26 +65,63 @@ team = 1
 [node name="Pickups" type="Node3D" parent="."]
 
 [node name="HealthPickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.601507, 6.1582994, -5.9511504)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.661089, 6.1582994, -2.8743925)
 network_id = &"highrise_health_pickup_01"
 
+[node name="HealthPickup2" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.06587, 0.1733669, -5.590705)
+network_id = &"highrise_health_pickup_02"
+
+[node name="HealthPickup3" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4711227, 0.17631108, 5.903267)
+network_id = &"highrise_health_pickup_03"
+
+[node name="HealthPickup4" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.588009, 3.1745718, 1.359066)
+network_id = &"highrise_health_pickup_04"
+
 [node name="GrenadePickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.791222, 6.1583004, -2.9781682)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6873751, 6.186738, -7.08047)
 data = ExtResource("6_ofv66")
 network_id = &"highrise_grenade_pickup_01"
 
+[node name="GrenadePickup2" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.652087, 6.175645, 0.23136759)
+data = ExtResource("6_ofv66")
+network_id = &"highrise_grenade_pickup_02"
+
 [node name="AmmoPickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.40201, 6.1583004, -1.1937826)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.40201, 6.152047, -1.1937826)
 data = ExtResource("7_ofv66")
 network_id = &"highrise_ammo_pickup_01"
 
+[node name="AmmoPickup2" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.681737, 3.1873798, -7.308979)
+data = ExtResource("7_ofv66")
+network_id = &"highrise_ammo_pickup_02"
+
+[node name="AmmoPickup3" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.945975, 3.1712294, -7.308979)
+data = ExtResource("7_ofv66")
+network_id = &"highrise_ammo_pickup_03"
+
+[node name="AmmoPickup4" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.945975, 3.1712294, 4.4546375)
+data = ExtResource("7_ofv66")
+network_id = &"highrise_ammo_pickup_04"
+
+[node name="AmmoPickup5" parent="Pickups" instance=ExtResource("5_8x5f0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.9512415, 0.19690728, -5.5889435)
+data = ExtResource("7_ofv66")
+network_id = &"highrise_ammo_pickup_05"
+
 [node name="DamagePowerupPickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.746109, 6.1583004, -4.474659)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.318449, 8.415347, -7.8450365)
 data = ExtResource("8_powerup_damage")
 network_id = &"highrise_powerup_damage_01"
 
 [node name="FireRatePowerupPickup" parent="Pickups" instance=ExtResource("5_8x5f0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.339784, 6.1583004, -3.6273878)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.32103, 3.1440055, 5.864784)
 data = ExtResource("9_powerup_fire_rate")
 network_id = &"highrise_powerup_fire_rate_01"
 
@@ -100,10 +137,10 @@ objective_id = &"highrise_hill_main"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -25.984848, 0)
 
 [node name="BlueSideJumpPad" parent="SpecialPlatforms" instance=ExtResource("12_nmt30")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0676503, 3.1737075, 3.5598679)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0676503, 2.9672263, 3.5598679)
 
 [node name="RedSideJumpPad" parent="SpecialPlatforms" instance=ExtResource("12_nmt30")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.32308, 6.2258005, -5.3545246)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.32308, 5.983216, -5.3545246)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0.57598835, -0.8174579, 0, 0.8174579, 0.57598835, 1, 2.517725e-08, -3.573222e-08, -19.788496, 9.828215, 0)

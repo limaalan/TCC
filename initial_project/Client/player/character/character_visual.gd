@@ -24,8 +24,6 @@ const RINGS_ANIMATION_MAP := {
 @export var skeleton_path: NodePath
 @export var team_color_mesh_paths: Array[NodePath] = []
 @export var team_color_surface_slots: PackedInt32Array = PackedInt32Array()
-@export var skin_mesh_path: NodePath
-@export var skin_surface_slot := 1
 
 var current_game_animation: StringName = &""
 
@@ -79,25 +77,6 @@ func apply_team_material(material: Material) -> void:
 			continue
 
 		mesh.set_surface_override_material(surface_slot, material)
-
-
-func apply_skin_variation(team_material: StandardMaterial3D, value_offset: float) -> void:
-	var mesh := get_node_or_null(skin_mesh_path) as MeshInstance3D
-	if mesh == null or mesh.mesh == null:
-		return
-
-	if skin_surface_slot < 0 or skin_surface_slot >= mesh.mesh.get_surface_count():
-		return
-
-	var skin_material := team_material.duplicate() as StandardMaterial3D
-	var team_color := team_material.albedo_color
-	skin_material.albedo_color = Color.from_hsv(
-		team_color.h,
-		team_color.s,
-		clampf(team_color.v + value_offset, 0.0, 1.0),
-		team_color.a
-	)
-	mesh.set_surface_override_material(skin_surface_slot, skin_material)
 
 
 func _get_char_animation_player() -> AnimationPlayer:

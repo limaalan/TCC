@@ -9,9 +9,8 @@ script = ExtResource("1_6t7jt")
 char_animation_player_path = NodePath("CompleteChar/char/AnimationPlayer")
 rings_animation_player_path = NodePath("CompleteChar/char/Armature_001/Skeleton3D/RingsAttachment/rings/AnimationPlayer")
 skeleton_path = NodePath("CompleteChar/char/Armature_001/Skeleton3D")
-team_color_mesh_paths = Array[NodePath]([NodePath("CompleteChar/char/Armature_001/Skeleton3D/Braco L_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Braco R_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Corpo_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Cabeca_001")])
-team_color_surface_slots = PackedInt32Array(0, 0, 0, 0)
-skin_mesh_path = NodePath("CompleteChar/char/Armature_001/Skeleton3D/Cabeca_001")
+team_color_mesh_paths = Array[NodePath]([NodePath("CompleteChar/char/Armature_001/Skeleton3D/Braco L_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Braco R_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Corpo_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Cabeca_001"), NodePath("CompleteChar/char/Armature_001/Skeleton3D/Cabeca_001")])
+team_color_surface_slots = PackedInt32Array(0, 0, 0, 0, 1)
 
 [node name="CompleteChar" parent="." instance=ExtResource("2_rbt3e")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7468535, 0)
