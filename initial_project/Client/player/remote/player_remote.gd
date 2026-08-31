@@ -91,6 +91,12 @@ func update_name_tag() -> void:
 	name_tag_player.text = display_name
 
 
+func update_health_bar(current_health: int, max_health: int, changed_amount: int) -> void:
+	super(current_health, max_health, changed_amount)
+	if character_visual != null:
+		character_visual.update_face_health(current_health, max_health, changed_amount)
+
+
 func play_shoot_fx() -> void:
 	if weapon_holder != null and weapon_holder.weapon != null:
 		weapon_holder.weapon.play_shoot_fx()

@@ -24,11 +24,16 @@ const RINGS_ANIMATION_MAP := {
 @export var skeleton_path: NodePath
 @export var team_color_mesh_paths: Array[NodePath] = []
 @export var team_color_surface_slots: PackedInt32Array = PackedInt32Array()
+@export var face_mesh_path: NodePath
+@export var face_surface_slot := 2
 
 var current_game_animation: StringName = &""
 
+@onready var face_controller = $FaceController
+
 func _ready() -> void:
 	_configure_gameplay_animation_loops()
+	face_controller.setup(get_node_or_null(face_mesh_path) as MeshInstance3D, face_surface_slot)
 
 
 func get_skeleton() -> Skeleton3D:
@@ -77,6 +82,10 @@ func apply_team_material(material: Material) -> void:
 			continue
 
 		mesh.set_surface_override_material(surface_slot, material)
+
+
+func update_face_health(current_health: int, max_health: int, changed_amount: int) -> void:
+	face_controller.update_health(current_health, max_health, changed_amount)
 
 
 func _get_char_animation_player() -> AnimationPlayer:
