@@ -5,7 +5,6 @@ This folder contains isolated scenes to inspect client maps in first person.
 ## Files
 
 - `preview_map_prototype.tscn`
-- `preview_map_farm.tscn`
 
 Both scenes instantiate:
 
