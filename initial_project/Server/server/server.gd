@@ -4,8 +4,7 @@ const MatchPresetRegistry = preload("res://shared/match_preset_registry.gd")
 const Lobby = preload("res://server/lobby.gd")
 const ServerMetricsCollector = preload("res://server/server_metrics_collector.gd")
 const MAX_CLIENTS :=64
-const MAX_LOBBIES:= 2
-const MAX_PLAYERS_PER_LOBBY :=4
+const MAX_LOBBIES:= 4
 const DISTANCE_BETWEEN_LOBBIES = 100
 
 var lobbies :Array[Lobby] = []

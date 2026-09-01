@@ -233,10 +233,20 @@ function renderPeers() {
     .join("");
 }
 
-function buildPolylinePoints(history, valueGetter, minValue, maxValue, width, height, padding) {
-  const usableWidth = width - padding * 2;
-  const usableHeight = height - padding * 2;
-  const range = Math.max(maxValue - minValue, 1);
+function formatAxisValue(value) {
+  if (!Number.isFinite(value)) {
+    return "-";
+  }
+
+  const absoluteValue = Math.abs(value);
+  const fractionDigits = absoluteValue >= 100 ? 0 : absoluteValue >= 10 ? 1 : absoluteValue >= 1 ? 2 : 3;
+  return value.toFixed(fractionDigits);
+}
+
+function buildPolylinePoints(history, valueGetter, minValue, maxValue, width, height, chartArea) {
+  const usableWidth = chartArea.right - chartArea.left;
+  const usableHeight = chartArea.bottom - chartArea.top;
+  const range = maxValue - minValue || 1;
 
   return history
     .map((sample, index) => {
@@ -245,9 +255,9 @@ function buildPolylinePoints(history, valueGetter, minValue, maxValue, width, he
         return null;
       }
 
-      const x = padding + (history.length === 1 ? usableWidth / 2 : (index / (history.length - 1)) * usableWidth);
+      const x = chartArea.left + (history.length === 1 ? usableWidth / 2 : (index / (history.length - 1)) * usableWidth);
       const normalized = (value - minValue) / range;
-      const y = height - padding - normalized * usableHeight;
+      const y = chartArea.bottom - normalized * usableHeight;
       return `${x.toFixed(2)},${y.toFixed(2)}`;
     })
     .filter(Boolean)
@@ -275,19 +285,34 @@ function renderChart(definition) {
   container.className = "chart-body";
   const width = 560;
   const height = 170;
-  const padding = 18;
-  const minValue = Math.min(...values);
-  const maxValue = Math.max(...values);
-  const gridLines = [0.2, 0.4, 0.6, 0.8]
+  const chartArea = {
+    left: 58,
+    right: width - 18,
+    top: 16,
+    bottom: height - 18,
+  };
+  const rawMinValue = Math.min(...values);
+  const rawMaxValue = Math.max(...values);
+  const rawRange = rawMaxValue - rawMinValue;
+  const scalePadding = rawRange > 0
+    ? rawRange * 0.08
+    : Math.max(Math.abs(rawMaxValue) * 0.1, 1);
+  const minValue = rawMinValue - scalePadding;
+  const maxValue = rawMaxValue + scalePadding;
+  const gridLines = [0, 0.25, 0.5, 0.75, 1]
     .map((ratio) => {
-      const y = (height - padding * 2) * ratio + padding;
-      return `<line class="chart-grid-line" x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" />`;
+      const y = chartArea.top + (chartArea.bottom - chartArea.top) * ratio;
+      const tickValue = maxValue - (maxValue - minValue) * ratio;
+      return `
+        <line class="chart-grid-line" x1="${chartArea.left}" y1="${y}" x2="${chartArea.right}" y2="${y}" />
+        <text class="chart-axis-label" x="${chartArea.left - 8}" y="${y + 4}" text-anchor="end">${formatAxisValue(tickValue)}</text>
+      `;
     })
     .join("");
 
   const seriesMarkup = definition.series
     .map((series) => {
-      const points = buildPolylinePoints(state.history, series.getValue, minValue, maxValue, width, height, padding);
+      const points = buildPolylinePoints(state.history, series.getValue, minValue, maxValue, width, height, chartArea);
       if (!points) {
         return "";
       }

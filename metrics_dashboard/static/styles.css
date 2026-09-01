@@ -182,6 +182,12 @@ body {
   stroke-width: 1;
 }
 
+.chart-axis-label {
+  fill: var(--muted);
+  font-family: inherit;
+  font-size: 11px;
+}
+
 .chart-path {
   fill: none;
   stroke-width: 3;
