@@ -6,11 +6,11 @@
 [ext_resource type="AudioStream" uid="uid://d04xuxhkeo7bq" path="res://assets/audio/ammo_pickup.ogg" id="4_tggly"]
 [ext_resource type="AudioStream" uid="uid://cbjnxsym4afmp" path="res://assets/audio/sfx/ui_click.ogg" id="4_ui_click"]
 [ext_resource type="AudioStream" uid="uid://1qrnmit6hdr4" path="res://assets/audio/grenade_throw.wav" id="5_tggly"]
+[ext_resource type="AudioStream" uid="uid://cnado2k3xtrpw" path="res://game/audio/heal.wav" id="6_bxc72"]
 [ext_resource type="AudioStream" uid="uid://df3w58ijr4xiv" path="res://assets/audio/sfx/footstep.ogg" id="8_footstep"]
 [ext_resource type="AudioStream" uid="uid://d7g6yygk35mu" path="res://game/audio/menu_song.ogg" id="8_qrs5x"]
 [ext_resource type="AudioStream" uid="uid://qglbrnq44w2l" path="res://assets/audio/gun_sound_2.ogg" id="9_hqpio"]
 [ext_resource type="AudioStream" uid="uid://qfyxkyii48cd" path="res://assets/audio/sfx/jump_land.ogg" id="9_jump"]
-[ext_resource type="AudioStream" uid="uid://bnaekk26fim3u" path="res://assets/audio/sfx/pickup_health.ogg" id="10_health_pickup"]
 [ext_resource type="AudioStream" uid="uid://cx4yca8hh1dqq" path="res://game/audio/squeeky.wav" id="11_bxc72"]
 [ext_resource type="AudioStream" uid="uid://bx06jf1xgdob0" path="res://game/audio/pop.wav" id="12_bxc72"]
 
@@ -24,7 +24,7 @@ smg_sound = ExtResource("12_bxc72")
 shotgun_sound = ExtResource("11_bxc72")
 footstep_sound = ExtResource("8_footstep")
 jump_sound = ExtResource("9_jump")
-health_pickup_sound = ExtResource("10_health_pickup")
+health_pickup_sound = ExtResource("6_bxc72")
 grenade_pickup_sound = ExtResource("4_tggly")
 grenade_throw_sound = ExtResource("5_tggly")
 grenade_explosion_sound = ExtResource("3_bxc72")
