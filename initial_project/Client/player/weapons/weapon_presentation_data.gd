@@ -1,7 +1,7 @@
 class_name WeaponPresentationData
 extends Resource
 
-const AudioManagerScript = preload("res://game/audio_manager.gd")
+const AudioManagerScript = preload("res://game/audio/audio_manager.gd")
 
 @export var id: GameEnums.WeaponId = GameEnums.WeaponId.PISTOL
 @export var display_name: StringName = &"Pistol"

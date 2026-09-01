@@ -5,7 +5,7 @@ const PROTOTYPE_MAP_ID := &"prototype"
 const HIGHRISE_MAP_ID := &"highrise"
 
 const MAP_SCENE_PATHS := {
-	PROTOTYPE_MAP_ID: "res://maps/map_prototype.tscn",
+	PROTOTYPE_MAP_ID: "res://maps/map_prototype/map_prototype.tscn",
 	HIGHRISE_MAP_ID: "res://maps/highrise/map_highrise.tscn"
 }
 

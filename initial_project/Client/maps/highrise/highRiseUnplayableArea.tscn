@@ -2,7 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://6dm7mvxbh6m1" path="res://maps/highrise/source/base_floor.tscn" id="1_24gkl"]
 [ext_resource type="Texture2D" uid="uid://bghmjjbjvmqxi" path="res://assets/meshes/props/construction_mesh_green_transparent.png" id="3_3n7us"]
-[ext_resource type="PackedScene" uid="uid://bvt0xo8j21inb" path="res://maps/highrise/pilar.tscn" id="5_fl4sq"]
+[ext_resource type="PackedScene" uid="uid://bvt0xo8j21inb" path="res://assets/meus_assets/pilar/pilar.tscn" id="5_fl4sq"]
+
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xe2mt"]
 size = Vector3(5.7998047, 27.408752, 16.17743)

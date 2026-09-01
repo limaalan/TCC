@@ -16,8 +16,8 @@ const HEALED_DURATION := 3
 
 const EXPRESSION_TEXTURES := {
 	FaceExpression.NORMAL: preload("res://assets/meus_assets/char/expressions/normal.png"),
-	FaceExpression.SAD: preload("res://assets/meus_assets/char/expressions/crying.png"),
-	FaceExpression.HIT: preload("res://assets/meus_assets/char/expressions/in_pain.png"),
+	FaceExpression.SAD: preload("res://assets/meus_assets/char/expressions/cry.png"),
+	FaceExpression.HIT: preload("res://assets/meus_assets/char/expressions/pain.png"),
 	FaceExpression.ANGRY: preload("res://assets/meus_assets/char/expressions/angry.png"),
 	FaceExpression.HEALED: preload("res://assets/meus_assets/char/expressions/healed.png"),
 }

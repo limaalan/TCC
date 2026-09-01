@@ -2,7 +2,7 @@ extends Node3D
 class_name Lobby
 const PickupPresentationRegistry = preload("res://player/pickups/pickup_presentation_registry.gd")
 const ServerLocator = preload("res://server/server_locator.gd")
-const HillZoneVisualScene = preload("res://game_modes/objectives/hill_zone_visual.tscn")
+const HillZoneVisualScene = preload("res://game_modes/objectives/Hillzone/hill_zone_visual.tscn")
 const JumpPadScene = preload("res://platforms/jump_pad.tscn")
 
 const INTERPOLATION_BUFFER_MS := 100 

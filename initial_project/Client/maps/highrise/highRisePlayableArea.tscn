@@ -1,12 +1,13 @@
 [gd_scene load_steps=8 format=3 uid="uid://difmbyjy32p0l"]
 
 [ext_resource type="PackedScene" uid="uid://6dm7mvxbh6m1" path="res://maps/highrise/source/base_floor.tscn" id="1_quvw5"]
-[ext_resource type="PackedScene" uid="uid://bvt0xo8j21inb" path="res://maps/highrise/pilar.tscn" id="3_he8tb"]
+[ext_resource type="PackedScene" uid="uid://bvt0xo8j21inb" path="res://assets/meus_assets/pilar/pilar.tscn" id="3_he8tb"]
 [ext_resource type="PackedScene" uid="uid://8uh853lc2pbe" path="res://maps/highrise/source/second_floor.tscn" id="5_ds0c0"]
 [ext_resource type="PackedScene" uid="uid://vpaguswc1hv7" path="res://maps/highrise/source/first_floor.tscn" id="5_he8tb"]
 [ext_resource type="PackedScene" uid="uid://bethkpqq7t1s4" path="res://assets/meus_assets/andaime/tabua_andaime.tscn" id="5_rvbac"]
 [ext_resource type="PackedScene" uid="uid://dvhrbf68b7bgx" path="res://assets/meus_assets/danger_sign/aviso_perigo_queda.tscn" id="6_dglov"]
 [ext_resource type="PackedScene" uid="uid://58ju2j2u3j52" path="res://assets/meus_assets/danger_sign/aviso_perigo_queda_placa.tscn" id="7_1ik4u"]
+
 
 [node name="HighRisePlayableArea" type="Node3D"]
 

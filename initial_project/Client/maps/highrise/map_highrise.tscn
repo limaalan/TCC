@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://difmbyjy32p0l" path="res://maps/highrise/highRisePlayableArea.tscn" id="1_mygbh"]
 [ext_resource type="Script" uid="uid://d4js4ps8hh8uw" path="res://shared/game_map.gd" id="1_u0lkw"]
 [ext_resource type="PackedScene" uid="uid://niwaw0ilssci" path="res://maps/highrise/highRiseUnplayableArea.tscn" id="2_6jufm"]
-[ext_resource type="Texture2D" uid="uid://eeb52qhocefr" path="res://assets/textures/kloofendal_48d_partly_cloudy_puresky_4k.hdr" id="3_6jufm"]
+[ext_resource type="Texture2D" uid="uid://eeb52qhocefr" path="res://assets/textures/hdr/kloofendal_48d_partly_cloudy_puresky_4k.hdr" id="3_6jufm"]
 [ext_resource type="Script" uid="uid://ipn7xeoq3v0c" path="res://player/spawn_point/player_spawn_point.gd" id="5_pg82g"]
 [ext_resource type="PackedScene" uid="uid://r1fsrv56vckp" path="res://ui/weapon_selection/weapon_selection_ui.tscn" id="6_1jxcs"]
 [ext_resource type="PackedScene" uid="uid://o6acxrwqfn0x" path="res://ui/match_info/match_info_ui.tscn" id="7_nxa1b"]

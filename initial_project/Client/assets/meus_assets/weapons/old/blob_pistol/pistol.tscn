@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ce5bu4ksyqo5h"]
+
+[ext_resource type="PackedScene" uid="uid://b807q17w4bjrx" path="res://assets/meus_assets/weapons/old/blob_pistol/import/pistol.glb" id="1_q0q1g"]
+
+
+[node name="Pistol" instance=ExtResource("1_q0q1g")]

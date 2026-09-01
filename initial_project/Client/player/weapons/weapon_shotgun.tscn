@@ -1,7 +1,8 @@
 [gd_scene load_steps=3 format=3 uid="uid://bn1a6lm6p04hb"]
 
 [ext_resource type="PackedScene" uid="uid://cmftcvlth4s58" path="res://player/weapons/weapon.tscn" id="1_efq3t"]
-[ext_resource type="PackedScene" uid="uid://3uhth6ie6ge0" path="res://assets/meus_assets/shotgun/shotgun_variation.tscn" id="2_ubbhc"]
+[ext_resource type="PackedScene" uid="uid://3uhth6ie6ge0" path="res://assets/meus_assets/weapons/shotgun/shotgun_variation.tscn" id="2_ubbhc"]
+
 
 [node name="WeaponShotgun" instance=ExtResource("1_efq3t")]
 
