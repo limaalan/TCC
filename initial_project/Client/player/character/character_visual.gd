@@ -84,6 +84,24 @@ func apply_team_material(material: Material) -> void:
 		mesh.set_surface_override_material(surface_slot, material)
 
 
+func apply_ring_material(material: Material) -> void:
+	if material == null:
+		return
+
+	var rings_animation_player := _get_rings_animation_player()
+	if rings_animation_player == null:
+		return
+
+	var rings_root := rings_animation_player.get_parent()
+	for ring_mesh in rings_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := ring_mesh as MeshInstance3D
+		if mesh == null or mesh.mesh == null:
+			continue
+
+		for surface_slot in range(mesh.mesh.get_surface_count()):
+			mesh.set_surface_override_material(surface_slot, material)
+
+
 func update_face_health(current_health: int, max_health: int, changed_amount: int) -> void:
 	face_controller.update_health(current_health, max_health, changed_amount)
 

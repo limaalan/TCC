@@ -29,12 +29,13 @@ corner_detail = 6
 [sub_resource type="SphereShape3D" id="SphereShape3D_y8ftr"]
 radius = 5.0
 
-[node name="PlayerLocal" type="CharacterBody3D" node_paths=PackedStringArray("grenade_amount_label", "ammo_amount_label", "weapon_holder", "health_bar", "powerup_visual") groups=["PlayerLocal"]]
+[node name="PlayerLocal" type="CharacterBody3D" node_paths=PackedStringArray("grenade_amount_label", "ammo_amount_label", "powerup_status_container", "weapon_holder", "health_bar", "powerup_visual") groups=["PlayerLocal"]]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_gucd0")
-grenade_amount_label = NodePath("HUD/MarginContainer/GrenadeInfoContainer/GrenadeAmountLabel")
-ammo_amount_label = NodePath("HUD/MarginContainer/GrenadeInfoContainer/AmmoAmountLabel")
+grenade_amount_label = NodePath("HUD/MarginContainer/RightHudContainer/GrenadeInfoContainer/GrenadeAmountLabel")
+ammo_amount_label = NodePath("HUD/MarginContainer/RightHudContainer/GrenadeInfoContainer/AmmoAmountLabel")
+powerup_status_container = NodePath("HUD/MarginContainer/RightHudContainer/PowerupStatusContainer")
 weapon_holder = NodePath("Head/LocalWeaponHolder")
 health_bar = NodePath("HUD/MarginContainer/HealthBar")
 powerup_visual = NodePath("PowerupVisual")

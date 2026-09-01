@@ -10,6 +10,7 @@ const FOOTSTEP_SFX_RUN_INTERVAL := 0.37
 const FOOTSTEP_SFX_PITCH_RANDOM := 0.2
 const WeaponAmmoInventory = preload("res://shared/weapons/weapon_ammo_inventory.gd")
 const WeaponCatalog = preload("res://shared/weapons/weapon_catalog.gd")
+const PowerupStatusItemScene = preload("res://ui/hud/powerup_status_item.tscn")
 const RESUME_CONFLICT_ACTIONS: Array[StringName] = [
 	ClientNames.INPUT_JUMP,
 	ClientNames.INPUT_SHOOT,
@@ -18,6 +19,7 @@ const RESUME_CONFLICT_ACTIONS: Array[StringName] = [
 
 @export var grenade_amount_label: Label
 @export var ammo_amount_label: Label
+@export var powerup_status_container: HBoxContainer
 @export var normal_speed := 3.0
 @export var sprint_speed := 5.0
 @export var jump_velocity := 4.0
@@ -40,6 +42,7 @@ var current_anim: String
 var nearby_grenades: Array[Grenade] = []
 var ammo_inventory := WeaponAmmoInventory.new()
 var blocked_actions_after_resume := {}
+var powerup_status_items: Dictionary = {}
 
 
 func _ready() -> void:
@@ -327,6 +330,44 @@ func show_nearby_grenades() -> void:
 
 func update_grenades_left(grenades_left: int) -> void:
 	grenade_amount_label.text = str(grenades_left)
+
+
+func set_powerup_active(
+	powerup_type: int,
+	active: bool,
+	damage_multiplier := 1.0,
+	fire_rate_cooldown_multiplier := 1.0,
+	duration_sec := 0.0
+) -> void:
+	super(powerup_type, active, damage_multiplier, fire_rate_cooldown_multiplier, duration_sec)
+
+	if active:
+		if duration_sec > 0.0:
+			show_powerup_status(powerup_type, duration_sec)
+		return
+
+	hide_powerup_status(powerup_type)
+
+
+func show_powerup_status(powerup_type: int, duration_sec: float) -> void:
+	if powerup_status_container == null:
+		return
+
+	var status_item = powerup_status_items.get(powerup_type)
+	if not is_instance_valid(status_item):
+		status_item = PowerupStatusItemScene.instantiate()
+		powerup_status_container.add_child(status_item)
+		powerup_status_items[powerup_type] = status_item
+
+	status_item.start_buff(powerup_type, duration_sec)
+
+
+func hide_powerup_status(powerup_type: int) -> void:
+	var status_item = powerup_status_items.get(powerup_type)
+	if is_instance_valid(status_item):
+		status_item.queue_free()
+
+	powerup_status_items.erase(powerup_type)
 
 
 func try_spend_current_weapon_ammo() -> bool:

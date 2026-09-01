@@ -44,7 +44,8 @@ func set_powerup_active(
 	powerup_type: int,
 	active: bool,
 	damage_multiplier := 1.0,
-	fire_rate_cooldown_multiplier := 1.0
+	fire_rate_cooldown_multiplier := 1.0,
+	_duration_sec := 0.0
 ) -> void:
 	if active:
 		active_powerups[powerup_type] = {

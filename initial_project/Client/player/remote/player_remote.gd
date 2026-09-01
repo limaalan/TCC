@@ -7,6 +7,8 @@ const PlayerBoneAimConfig = preload("res://shared/player/player_bone_aim_config.
 const ANIM_BLEND_TIME := 0.2
 const RED_MATERIAL: StandardMaterial3D = preload("res://assets/materials/red_team_material.tres")
 const BLUE_MATERIAL: StandardMaterial3D = preload("res://assets/materials/blue_team_material.tres")
+const BLUE_RING_MATERIAL: StandardMaterial3D = preload("res://assets/materials/blue_ring_material.tres")
+const RED_RING_MATERIAL: StandardMaterial3D = preload("res://assets/materials/red_ring_material.tres")
 const BLUE_SKIN_COLORS: Array[Color] = [
 	Color("6FA8FF"),
 	Color("4F93F5"),
@@ -30,6 +32,7 @@ var bone_aim_cache := {}
 var display_name := ""
 var skin_color := Color.WHITE
 var skin_color_team := GameEnums.NO_TEAM
+var ring_color_team := GameEnums.NO_TEAM
 
 func _ready() -> void:
 	super()
@@ -60,6 +63,11 @@ func update_player_colors() -> void:
 	var team_variant_material := team_material.duplicate() as StandardMaterial3D
 	team_variant_material.albedo_color = skin_color
 	character_visual.apply_team_material(team_variant_material)
+
+	if ring_color_team != team:
+		ring_color_team = team
+		var ring_material := BLUE_RING_MATERIAL if team == GameEnums.Team.BLUE else RED_RING_MATERIAL
+		character_visual.apply_ring_material(ring_material)
 
 
 func set_rot_x_visuals(rot_x: float) -> void:
