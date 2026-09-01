@@ -515,7 +515,8 @@ func s_player_powerup_started(
 		powerup_type,
 		true,
 		damage_multiplier,
-		fire_rate_cooldown_multiplier
+		fire_rate_cooldown_multiplier,
+		duration_sec
 	)
 
 
