@@ -1,11 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://58ju2j2u3j52"]
+[gd_scene load_steps=4 format=3 uid="uid://58ju2j2u3j52"]
 
 [ext_resource type="PackedScene" uid="uid://dqmceobwvhy8l" path="res://assets/meus_assets/danger_sign/import/aviso_perigo_queda_placa.glb" id="1_adax2"]
+[ext_resource type="Material" uid="uid://dkr6mvb1bqyf0" path="res://assets/meus_assets/danger_sign/TEXTURA.tres" id="2_texture"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_adax2"]
 size = Vector3(0.09472656, 2.0214844, 3.9804688)
 
 [node name="aviso_perigo_queda_placa" instance=ExtResource("1_adax2")]
+
+[node name="placa_parede" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_texture")
 
 [node name="ExactCollisions" type="StaticBody3D" parent="." index="1"]
 collision_layer = 16

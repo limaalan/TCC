@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://dvhrbf68b7bgx"]
+[gd_scene load_steps=5 format=3 uid="uid://dvhrbf68b7bgx"]
 
 [ext_resource type="PackedScene" uid="uid://dt4xj1s7fegfg" path="res://assets/meus_assets/danger_sign/import/aviso_perigo_queda.glb" id="1_ut0qj"]
+[ext_resource type="Material" uid="uid://dkr6mvb1bqyf0" path="res://assets/meus_assets/danger_sign/TEXTURA.tres" id="2_texture"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_skxeh"]
 size = Vector3(0.11857605, 4.0635376, 2.0595703)
@@ -9,6 +10,9 @@ size = Vector3(0.11857605, 4.0635376, 2.0595703)
 size = Vector3(0.11857605, 4.0635376, 2.0302734)
 
 [node name="aviso_perigo_queda" instance=ExtResource("1_ut0qj")]
+
+[node name="placa" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_texture")
 
 [node name="PlayerCollisions" type="StaticBody3D" parent="." index="1"]
 collision_layer = 17

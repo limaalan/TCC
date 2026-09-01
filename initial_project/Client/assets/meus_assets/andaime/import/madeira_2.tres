@@ -1,7 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://eal0je8w1fcg"]
-
-[resource]
-resource_name = "madeira_2"
-cull_mode = 2
-albedo_color = Color(0.77847236, 0.28969538, 0.029943801, 1)
-roughness = 0.5
