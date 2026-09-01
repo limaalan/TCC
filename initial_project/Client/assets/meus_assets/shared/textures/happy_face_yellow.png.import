@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d06bqyafp87p5"
-path.s3tc="res://.godot/imported/ammo_pickup_happy_face.png-763a419ba717e81000c46060ace49eb8.s3tc.ctex"
+uid="uid://byleto6w58kwv"
+path.s3tc="res://.godot/imported/happy_face_yellow.png-040347186c33053d23a10973399c421e.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/meus_assets/health_pickup/import/ammo_pickup_happy_face.png"
-dest_files=["res://.godot/imported/ammo_pickup_happy_face.png-763a419ba717e81000c46060ace49eb8.s3tc.ctex"]
+source_file="res://assets/meus_assets/shared/textures/happy_face_yellow.png"
+dest_files=["res://.godot/imported/happy_face_yellow.png-040347186c33053d23a10973399c421e.s3tc.ctex"]
 
 [params]
 

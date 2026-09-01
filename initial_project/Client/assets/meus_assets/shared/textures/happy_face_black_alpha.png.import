@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://csosc50sdpbcd"
-path.s3tc="res://.godot/imported/happy_face.png-42c24d4fd2135a86c679f384f9a48b47.s3tc.ctex"
+uid="uid://r02151vvtlxp"
+path.s3tc="res://.godot/imported/happy_face_black_alpha.png-d020943147d1ccfbb1e51974c30da1c4.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/meus_assets/ammo_pickup/happy_face.png"
-dest_files=["res://.godot/imported/happy_face.png-42c24d4fd2135a86c679f384f9a48b47.s3tc.ctex"]
+source_file="res://assets/meus_assets/shared/textures/happy_face_black_alpha.png"
+dest_files=["res://.godot/imported/happy_face_black_alpha.png-d020943147d1ccfbb1e51974c30da1c4.s3tc.ctex"]
 
 [params]
 

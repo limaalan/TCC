@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/meus_assets/shared/textures/happy_face_yellow.png" id="1_happy"]
+
+[resource]
+resource_name = "happy_face_yellow"
+cull_mode = 2
+albedo_texture = ExtResource("1_happy")
+roughness = 0.5

@@ -1,9 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bat886j680ha1"]
-
-[ext_resource type="Texture2D" uid="uid://cgygy0ldxrlwa" path="res://assets/meus_assets/ammo_pickup/import/ammo_pickup_happy_face.png" id="1_itaqa"]
-
-[resource]
-resource_name = "face_texture.001"
-cull_mode = 2
-albedo_texture = ExtResource("1_itaqa")
-roughness = 0.5

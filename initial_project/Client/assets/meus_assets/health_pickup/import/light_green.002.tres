@@ -1,7 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://68lam67kxbok"]
-
-[resource]
-resource_name = "light_green.002"
-cull_mode = 2
-albedo_color = Color(0.57647073, 0.8196079, 0.49019608, 1)
-roughness = 0.5
