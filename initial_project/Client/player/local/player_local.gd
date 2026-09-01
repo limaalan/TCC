@@ -11,6 +11,8 @@ const FOOTSTEP_SFX_PITCH_RANDOM := 0.2
 const WeaponAmmoInventory = preload("res://shared/weapons/weapon_ammo_inventory.gd")
 const WeaponCatalog = preload("res://shared/weapons/weapon_catalog.gd")
 const PowerupStatusItemScene = preload("res://ui/hud/powerup_status_item.tscn")
+const BLUE_TEAM_INDICATOR := preload("res://ui/hud/icons/team_indicator_blue.png")
+const RED_TEAM_INDICATOR := preload("res://ui/hud/icons/team_indicator_red.png")
 const RESUME_CONFLICT_ACTIONS: Array[StringName] = [
 	ClientNames.INPUT_JUMP,
 	ClientNames.INPUT_SHOOT,
@@ -20,6 +22,7 @@ const RESUME_CONFLICT_ACTIONS: Array[StringName] = [
 @export var grenade_amount_label: Label
 @export var ammo_amount_label: Label
 @export var powerup_status_container: HBoxContainer
+@export var team_indicator: TextureRect
 @export var normal_speed := 3.0
 @export var sprint_speed := 5.0
 @export var jump_velocity := 4.0
@@ -49,11 +52,19 @@ func _ready() -> void:
 	super()
 	ammo_inventory.clear_all_ammo()
 	update_ammo_ui()
+	update_team_indicator()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if auto_freeze:
 		freeze()
 
 	pause_screen.hide()
+
+
+func update_team_indicator() -> void:
+	if team_indicator == null:
+		return
+
+	team_indicator.texture = BLUE_TEAM_INDICATOR if team == GameEnums.Team.BLUE else RED_TEAM_INDICATOR
 
 
 func pause() -> void:

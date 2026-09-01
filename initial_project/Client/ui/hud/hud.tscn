@@ -71,8 +71,28 @@ theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 32
 
-[node name="HealthBar" parent="MarginContainer" instance=ExtResource("1_xmswo")]
+[node name="HealthAndTeamContainer" type="Control" parent="MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+
+[node name="TeamIndicator" type="TextureRect" parent="MarginContainer/HealthAndTeamContainer"]
+z_index = 1
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 0
+offset_left = 32.0
+offset_top = -52.0
+offset_right = 68.0
+offset_bottom = -16.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HealthBar" parent="MarginContainer/HealthAndTeamContainer" instance=ExtResource("1_xmswo")]
+layout_mode = 0
+offset_left = 44.0
+offset_top = -38.0
+offset_right = 300.0
+offset_bottom = -6.0
 size_flags_horizontal = 0
 size_flags_vertical = 8
 theme_override_styles/fill = SubResource("StyleBoxFlat_e0nub")
