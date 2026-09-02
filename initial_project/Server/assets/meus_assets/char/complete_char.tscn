@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/meus_assets/char/char_body.tscn" id="1_01odu"]
+[ext_resource type="PackedScene" path="res://assets/meus_assets/char/rings.tscn" id="2_52l2e"]
+[ext_resource type="Script" path="res://assets/meus_assets/char/complete_char.gd" id="3_hgjsk"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("3_hgjsk")
+
+[node name="char" parent="." instance=ExtResource("1_01odu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Skeleton3D" parent="char/Armature_001" index="0"]
+bones/0/position = Vector3(0, -0.37460738, 0)
+bones/0/rotation = Quaternion(0.026409889, 1.1916771e-07, 3.148304e-09, 0.9996512)
+bones/1/position = Vector3(6.661338e-16, 0.50621283, -2.7939677e-09)
+bones/2/position = Vector3(0, 0.71813405, -3.7252903e-09)
+bones/3/position = Vector3(0.35614717, 0.39992446, -2.4501994e-09)
+bones/3/rotation = Quaternion(-1.5426173e-07, -4.66071e-08, 0.95726335, -0.2892178)
+bones/4/position = Vector3(-0.35614714, 0.39992443, -1.5287126e-09)
+bones/4/rotation = Quaternion(-1.8992618e-07, 5.7382394e-08, 0.95726335, 0.2892178)
+
+[node name="RingsAttachment" type="BoneAttachment3D" parent="char/Armature_001/Skeleton3D" index="4"]
+transform = Transform3D(1, 0, 0, 0, 0.998605, -0.052801352, 0, 0.052801352, 0.998605, 0, 0.13089931, 0.02672872)
+bone_name = "hover"
+bone_idx = 1
+
+[node name="rings" parent="char/Armature_001/Skeleton3D/RingsAttachment" instance=ExtResource("2_52l2e")]
+transform = Transform3D(1, 1.2588823e-08, -2.3808599e-07, 0, 0.998605, 0.052801352, 2.3841858e-07, -0.052801352, 0.998605, -1.6284552e-08, 0.37796968, 0.08933054)
+
+[editable path="char"]
