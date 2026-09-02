@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://yiwkiciuhk85"]
+[gd_scene load_steps=3 format=3 uid="uid://yiwkiciuhk85"]
 
 [ext_resource type="PackedScene" uid="uid://bpckx1xo1l18s" path="res://assets/meus_assets/ammo_pickup/import/ammo_pickup.glb" id="1_wukiv"]
+[ext_resource type="Material" path="res://assets/meus_assets/shared/materials/happy_face_yellow.tres" id="2_happy"]
 
 [node name="ammo_pickup" instance=ExtResource("1_wukiv")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="estrela" parent="." index="5"]
+surface_material_override/0 = ExtResource("2_happy")

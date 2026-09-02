@@ -5018,7 +5018,7 @@ shape = SubResource("CapsuleShape3D_4k856")
 debug_color = Color(0, 0.6, 0.69803923, 0.7529412)
 
 [node name="BoneAttachmentUpperArmR" type="BoneAttachment3D" parent="character_soldier/CharacterArmature/Skeleton3D"]
-transform = Transform3D(-0.81097275, -0.39512688, -0.4315071, -0.37314993, -0.21875927, 0.9016122, -0.45064718, 0.8921994, 0.029966116, -0.15693408, 1.2901802, 0.07315166)
+transform = Transform3D(0.13847384, -0.6560732, -0.7418852, 0.12587483, -0.73136765, 0.670267, -0.98233443, -0.18619901, -0.018692292, -0.15693408, 1.2901802, 0.07315166)
 bone_name = "UpperArm.R"
 bone_idx = 25
 
@@ -5031,7 +5031,7 @@ shape = SubResource("CapsuleShape3D_fmy6v")
 debug_color = Color(0, 0.6, 0.69803923, 0.7529412)
 
 [node name="BoneAttachmentLowerArmR" type="BoneAttachment3D" parent="character_soldier/CharacterArmature/Skeleton3D"]
-transform = Transform3D(-0.34094194, -0.202663, -0.9179795, -0.9400599, 0.080627896, 0.33134225, 0.0068640225, 0.97592366, -0.21800472, -0.31017596, 1.2053388, 0.419173)
+transform = Transform3D(-0.82916087, -0.025926873, -0.5584089, -0.48218903, -0.4722122, 0.73790914, -0.2828192, 0.8811036, 0.37903792, -0.41137865, 1.0065341, 0.00093816966)
 bone_name = "LowerArm.R"
 bone_idx = 26
 
@@ -5132,7 +5132,7 @@ shape = SubResource("CapsuleShape3D_q3d7g")
 debug_color = Color(0, 0.6, 0.69803923, 0.7529412)
 
 [node name="BoneAttachmentLowerLegL" type="BoneAttachment3D" parent="character_soldier/CharacterArmature/Skeleton3D"]
-transform = Transform3D(0.99994344, 0.0054066973, 0.009195437, 0.0015877935, -0.92787164, 0.37289718, 0.010548317, -0.3728634, -0.9278289, 0.18508193, 0.5281748, 0.16467884)
+transform = Transform3D(0.99994344, 0.005406698, 0.009195435, 0.0015877953, -0.92787164, 0.37289718, 0.010548315, -0.3728634, -0.9278289, 0.18508193, 0.5281748, 0.16467884)
 bone_name = "LowerLeg.L"
 bone_idx = 54
 

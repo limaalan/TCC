@@ -1,7 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://dtxyj0nstjn3o"]
-
-[resource]
-resource_name = "purple.001"
-cull_mode = 2
-albedo_color = Color(0.62745106, 0.3568628, 0.6862746, 1)
-roughness = 0.5

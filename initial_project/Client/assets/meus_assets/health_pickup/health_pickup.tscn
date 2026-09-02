@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://d275woa64wulw"]
+[gd_scene load_steps=3 format=3 uid="uid://d275woa64wulw"]
 
 [ext_resource type="PackedScene" uid="uid://bjc3w41loto2n" path="res://assets/meus_assets/health_pickup/import/health_pickup.glb" id="1_x2gkt"]
+[ext_resource type="Material" path="res://assets/meus_assets/shared/materials/happy_face_yellow.tres" id="2_happy"]
 
 [node name="health_pickup" instance=ExtResource("1_x2gkt")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="caixa" parent="." index="1"]
+surface_material_override/1 = ExtResource("2_happy")
