@@ -1,10 +1,8 @@
-/audio
 .godot/
 build/
 /android/
 /initial_project/Client/ShrooterClient.exe
 /initial_project/Client/ShrooterClient.console.exe
-imgs/referencias
 initial_project/Client/shared
 initial_project/Server/shared
 *.blend1
