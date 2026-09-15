@@ -1,7 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://cbb6fkolnbkk7"]
-
-[resource]
-resource_name = "light_blue.001"
-cull_mode = 2
-albedo_color = Color(0.3294118, 0.60784316, 0.7372549, 1)
-roughness = 0.5

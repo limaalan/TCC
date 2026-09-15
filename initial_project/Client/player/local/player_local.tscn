@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://e5u0dkxhqed0" path="res://player/local/camera_shake_component.gd" id="3_dog3v"]
 [ext_resource type="PackedScene" uid="uid://qty0uvl51pci" path="res://ui/hud/hud.tscn" id="3_w115m"]
 [ext_resource type="Script" uid="uid://dqilt4so2b0c0" path="res://player/local/pause_screen.gd" id="5_xbm03"]
-[ext_resource type="PackedScene" path="res://ui/settings_screen/settings_screen.tscn" id="6_exmsb"]
+[ext_resource type="PackedScene" uid="uid://c788ux8f3kbsw" path="res://ui/settings_screen/settings_screen.tscn" id="6_exmsb"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s7k6g"]
 radius = 0.25
@@ -29,14 +29,16 @@ corner_detail = 6
 [sub_resource type="SphereShape3D" id="SphereShape3D_y8ftr"]
 radius = 5.0
 
-[node name="PlayerLocal" type="CharacterBody3D" node_paths=PackedStringArray("grenade_amount_label", "ammo_amount_label", "weapon_holder", "health_bar", "powerup_visual") groups=["PlayerLocal"]]
+[node name="PlayerLocal" type="CharacterBody3D" node_paths=PackedStringArray("grenade_amount_label", "ammo_amount_label", "powerup_status_container", "team_indicator", "weapon_holder", "health_bar", "powerup_visual") groups=["PlayerLocal"]]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_gucd0")
-grenade_amount_label = NodePath("HUD/MarginContainer/GrenadeInfoContainer/GrenadeAmountLabel")
-ammo_amount_label = NodePath("HUD/MarginContainer/GrenadeInfoContainer/AmmoAmountLabel")
+grenade_amount_label = NodePath("HUD/MarginContainer/RightHudContainer/GrenadeInfoContainer/GrenadeAmountLabel")
+ammo_amount_label = NodePath("HUD/MarginContainer/RightHudContainer/GrenadeInfoContainer/AmmoAmountLabel")
+powerup_status_container = NodePath("HUD/MarginContainer/RightHudContainer/PowerupStatusContainer")
+team_indicator = NodePath("HUD/MarginContainer/HealthAndTeamContainer/TeamIndicator")
 weapon_holder = NodePath("Head/LocalWeaponHolder")
-health_bar = NodePath("HUD/MarginContainer/HealthBar")
+health_bar = NodePath("HUD/MarginContainer/HealthAndTeamContainer/HealthBar")
 powerup_visual = NodePath("PowerupVisual")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -44,7 +46,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("CapsuleShape3D_s7k6g")
 
 [node name="PowerupVisual" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 visible = false
 light_color = Color(1, 0.4, 0.2, 1)
 light_energy = 1.2
@@ -69,7 +71,7 @@ near = 0.001
 
 [node name="HUD" parent="." instance=ExtResource("3_w115m")]
 
-[node name="HealthBar" parent="HUD/MarginContainer" index="0"]
+[node name="HealthBar" parent="HUD/MarginContainer/HealthAndTeamContainer" index="0"]
 theme_override_styles/fill = SubResource("StyleBoxFlat_y8ftr")
 
 [node name="GrenadeDetectionArea3D" type="Area3D" parent="."]

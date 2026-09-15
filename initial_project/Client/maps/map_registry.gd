@@ -1,18 +1,15 @@
 class_name MapRegistry
 extends RefCounted
 
-const FARM_MAP_ID := &"farm"
 const PROTOTYPE_MAP_ID := &"prototype"
 const HIGHRISE_MAP_ID := &"highrise"
 
 const MAP_SCENE_PATHS := {
-	FARM_MAP_ID: "res://maps/map_farm.tscn",
-	PROTOTYPE_MAP_ID: "res://maps/map_prototype.tscn",
+	PROTOTYPE_MAP_ID: "res://maps/map_prototype/map_prototype.tscn",
 	HIGHRISE_MAP_ID: "res://maps/highrise/map_highrise.tscn"
 }
 
 const MAP_DISPLAY_NAMES := {
-	FARM_MAP_ID: "Farm",
 	PROTOTYPE_MAP_ID: "Prototype",
 }
 

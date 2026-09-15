@@ -1,9 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://cudgsg0phbvcw"]
 
 [ext_resource type="PackedScene" path="res://player/weapons/fx/muzzle_flash_confetti.tscn" id="1_muzzle_fx"]
 
 [node name="SmgMuzzleFx" instance=ExtResource("1_muzzle_fx")]
-scale = Vector3(0.3, 0.3, 0.3)
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 
 [node name="Particles" parent="." index="0"]
 lifetime = 0.05

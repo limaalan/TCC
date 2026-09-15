@@ -1,9 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=7 format=3 uid="uid://c4r1ljoys2n5c"]
 
-[ext_resource type="Script" path="res://player/remote/player_remote.gd" id="1_55a7p"]
-[ext_resource type="PackedScene" path="res://player/player_info/player_info.tscn" id="2_2kk07"]
-[ext_resource type="PackedScene" path="res://player/character/character_visual.tscn" id="3_4j2fi"]
-[ext_resource type="Resource" path="res://player/character/default_player_bone_aim_config.tres" id="4_kxkw4"]
+[ext_resource type="Script" uid="uid://cttovpdkkewee" path="res://player/remote/player_remote.gd" id="1_55a7p"]
+[ext_resource type="PackedScene" uid="uid://bwtxrovlkuog2" path="res://player/player_info/player_info.tscn" id="2_2kk07"]
+[ext_resource type="PackedScene" uid="uid://cehfayvssa1my" path="res://player/character/character_visual.tscn" id="3_4j2fi"]
+[ext_resource type="Resource" uid="uid://bjo6f6qhcishd" path="res://player/character/default_player_bone_aim_config.tres" id="4_kxkw4"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_s7k6g"]
 radius = 0.25
@@ -28,10 +28,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("CapsuleShape3D_s7k6g")
 
 [node name="PowerupVisual" type="OmniLight3D" parent="."]
-visible = false
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6667333, 0.074962646)
 light_color = Color(1, 0.4, 0.2, 1)
-light_energy = 1.8
+light_indirect_energy = 0.7
 omni_range = 4.0
 
 [node name="character_soldier" parent="." instance=ExtResource("3_4j2fi")]

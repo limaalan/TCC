@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://clkrddcdii4d2"]
+
+[ext_resource type="PackedScene" uid="uid://cqnha2ye6jd2u" path="res://assets/meus_assets/weapons/smg/import/smg.glb" id="1_hm5oc"]
+
+
+[node name="smg2" instance=ExtResource("1_hm5oc")]

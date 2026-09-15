@@ -1,7 +1,7 @@
 class_name PickupPresentationData
 extends Resource
 
-const AudioManagerScript = preload("res://game/audio_manager.gd")
+const AudioManagerScript = preload("res://game/audio/audio_manager.gd")
 
 @export var pickup_type: GameEnums.PickupType = GameEnums.PickupType.HEALTH
 @export var pickup_subtype := -1

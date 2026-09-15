@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="PickupPresentationData" load_steps=5 format=3 uid="uid://c5j4volm2umfn"]
 
-[ext_resource type="PackedScene" uid="uid://bhyx3qxx05lr1" path="res://assets/meus_assets/grenade/tomato.tscn" id="1_dmihf"]
+[ext_resource type="PackedScene" uid="uid://bhyx3qxx05lr1" path="res://assets/meus_assets/weapons/grenade/tomato.tscn" id="1_dmihf"]
 [ext_resource type="Script" uid="uid://t8clrrf10vag" path="res://player/pickups/pickup_presentation_data.gd" id="1_o6i5n"]
 [ext_resource type="Material" uid="uid://bv8t0ww8thvdg" path="res://assets/materials/pickup_ready_material.tres" id="3_60585"]
 [ext_resource type="Material" uid="uid://ui0yeo2fb33k" path="res://assets/materials/pickup_not_ready_material.tres" id="4_k73od"]
@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("1_o6i5n")
 pickup_type = 1
+pickup_subtype = null
 mesh_scene = ExtResource("1_dmihf")
 ready_material = ExtResource("3_60585")
 not_ready_material = ExtResource("4_k73od")

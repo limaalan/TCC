@@ -1,30 +1,30 @@
 [gd_resource type="Resource" script_class="AudioLibrary" load_steps=14 format=3 uid="uid://dtg0mj4fqvw0o"]
 
 [ext_resource type="Script" uid="uid://b7xq5ywwhsvxh" path="res://game/audio/audio_library.gd" id="1_audio_library"]
-[ext_resource type="AudioStream" uid="uid://cbbe8gmo5vody" path="res://assets/audio/battle_song.ogg" id="1_dxtbd"]
-[ext_resource type="AudioStream" uid="uid://blcp5fff1mjkj" path="res://assets/audio/grenade_explode.ogg" id="3_bxc72"]
-[ext_resource type="AudioStream" uid="uid://d04xuxhkeo7bq" path="res://assets/audio/ammo_pickup.ogg" id="4_tggly"]
+[ext_resource type="AudioStream" uid="uid://cbbe8gmo5vody" path="res://assets/audio/music/battle_song.ogg" id="1_dxtbd"]
+[ext_resource type="AudioStream" uid="uid://do7j3tjkflmt" path="res://assets/audio/sfx/grenade_explode.wav" id="3_bxc72"]
+[ext_resource type="AudioStream" uid="uid://d04xuxhkeo7bq" path="res://assets/audio/sfx/ammo_pickup.ogg" id="4_tggly"]
 [ext_resource type="AudioStream" uid="uid://cbjnxsym4afmp" path="res://assets/audio/sfx/ui_click.ogg" id="4_ui_click"]
-[ext_resource type="AudioStream" uid="uid://b8nckntq1s6u1" path="res://assets/audio/grenade_throw.ogg" id="5_pm0u1"]
-[ext_resource type="AudioStream" uid="uid://d3vyqq55atepa" path="res://assets/audio/sfx/smg_shot.ogg" id="6_smg"]
+[ext_resource type="AudioStream" uid="uid://1qrnmit6hdr4" path="res://assets/audio/sfx/grenade_throw.wav" id="5_pm0u1"]
+[ext_resource type="AudioStream" uid="uid://cnado2k3xtrpw" path="res://assets/audio/sfx/heal.wav" id="6_bxc72"]
 [ext_resource type="AudioStream" uid="uid://df3w58ijr4xiv" path="res://assets/audio/sfx/footstep.ogg" id="8_footstep"]
-[ext_resource type="AudioStream" uid="uid://d7g6yygk35mu" path="res://game/audio/menu_song.ogg" id="8_qrs5x"]
-[ext_resource type="AudioStream" uid="uid://qglbrnq44w2l" path="res://assets/audio/gun_sound_2.ogg" id="9_hqpio"]
+[ext_resource type="AudioStream" uid="uid://d7g6yygk35mu" path="res://assets/audio/music/menu_song.ogg" id="8_tggly"]
 [ext_resource type="AudioStream" uid="uid://qfyxkyii48cd" path="res://assets/audio/sfx/jump_land.ogg" id="9_jump"]
-[ext_resource type="AudioStream" uid="uid://bnaekk26fim3u" path="res://assets/audio/sfx/pickup_health.ogg" id="10_health_pickup"]
-[ext_resource type="AudioStream" uid="uid://cgo3a5j7m7y8y" path="res://game/audio/shotgun_sound.ogg" id="11_bxc72"]
+[ext_resource type="AudioStream" uid="uid://qglbrnq44w2l" path="res://assets/audio/sfx/pistol_sound.ogg" id="9_pm0u1"]
+[ext_resource type="AudioStream" uid="uid://cx4yca8hh1dqq" path="res://assets/audio/sfx/shotgun_sound.wav" id="11_qrs5x"]
+[ext_resource type="AudioStream" uid="uid://bx06jf1xgdob0" path="res://assets/audio/sfx/smg_sound.wav" id="12_hqpio"]
 
 [resource]
 script = ExtResource("1_audio_library")
-menu_music = ExtResource("8_qrs5x")
+menu_music = ExtResource("8_tggly")
 battle_music = ExtResource("1_dxtbd")
 ui_click_sound = ExtResource("4_ui_click")
-pistol_sound = ExtResource("9_hqpio")
-smg_sound = ExtResource("6_smg")
-shotgun_sound = ExtResource("11_bxc72")
+pistol_sound = ExtResource("9_pm0u1")
+smg_sound = ExtResource("12_hqpio")
+shotgun_sound = ExtResource("11_qrs5x")
 footstep_sound = ExtResource("8_footstep")
 jump_sound = ExtResource("9_jump")
-health_pickup_sound = ExtResource("10_health_pickup")
+health_pickup_sound = ExtResource("6_bxc72")
 grenade_pickup_sound = ExtResource("4_tggly")
 grenade_throw_sound = ExtResource("5_pm0u1")
 grenade_explosion_sound = ExtResource("3_bxc72")
