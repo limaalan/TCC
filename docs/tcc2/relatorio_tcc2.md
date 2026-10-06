@@ -48,7 +48,7 @@ O trabalho contempla configurações de exportação do Client para Windows e Li
 
 ### 1.5 Estrutura do relatório
 
-O Capítulo 2 apresenta os conceitos utilizados no trabalho. O Capítulo 3 relaciona os jogos de referência às decisões adotadas. O Capítulo 4 descreve as ferramentas, a organização do desenvolvimento e os procedimentos de avaliação. O Capítulo 5 apresenta o sistema por funcionalidades, incluindo sua arquitetura de rede e os mecanismos de observação. Por fim, o Capítulo 6 discute os objetivos alcançados, as contribuições e as possibilidades de continuidade.
+O Capítulo 2 apresenta a fundamentação do trabalho. O Capítulo 3 resume as inspirações visuais e de jogabilidade. O Capítulo 4 descreve as ferramentas, a organização do desenvolvimento e os procedimentos de avaliação. O Capítulo 5 apresenta o sistema por funcionalidades, incluindo sua arquitetura de rede e os mecanismos de observação. Por fim, o Capítulo 6 discute os objetivos alcançados, as contribuições e as possibilidades de continuidade.
 
 ## 2 Fundamentação teórica
 
@@ -100,48 +100,11 @@ A observabilidade utiliza informações produzidas por um sistema para ajudar a 
 
 É necessário distinguir observar a execução de demonstrar seu desempenho. Uma dashboard pode mostrar uma alteração de latência durante uma partida, mas a comparação entre condições depende de registrar o cenário, o intervalo e a origem das amostras. O trabalho dispõe de gravação em CSV e apresentação em tempo real para apoiar esses dois usos, enquanto o plano de fechamento mantém a realização do experimento como uma atividade própria. [DOC-METRICAS] [LOGGER] [PLANO-FECHAMENTO]
 
-### 2.8 Level design para arenas competitivas
+## 3 Inspirações visuais e de jogabilidade
 
-O level design compreende a organização do espaço em que as ações do jogo ocorrem. Hullett e Whitehead relacionam geometria e posicionamento de itens às situações criadas durante a exploração e o combate. Embora sua análise se concentre em níveis de FPS para um jogador, ela oferece uma base para discutir altura, circulação e distribuição de recursos. Sua aplicação a Highrise é uma interpretação de projeto, e não uma evidência de balanceamento competitivo. [HULLETT]
+Quake III Arena e Unreal Tournament inspiraram o combate em arena, a coleta de recursos e a disputa por objetivos. No jogo desenvolvido, essas ideias aparecem nas armas, nos itens coletáveis e nos modos Team Deathmatch e King of the Hill. [TCC1] [QUAKE] [UNREAL] [ARMAS] [PRESETS]
 
-Na arena desenvolvida, pontos de nascimento, itens, plataformas e zona de controle ocupam posições específicas. O percurso entre esses elementos faz parte das decisões disponíveis ao jogador: permanecer no objetivo, procurar munição ou recuperar vida. A presença de regiões em alturas diferentes também associa o combate às ações de salto e impulso. A análise detalhada dessa disposição é apresentada na seção 5.5. [MAPA-CLIENT] [MAPA-SERVER] [JOGADOR-LOCAL]
-
-## 3 Jogos similares e referências
-
-Neste capítulo são retomados os jogos utilizados como referência na proposta. A comparação se concentra nos aspectos que ajudam a explicar o produto desenvolvido, considerando combate, modos de disputa, movimentação e direção visual.
-
-### 3.1 Critérios de comparação
-
-O TCC1 destacou Doom, Quake III Arena, Unreal Tournament e Lovely Planet. Para este relatório, essas referências foram organizadas pelo papel que desempenham na proposta: contextualização do gênero, combate em arena, variedade de objetivos e combinação entre tiro, salto e apresentação cartunesca. A comparação não pretende medir a qualidade do projeto em relação a produtos comerciais, mas identificar quais características orientaram sua concepção. [TCC1]
-
-### 3.2 Referências clássicas de FPS e arena shooter
-
-Doom foi utilizado no TCC1 para introduzir a discussão sobre jogos de tiro em primeira pessoa e confrontos multijogador. O código disponibilizado pela id Software também constitui uma referência primária de implementação acessível para estudo. Neste relatório, sua presença cumpre uma função de contextualização; não há evidência de que o código do jogo tenha sido incorporado ao projeto desenvolvido. [TCC1] [DOOM]
-
-Quake III Arena apresenta um combate centrado em arenas, diferentes armas e power-ups. A descrição publicada na loja oficial do produto inclui modos como Team Deathmatch e Capture the Flag. Para o presente trabalho, os aspectos relevantes são a continuidade do confronto e a disponibilidade de recursos que alteram as condições de combate. A implementação aproveitou essas ideias em um conjunto menor de armas e em partidas configuradas para dois jogadores. [QUAKE] [ARMAS] [PRESETS]
-
-Unreal Tournament reúne modos de confronto com objetivos distintos, como Deathmatch, Domination e Capture the Flag. A proposta inicial também relacionou seu mapa Facing Worlds a um protótipo com regiões opostas. Na versão atual, Highrise passou a ser o mapa selecionável e o controle de área foi implementado por King of the Hill. A comparação relevante está na possibilidade de reutilizar movimentação e combate sob regras de pontuação diferentes. [UNREAL] [TCC1] [PRESETS] [TDM] [KOTH]
-
-### 3.3 Referências visuais e de jogabilidade
-
-Lovely Planet foi escolhido no TCC1 como referência de estilo cartunesco, com cores marcantes e formas simplificadas. A apresentação do desenvolvedor também relaciona sua jogabilidade a saltar e disparar. O trabalho retomou essa combinação na concepção de um FPS com elementos de plataforma, embora o resultado se concentre em confrontos entre equipes, e não na progressão por fases descrita para Lovely Planet. [TCC1] [LOVELY] [PRESETS]
-
-A intenção visual registrada na proposta foi produzir personagens e cenários sem exigir uma representação realista. Na implementação, os personagens possuem materiais associados ao time, variações locais de cor e anéis com materiais próprios. Esses elementos se somam aos indicadores da interface para representar o pertencimento à equipe. A escolha estética é documentada pela proposta e pelos recursos do projeto; sua eficácia para diferentes públicos ainda demanda avaliação específica. [TCC1] [JOGADOR-REMOTO] [JOGADOR-LOCAL]
-
-### 3.4 Comparação com o jogo desenvolvido
-
-A Tabela 1 relaciona os aspectos selecionados das referências ao sistema implementado. As correspondências indicam aproximações de conceito; não implicam reprodução dos mapas, regras completas ou conteúdo audiovisual dos jogos citados. [TCC1] [PRESETS] [ARMAS] [MAPA-SERVER]
-
-**Tabela 1 — Relação entre referências e decisões do projeto.**
-
-| Referência | Aspecto considerado | Relação com o projeto |
-| --- | --- | --- |
-| Doom | Contextualização do FPS e do combate multijogador. | Perspectiva em primeira pessoa e confronto entre participantes. |
-| Quake III Arena | Combate em arena, armas e power-ups. | Três armas, recursos coletáveis e efeitos temporários. |
-| Unreal Tournament | Diferentes regras de disputa sobre uma base de combate. | TDM e KOTH compartilham jogador, armas e mapa. |
-| Lovely Planet | Combinação entre salto, tiro e proposta visual simplificada. | Salto duplo, plataformas de impulso e direção visual cartunesca. |
-
-Fonte: elaboração a partir do TCC1, das descrições dos produtos e da implementação. [TCC1] [QUAKE] [UNREAL] [LOVELY] [JOGADOR-LOCAL]
+Lovely Planet serviu de referência para a combinação de tiros com saltos e para uma apresentação visual colorida e simplificada. O projeto incorporou salto duplo e plataformas de impulso, além de usar cores para identificar os times. [TCC1] [LOVELY] [JOGADOR-LOCAL] [JOGADOR-REMOTO]
 
 ## 4 Materiais e métodos
 
@@ -149,9 +112,9 @@ Este capítulo descreve as ferramentas utilizadas e a organização técnica do 
 
 ### 4.1 Ferramentas e tecnologias
 
-A Godot 4.5 foi utilizada nos projetos Client e Server, com comportamentos programados em GDScript. O Blender integrou a proposta de modelagem e texturização, e o repositório utiliza Git para controle de versão. Scripts PowerShell dão suporte à preparação dos diretórios compartilhados e à sincronização do mapa. Para a dashboard foram utilizados Python e FastAPI, com recepção UDP, comunicação WebSocket e consulta de dados do processo por psutil. A Tabela 2 resume o papel desses materiais. [TCC1] [PROJETO-CLIENT] [PROJETO-SERVER] [SETUP-SHARED] [GERADOR-MAPA] [DASHBOARD] [PROCESSO]
+A Godot 4.5 foi utilizada nos projetos Client e Server, com comportamentos programados em GDScript. O Blender integrou a proposta de modelagem e texturização, e o repositório utiliza Git para controle de versão. Scripts PowerShell dão suporte à preparação dos diretórios compartilhados e à sincronização do mapa. Para a dashboard foram utilizados Python e FastAPI, com recepção UDP, comunicação WebSocket e consulta de dados do processo por psutil. A Tabela 1 resume o papel desses materiais. [TCC1] [PROJETO-CLIENT] [PROJETO-SERVER] [SETUP-SHARED] [GERADOR-MAPA] [DASHBOARD] [PROCESSO]
 
-**Tabela 2 — Ferramentas e responsabilidades.**
+**Tabela 1 — Ferramentas e responsabilidades.**
 
 | Material | Utilização no trabalho |
 | --- | --- |
@@ -218,7 +181,7 @@ A movimentação foi implementada no Client por meio de um corpo tridimensional 
 
 O salto duplo é controlado por uma contagem de saltos utilizados. Quando o personagem aterrissa, essa contagem é reiniciada; ao tocar uma plataforma de impulso, a velocidade vertical é alterada e os saltos também são restabelecidos. Os jump pads são configurados pelo Server e apresentados no Client, onde a detecção de contato aplica o impulso ao personagem local. O Server recebe depois a posição resultante pelo fluxo normal de movimento; não há uma validação separada de cada impulso na implementação consultada. [JOGADOR-LOCAL] [JUMP-PAD] [SERVER-LOBBY]
 
-**Tabela 3 — Principais controles presentes na configuração do Client.**
+**Tabela 2 — Principais controles presentes na configuração do Client.**
 
 | Ação | Teclado e mouse | Controle, em nomenclatura equivalente à disposição Xbox |
 | --- | --- | --- |
@@ -288,9 +251,33 @@ Na configuração consultada, o peer aceita até 64 conexões, o gerenciador pos
 
 **Envio contínuo de movimento.** A cada ciclo de física, o Client envia posição, rotação horizontal, inclinação da mira e animação. O Server copia esses dados para a representação do jogador e os utiliza na composição do estado da partida. Esse envio emprega o modo não confiável ordenado, adequado ao tratamento de informações que serão substituídas por novas atualizações. O fluxo transmite o resultado local do movimento, em vez de uma sequência de comandos para o Server simular novamente. [CLIENT-LOBBY] [SERVER-LOBBY]
 
-**Snapshots e interpolação dos jogadores remotos.** O Server distribui o estado do mundo a cada três ciclos de física. O Client mantém um buffer e calcula um instante de apresentação 100 milissegundos atrasado, considerando o desvio estimado entre os relógios. As posições e rotações dos jogadores remotos são interpoladas entre os registros disponíveis. O fator calculado não é limitado explicitamente ao intervalo entre zero e um; por isso, na falta de um registro posterior, não há no código uma garantia de que a apresentação permaneça sempre estritamente entre os dois snapshots. [SERVER-LOBBY] [CLIENT-LOBBY] [JOGADOR-REMOTO]
+##### 5.2.4.1 Interpolação dos estados remotos
 
-**Referência temporal.** O componente de conexão do Client troca mensagens com o Server para estimar a diferença entre seus relógios. Essa referência é consultada ao calcular o instante usado na apresentação dos snapshots e ao enviar o timestamp de um disparo. O mecanismo permite relacionar instantes dos dois processos, mas o código não estabelece uma garantia de sincronização exata de relógios. [CONEXAO-CLIENT] [CLIENT-LOBBY]
+O Server distribui snapshots do estado do mundo a cada três ciclos de física, enquanto o Client produz novos quadros continuamente. Como o tempo de trânsito pela rede pode variar, os snapshots podem chegar em intervalos irregulares. Se cada quadro utilizasse apenas o estado mais recente, uma renderização poderia ocorrer antes da chegada da atualização seguinte, mantendo temporariamente a última posição conhecida ou exigindo uma estimativa do movimento. [SERVER-LOBBY] [CLIENT-LOBBY]
+
+Para reduzir essas descontinuidades, o Client mantém um buffer e calcula um instante de apresentação 100 milissegundos no passado. O desvio estimado entre os relógios do Client e do Server também participa desse cálculo. A cada quadro, o sistema procura dois estados conhecidos ao redor do instante de apresentação e interpola entre eles as posições e rotações dos jogadores remotos. [CONEXAO-CLIENT] [CLIENT-LOBBY] [JOGADOR-REMOTO]
+
+A Figura 3 compara a renderização no instante mais recente com o uso do buffer. Na primeira situação, pode surgir um novo quadro sem outro snapshot disponível. Na segunda, a apresentação permanece atrás do estado mais recente recebido, aumentando a possibilidade de haver dois estados conhecidos para calcular uma posição intermediária.
+
+![Comparação entre renderização imediata e interpolação com buffer de apresentação](figuras/interpolacao-snapshots.png)
+
+Figura 3 — Interpolação dos estados recebidos utilizando buffer de apresentação. A renderização atrasada permite calcular quadros intermediários entre snapshots conhecidos. Fonte: elaboração própria a partir da implementação. [CLIENT-LOBBY]
+
+O atraso de 100 milissegundos é intencional e pertence à apresentação visual; ele não representa uma medição da latência da conexão. Essa estratégia troca uma pequena quantidade fixa de atraso por maior continuidade visual. Na implementação atual, o fator de interpolação não é limitado explicitamente ao intervalo entre zero e um. Caso não exista um estado posterior adequado, o cálculo não garante que o resultado permaneça estritamente entre os dois snapshots utilizados. [CLIENT-LOBBY]
+
+##### 5.2.4.2 Compensação de latência dos disparos
+
+A interpolação melhora a apresentação dos jogadores remotos, mas não resolve o intervalo entre um disparo no Client e seu processamento pelo Server. Durante esse período, um alvo pode se deslocar. Se o raycast fosse executado somente contra a posição corrente no momento da recepção, um disparo alinhado com aquilo que o atirador viu poderia ser considerado uma falha.
+
+Ao disparar, o Client envia uma referência temporal ajustada pelo desvio estimado entre os relógios. O Server mantém um histórico recente dos estados e, ao receber a solicitação, subtrai os 100 milissegundos do buffer de apresentação para determinar o instante que se aproxima daquele exibido ao atirador. Em seguida, reposiciona as representações auxiliares dos jogadores com os dados históricos, aguarda um ciclo de física e executa o raycast nessa configuração. [CONEXAO-CLIENT] [CLIENT-LOBBY] [SERVER-LOBBY]
+
+A Figura 4 ilustra o processo. Embora o alvo esteja em outra posição quando o pacote chega ao Server, a validação consulta o histórico correspondente ao instante apresentado no Client. O atraso da rede aparece no tempo decorrido até a recepção do pacote, enquanto o deslocamento adicional de 100 milissegundos corresponde ao buffer visual.
+
+![Fluxo da compensação de latência na validação autoritativa de disparos](figuras/compensacao-latencia-disparos.png)
+
+Figura 4 — Compensação de latência na validação de disparos. O Server consulta o histórico correspondente ao que foi apresentado ao atirador e executa o raycast utilizando representações auxiliares. Fonte: elaboração própria a partir da implementação. [SERVER-LOBBY]
+
+Esse procedimento pode ser entendido como uma consulta ao passado para validar o disparo, mas não realiza um rollback completo da partida. O estado corrente do mundo não é integralmente reconstruído nem simulado novamente. Somente as representações auxiliares usadas nos testes de colisão são reposicionadas a partir do histórico recente. O mecanismo busca aproximar a decisão autoritativa da situação vista pelo jogador, sem garantir sincronização exata entre os relógios. [SERVER-LOBBY] [CONEXAO-CLIENT]
 
 **Sincronização inicial do mapa.** O Client recebe o identificador do mapa e carrega sua cena local. Após confirmar o carregamento, recebe mensagens confiáveis para criar pickups, objetivos e plataformas especiais. São enviados identificadores e parâmetros de criação, sem retransmitir continuamente toda a geometria visual. Assim, a posição inicial da zona de KOTH e dos jump pads faz parte da preparação da partida. [SERVER-LOBBY] [CLIENT-LOBBY] [PAYLOADS]
 
@@ -299,8 +286,6 @@ Na configuração consultada, o peer aceita até 64 conexões, o gerenciador pos
 **Eventos confiáveis.** Nascimento, troca de arma, início e término de power-ups e encerramento da partida são comunicados por eventos confiáveis. Nesses casos, a mudança é transmitida quando ocorre, com os dados necessários à atualização da cópia local. O objetivo é preservar a entrega e a ordem enquanto a conexão permanece válida; isso não constitui, por si só, um mecanismo de persistência ou recuperação após desconexão. [SERVER-LOBBY] [CLIENT-LOBBY] [GODOT-PEER]
 
 **Predição local e correção de munição.** Ao disparar, o Client reduz sua munição, inicia o cooldown e apresenta recuo, som e efeito de tiro antes da resposta do Server. O valor confirmado pelo servidor substitui a cópia local quando é recebido. Essa antecipação produz uma resposta imediata, mas a implementação não mantém um histórico de comandos confirmados para repetir toda a simulação do personagem. Trata-se de uma correção de estado discreto associada ao disparo. [DISPARO-LOCAL] [JOGADOR-LOCAL] [SERVER-LOBBY]
-
-**Compensação de latência dos acertos.** Os tiros são resolvidos por raycasts. A partir do timestamp recebido, o Server subtrai os 100 milissegundos do buffer de apresentação e procura um estado anterior no histórico. Representações auxiliares dos jogadores são reposicionadas, e os testes de interseção são realizados após aguardar um ciclo de física. O procedimento procura aproximar a disposição dos alvos daquela percebida pelo atirador, sem reconstruir de forma determinística todo o mundo naquele instante. [SERVER-LOBBY]
 
 **Granadas por snapshots.** As granadas são simuladas fisicamente no Server e identificadas por um código de rede. O Client cria sua representação quando o identificador aparece nos snapshots e interpola as transformações recebidas. A explosão visual ocorre quando a granada desaparece entre dois estados consecutivos. Embora o Server também envie uma notificação confiável de explosão, o handler atual dessa notificação está vazio no Client; a apresentação efetiva depende da transição dos snapshots. [GRANADA-SERVER] [SERVER-LOBBY] [CLIENT-LOBBY]
 
@@ -354,9 +339,9 @@ Para manter a correspondência entre os mapas foi criado um script de geração 
 
 #### 5.6.1 Armas disponíveis
 
-As armas foram definidas em recursos compartilhados contendo dano, precisão, quantidade de traços por disparo, intervalo e limites de munição. O Client associa esses dados à apresentação da arma, enquanto o Server consulta o catálogo para processar o ataque. A Tabela 4 registra os parâmetros encontrados na versão consultada; são valores de configuração, sujeitos a revisão de balanceamento. [ARMAS] [PISTOLA] [SMG] [SHOTGUN] [DISPARO-LOCAL]
+As armas foram definidas em recursos compartilhados contendo dano, precisão, quantidade de traços por disparo, intervalo e limites de munição. O Client associa esses dados à apresentação da arma, enquanto o Server consulta o catálogo para processar o ataque. A Tabela 3 registra os parâmetros encontrados na versão consultada; são valores de configuração, sujeitos a revisão de balanceamento. [ARMAS] [PISTOLA] [SMG] [SHOTGUN] [DISPARO-LOCAL]
 
-**Tabela 4 — Configuração das armas.**
+**Tabela 3 — Configuração das armas.**
 
 | Arma | Dano base por traço | Traços por disparo | Intervalo local | Automática | Munição inicial / máxima |
 | --- | ---: | ---: | ---: | --- | ---: |
@@ -426,7 +411,7 @@ As taxas de tráfego são calculadas a partir dos bytes e pacotes contabilizados
 
 O campo de processamento dos lobbies mede o tempo gasto no trecho instrumentado de sua função de física. O Server informa o maior valor e a soma dos valores mais recentes dos lobbies. Essa medida não corresponde automaticamente a todo o custo de física do motor, ao uso de CPU do processo ou à duração de um tick completo. A distinção evita interpretar como desempenho global uma medição com escopo mais restrito. [SERVER-LOBBY] [SERVER] [COLETOR]
 
-**Tabela 5 — Origem e significado dos principais indicadores.**
+**Tabela 4 — Origem e significado dos principais indicadores.**
 
 | Indicador | Origem | Interpretação |
 | --- | --- | --- |
@@ -455,7 +440,7 @@ flowchart LR
     M -->|HTTP e WebSocket| N[Navegador]
 ```
 
-Figura 3 — Fluxo da coleta e apresentação de métricas. Fonte: implementação dos componentes de telemetria. [COLETOR] [LOGGER] [RECEPTOR] [ARMAZENAMENTO] [DASHBOARD]
+Figura 5 — Fluxo da coleta e apresentação de métricas. Fonte: implementação dos componentes de telemetria. [COLETOR] [LOGGER] [RECEPTOR] [ARMAZENAMENTO] [DASHBOARD]
 
 A transmissão UDP utiliza mensagens JSON, recebidas e interpretadas pelo processo Python. Mensagens que não podem ser decodificadas ou que não representam um objeto são descartadas pelo receptor. Como o transporte não garante a entrega, lacunas na dashboard não devem ser confundidas automaticamente com ausência de atividade do jogo. O CSV produzido no Server constitui um registro independente desse caminho de transmissão. [RECEPTOR] [LOGGER] [UDP]
 
@@ -481,9 +466,9 @@ A reprodutibilidade depende também dos arquivos disponíveis fora do cache da G
 
 #### 5.13.1 Resultados funcionais
 
-A inspeção identificou caminhos implementados para o ciclo de partida, os dois modos, combate, coleta, interface e observabilidade. A Tabela 6 reúne essas evidências e os cenários necessários para completar a verificação da release. A coluna de evidência registra o que pode ser sustentado pelos arquivos; não corresponde a uma declaração de aprovação de testes executados nesta etapa de escrita. [GUIA-RELEASE] [SERVER-LOBBY] [CLIENT-LOBBY]
+A inspeção identificou caminhos implementados para o ciclo de partida, os dois modos, combate, coleta, interface e observabilidade. A Tabela 5 reúne essas evidências e os cenários necessários para completar a verificação da release. A coluna de evidência registra o que pode ser sustentado pelos arquivos; não corresponde a uma declaração de aprovação de testes executados nesta etapa de escrita. [GUIA-RELEASE] [SERVER-LOBBY] [CLIENT-LOBBY]
 
-**Tabela 6 — Implementação identificada e verificação funcional a registrar.**
+**Tabela 5 — Implementação identificada e verificação funcional a registrar.**
 
 | Funcionalidade | Evidência na implementação | Cenário de execução a documentar |
 | --- | --- | --- |
@@ -501,7 +486,7 @@ Fonte: inspeção do projeto e roteiro documentado de smoke test. [GUIA-RELEASE]
 
 #### 5.13.2 Resultados das métricas
 
-O resultado demonstrável nesta etapa é a existência da instrumentação e dos caminhos de registro e apresentação. O coletor produz as variáveis descritas na Tabela 5, e a dashboard mantém amostras para consulta durante a execução. Essa implementação permite realizar o experimento, mas não fornece, sozinha, uma conclusão sobre estabilidade de latência, taxa de perda aceitável ou quantidade de jogadores suportada. [COLETOR] [LOGGER] [ARMAZENAMENTO] [PLANO-FECHAMENTO]
+O resultado demonstrável nesta etapa é a existência da instrumentação e dos caminhos de registro e apresentação. O coletor produz as variáveis descritas na Tabela 4, e a dashboard mantém amostras para consulta durante a execução. Essa implementação permite realizar o experimento, mas não fornece, sozinha, uma conclusão sobre estabilidade de latência, taxa de perda aceitável ou quantidade de jogadores suportada. [COLETOR] [LOGGER] [ARMAZENAMENTO] [PLANO-FECHAMENTO]
 
 Não foram incorporados a esta versão do relatório conjuntos de rodadas controladas que sustentem médias, percentis ou gráficos comparativos. Consequentemente, não se afirma que o servidor manteve determinada taxa de atualização sob carga ou que as quatro partidas possíveis foram executadas simultaneamente com desempenho adequado. A discussão quantitativa deverá relacionar os dados preservados ao protocolo da seção 4.6, indicando também períodos sem participantes e eventuais lacunas de recepção. [PLANO-FECHAMENTO] [SERVER] [COLETOR]
 
@@ -509,9 +494,9 @@ Não foram incorporados a esta versão do relatório conjuntos de rodadas contro
 
 #### 5.13.3 Comparação entre proposta e implementação
 
-A Tabela 7 consolida as principais diferenças entre o TCC1 e a versão consultada. A comparação utiliza a proposta para identificar os compromissos originais e o código para descrever o resultado, evitando tratar o planejamento como prova de uma funcionalidade concluída. [TCC1] [PRESETS] [SERVER-LOBBY]
+A Tabela 6 consolida as principais diferenças entre o TCC1 e a versão consultada. A comparação utiliza a proposta para identificar os compromissos originais e o código para descrever o resultado, evitando tratar o planejamento como prova de uma funcionalidade concluída. [TCC1] [PRESETS] [SERVER-LOBBY]
 
-**Tabela 7 — Evolução do escopo.**
+**Tabela 6 — Evolução do escopo.**
 
 | Tema | Proposta do TCC1 | Implementação consultada |
 | --- | --- | --- |
@@ -549,9 +534,9 @@ A arquitetura adotada utiliza um processo servidor dedicado para organizar as pa
 
 ### 6.2 Objetivos alcançados
 
-O objetivo geral foi atendido quanto à construção das funcionalidades centrais e à sua integração descrita no código. A comprovação da qualidade da versão distribuída depende ainda do registro dos testes e do experimento indicados no relatório. A Tabela 8 relaciona cada objetivo específico ao resultado correspondente, sem equiparar a existência da implementação à validação de todas as suas condições de uso. [GUIA-RELEASE] [PLANO-FECHAMENTO]
+O objetivo geral foi atendido quanto à construção das funcionalidades centrais e à sua integração descrita no código. A comprovação da qualidade da versão distribuída depende ainda do registro dos testes e do experimento indicados no relatório. A Tabela 7 relaciona cada objetivo específico ao resultado correspondente, sem equiparar a existência da implementação à validação de todas as suas condições de uso. [GUIA-RELEASE] [PLANO-FECHAMENTO]
 
-**Tabela 8 — Relação entre objetivos específicos e resultados.**
+**Tabela 7 — Relação entre objetivos específicos e resultados.**
 
 | Objetivo | Resultado sustentado nesta versão |
 | --- | --- |
@@ -581,7 +566,7 @@ No conteúdo, novos mapas e modos podem ampliar a variedade de partidas, mas a a
 
 ## Referências
 
-As referências externas abaixo sustentam os conceitos e a descrição dos produtos similares. Os identificadores entre colchetes utilizados no texto apontam diretamente para as respectivas fontes. As datas de publicação não disponíveis não foram presumidas; as páginas web foram consultadas em 5 de setembro de 2026, exceto o material Network Weapon, consultado na etapa anterior de redação.
+As referências externas abaixo sustentam a fundamentação e as inspirações citadas. Os identificadores entre colchetes utilizados no texto apontam diretamente para as respectivas fontes. As datas de publicação não disponíveis não foram presumidas; as páginas web foram consultadas em 5 de setembro de 2026, exceto o material Network Weapon, consultado na etapa anterior de redação.
 
 1. GODOT ENGINE. **Overview of Godot's key concepts**. Documentação da versão 4.5. [Acesso ao documento][GODOT-CONCEITOS].
 2. GODOT ENGINE. **High-level multiplayer**. Documentação da versão 4.5. [Acesso ao documento][GODOT-REDE].
@@ -596,8 +581,7 @@ As referências externas abaixo sustentam os conceitos e a descrição dos produ
 11. ID SOFTWARE. **Quake III Arena**. Descrição do produto disponibilizada na Steam. [Acesso à página][QUAKE].
 12. EPIC GAMES. **Unreal Tournament**. Apresentação oficial da série, seção referente ao jogo de 1999. [Acesso à página][UNREAL].
 13. QUICKTEQUILA. **Lovely Planet**. Apresentação do desenvolvedor. [Acesso à página][LOVELY].
-14. ID SOFTWARE. **DOOM Open Source Release**. Repositório de código-fonte. [Acesso ao repositório][DOOM].
-15. IMAKEBADGAMES. **Network Weapon with netfox**. Material interativo sobre armas em rede. [Acesso ao material][NETFOX].
+14. IMAKEBADGAMES. **Network Weapon with netfox**. Material interativo sobre armas em rede. [Acesso ao material][NETFOX].
 
 ### Fontes do próprio projeto
 
@@ -643,7 +627,6 @@ Este apêndice reúne as pendências editoriais indicadas ao longo do texto. Ele
 [QUAKE]: https://store.steampowered.com/app/2200/Quake_III_Arena/
 [UNREAL]: https://www.epicgames.com/unrealtournament/
 [LOVELY]: https://quicktequila.com/lovelyplanet.html
-[DOOM]: https://github.com/id-Software/DOOM
 [NETFOX]: https://imakebad.games/course/network-weapon
 [TCC1]: ../tcc/TCC.md
 [PLANO-FECHAMENTO]: 17_plano_fechamento_pontas_entrega_tcc.md

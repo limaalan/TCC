@@ -1,24 +1,3 @@
-# Estrutura sugerida para o relatório de TCC2
-
-## Orientações gerais
-
-- Use este arquivo como roteiro de escrita, não como sumário definitivo. A numeração e a profundidade das subseções podem ser ajustadas conforme o volume de conteúdo e as orientações do professor.
-- Descreva o produto que foi realmente entregue. O TCC1 registra a proposta inicial e deve ser usado para explicar a evolução do projeto, não como fonte do estado atual.
-- Escreva a implementação e os resultados predominantemente no passado. Reserve o futuro para limitações e trabalhos futuros.
-- Organize o capítulo principal por funcionalidades do jogo. Para cada feature, explique sua finalidade, seu comportamento e a solução técnica adotada. Não é necessário repetir uma estrutura rígida quando algum desses pontos não for relevante.
-- Separe fundamentação de implementação: conceitos externos e afirmações gerais precisam de referências; decisões e comportamentos do próprio projeto devem ser demonstrados com diagramas, capturas de tela, tabelas e pequenos trechos de código quando ajudarem a explicação.
-- Evite transformar o relatório em uma listagem de arquivos ou classes. Os caminhos registrados em `docs/features/` servem para localizar a implementação, enquanto o relatório deve explicar as responsabilidades e relações entre os sistemas.
-- Apresente uma figura ou evidência relevante para as principais features: fluxo de telas, arquitetura Client/Server, mapa, HUD, modos de jogo, combate e dashboard de métricas.
-- Explique em um único ponto as diferenças entre a proposta e o resultado. As principais mudanças identificadas são:
-  - substituição da arquitetura peer-to-peer por Client/Server com servidor dedicado e autoritativo;
-  - implementação de Team Deathmatch e King of the Hill, sem Capture the Flag;
-  - uso de presets de partida em vez de configuração livre feita por um jogador hospedeiro;
-  - conjunto final de armas composto por pistola, SMG e shotgun, além de granadas;
-  - power-ups de dano e cadência de tiro, em vez do aumento de velocidade de movimentação proposto inicialmente;
-  - adoção de Highrise como mapa principal, mantendo Prototype somente como mapa de desenvolvimento;
-  - inclusão de coleta de métricas e dashboard como parte do produto técnico.
-- Na parte de métricas, separe três assuntos: o método de avaliação definido no Capítulo 4, a implementação da coleta/dashboard no Capítulo 5 e os dados observados nos resultados.
-- Mantenha nomes consistentes ao longo do texto: Client para o projeto do jogador, Server para o servidor autoritativo e `shared` para os contratos e regras compartilhados.
 
 # 1 Introdução
 
@@ -66,6 +45,9 @@ Relacionar verticalidade, salto duplo, plataformas e jump pads com a movimentaç
 
 Retomar as classificações úteis do TCC1: jogo em rede, competitivo, simétrico e síncrono. Remover classificações que não contribuam para entender o produto final.
 
+
+--- Daqui pra baixo mover pro materiais e métodos
+
 ## 2.5 Arquiteturas de comunicação para jogos
 
 Comparar brevemente peer-to-peer e Client/Server e fundamentar a escolha de um servidor dedicado e autoritativo. Explicar autoridade, replicação de estado e o risco de confiar decisões de gameplay ao Client.
@@ -78,27 +60,9 @@ Apresentar UDP, ENet e chamadas RPC no nível necessário para compreender a imp
 
 Definir a finalidade de coletar métricas de processo, partida e rede. Contextualizar CSV, transmissão de telemetria por UDP e dashboards como instrumentos de acompanhamento e avaliação.
 
-## 2.8 Level design para arenas competitivas
+# 3 Inspirações visuais e de jogabilidade
 
-Apresentar os conceitos aproveitados no mapa, como verticalidade, rotas alternativas, pontos de conflito, cobertura, simetria e distribuição de recursos.
-
-# 3 Jogos similares e referências
-
-## 3.1 Critérios de comparação
-
-Explicar por que os jogos foram escolhidos e quais aspectos serão comparados: combate em arena, verticalidade, modos em equipe, estilo visual e organização do mapa.
-
-## 3.2 Referências clássicas de FPS e arena shooter
-
-Retomar de forma condensada as referências do TCC1, como Doom, Quake e Unreal Tournament, concentrando a análise nas características que influenciaram o projeto.
-
-## 3.3 Referências visuais e de jogabilidade
-
-Apresentar jogos que contribuíram para o estilo cartunesco, legibilidade visual ou mistura entre tiro e plataforma, como Lovely Planet, quando a influência puder ser demonstrada no resultado.
-
-## 3.4 Comparação com o jogo desenvolvido
-
-Usar uma tabela para relacionar as referências com as decisões adotadas em movimentação, armas, modos, mapa e direção visual. Evitar apenas descrever cada produto isoladamente.
+Resumir em um ou dois parágrafos a influência de Quake III Arena e Unreal Tournament no combate e nos modos de jogo, e a de Lovely Planet na movimentação e na direção visual. Evitar subseções e tabela comparativa.
 
 # 4 Materiais e métodos
 
@@ -112,7 +76,7 @@ Descrever honestamente o processo empregado durante o TCC2. Relacionar planejame
 
 ## 4.3 Evolução da proposta do TCC1
 
-Comparar a proposta com as decisões finais: mudança para servidor dedicado, substituição de CTF por KOTH, definição dos presets, revisão das armas e power-ups e amadurecimento do mapa. Apresentar as mudanças como resultado do processo de desenvolvimento e da redução de riscos técnicos.
+Justificar alterações em relação ao TCC1 
 
 ## 4.4 Organização do projeto
 
@@ -130,7 +94,8 @@ Registrar o ambiente, número de jogadores, duração das execuções, intervalo
 
 Este deve ser o principal capítulo do relatório. A organização segue as features do jogo e pode combinar explicação funcional, solução técnica e evidência visual.
 
-## 5.1 Visão geral do jogo final
+## 5.1 Visão geral do jogo final 
+// Aqui seria tipo um manual, explicar do ponto de vista do jogador 
 
 ### 5.1.1 Conceito e ciclo principal de jogabilidade
 
@@ -144,7 +109,9 @@ Apresentar movimentação em primeira pessoa, câmera, corrida, salto duplo e la
 
 Mostrar o encadeamento entre menu principal, seleção de partida, jogo, pausa e resultado final. Uma figura de fluxo é mais adequada do que descrever cada botão em detalhes.
 
-## 5.2 Arquitetura do sistema
+## 5.2 Relatório de desenvolvimento
+-> Relatório técnico
+-> Principal , manter os outros sucintos
 
 ### 5.2.1 Separação entre Client, Server e shared
 
@@ -157,6 +124,18 @@ Mostrar o fluxo de uma ação representativa, como disparo ou coleta de item: so
 ### 5.2.3 Sessões, lobbies e presets
 
 Descrever conexão, associação de jogadores, criação de lobbies e seleção dos presets TDM/KOTH em Highrise. Indicar os limites de jogadores e lobbies usados na versão entregue.
+
+### 5.2.4 Estratégias de sincronização de rede
+
+Explicar o envio de movimento, snapshots, eventos e atualização dos demais estados compartilhados. Separar a interpolação visual dos estados remotos da compensação de latência usada na validação autoritativa dos disparos.
+
+#### 5.2.4.1 Interpolação dos estados remotos
+
+Apresentar o buffer de 100 milissegundos e a interpolação entre snapshots conhecidos, acompanhados da figura que compara a renderização imediata com a renderização atrasada.
+
+#### 5.2.4.2 Compensação de latência dos disparos
+
+Descrever o timestamp do disparo, a consulta ao histórico, o reposicionamento das representações auxiliares e o raycast realizado pelo Server. Esclarecer, com a figura correspondente, que o mecanismo não executa um rollback completo da partida.
 
 ## 5.3 Jogador, times e ciclo de vida
 
@@ -189,6 +168,8 @@ Também explicar a existência das representações visual e autoritativa do map
 Fonte técnica: `docs/features/highrise-map-and-traversal.md`.
 
 ## 5.6 Armas, combate e granadas
+
+// Não precisaria dessa seção tão detalhada, pode ser incluso já no 5.1 e 5.2
 
 ### 5.6.1 Armas disponíveis
 
