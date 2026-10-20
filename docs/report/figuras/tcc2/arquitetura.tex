@@ -1,0 +1,15 @@
+% shared representa arquivos usados pelos dois projetos, não um serviço.
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  bloco/.style={draw,rounded corners,align=center,text width=4.5cm,minimum height=1.3cm,font=\small},
+  seta/.style={-{Latex[length=2mm]},thick}
+]
+\node[bloco] (client) at (-4,0) {Client\\Entrada, movimento local\\e apresentação};
+\node[bloco] (server) at (4,0) {Server\\Lobbies, combate,\\recursos e modos};
+\node[bloco] (shared) at (0,3.1) {shared\\Contratos, presets e definições};
+\draw[seta] (client.north east) -- node[above,align=center,font=\footnotesize] {Estado local\\e solicitações} (server.north west);
+\draw[seta] (server.south west) -- node[below,font=\footnotesize] {Snapshots e eventos} (client.south east);
+\draw[seta,dashed] (shared) -- node[left,font=\footnotesize] {Usado pelo código} (client);
+\draw[seta,dashed] (shared) -- node[right,font=\footnotesize] {Usado pelo código} (server);
+\end{tikzpicture}%
+}

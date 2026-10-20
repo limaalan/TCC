@@ -1,0 +1,109 @@
+% Texto adaptado de docs/tcc2/relatorio_tcc2.md para a prévia do TCC2.
+\chapter{Materiais e métodos}\label{cap:tcc2-4}
+
+Este capítulo descreve os recursos e procedimentos empregados no desenvolvimento. São apresentadas as ferramentas, a arquitetura de comunicação, as tecnologias de rede, a infraestrutura de observabilidade, a organização do projeto e os métodos de verificação e coleta. A existência de um roteiro de testes é distinguida de sua execução documentada, para que atividades planejadas não sejam apresentadas como resultados concluídos.
+
+\section{Ferramentas e tecnologias}\label{sec:4.1}
+
+A Godot 4.5 foi utilizada nos projetos Client e Server, com comportamentos programados em GDScript. O Blender integrou a proposta de modelagem e texturização, e o repositório utiliza Git para controle de versão. Scripts PowerShell dão suporte à preparação dos diretórios compartilhados e à sincronização do mapa. Para a dashboard foram utilizados Python e FastAPI, com recepção UDP, comunicação WebSocket e consulta de dados do processo por psutil. A Tabela~\ref{tab:tcc2-1} resume o papel desses materiais. \fonteprojeto{TCC1} \fonteprojeto{PROJETO-CLIENT} \fonteprojeto{PROJETO-SERVER} \fonteprojeto{SETUP-SHARED} \fonteprojeto{GERADOR-MAPA} \fonteprojeto{DASHBOARD} \fonteprojeto{PROCESSO}
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr0.32\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.68\textwidth-2\tabcolsep\relax}}
+\caption{Ferramentas e responsabilidades}\label{tab:tcc2-1}\\
+\toprule
+Material & Utilização no trabalho \\
+\midrule
+\endfirsthead
+\multicolumn{2}{l}{\small Ferramentas e responsabilidades (continuação)}\\
+\toprule
+Material & Utilização no trabalho \\
+\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{\small Continua na próxima página.}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Godot e GDScript & Cenas, física, regras, interface, áudio e comunicação do jogo. \\
+Blender & Autoria de modelos e recursos visuais prevista e mantida no fluxo de assets. \\
+Git & Organização e versionamento do projeto. \\
+PowerShell & Preparação dos links compartilhados e geração de cenas do mapa de servidor. \\
+Python e FastAPI & Recepção e disponibilização das amostras na dashboard. \\
+psutil & Consulta de CPU e memória do processo identificado pelo PID. \\
+\end{longtable}
+\endgroup
+
+Fonte: proposta, guias de manutenção e arquivos de suporte do projeto. \fonteprojeto{TCC1} \fonteprojeto{GUIA-ASSETS} \fonteprojeto{SETUP-SHARED} \fonteprojeto{GERADOR-MAPA} \fonteprojeto{DASHBOARD} \fonteprojeto{PROCESSO}
+
+\section{Arquitetura e tecnologias de rede}\label{sec:4.2}
+
+\subsection{Arquitetura de comunicação}\label{sec:4.2.1}
+
+A arquitetura define como os participantes trocam informações e onde são decididos os resultados. Fiedler apresenta tanto a troca de comandos entre pares quanto a organização cliente-servidor. Nesta última, o servidor mantém uma referência comum para os clientes; no modelo de simulação determinística entre pares, a reprodução consistente dos comandos depende de condições iniciais e regras equivalentes. Esses modelos exigem soluções diferentes para sincronização. \cite{FIEDLER-REDE}
+
+No presente projeto, o servidor foi implementado como um processo separado dos jogadores. A autoridade, porém, deve ser descrita por responsabilidade: o Server calcula dano e pontuação, mas utiliza posições recebidas dos Clients para atualizar os personagens. A existência de um servidor dedicado, portanto, não significa que toda a movimentação seja recalculada e validada por ele. Essa delimitação é necessária para interpretar tanto a arquitetura quanto suas limitações. \fonteprojeto{SERVER} \fonteprojeto{SERVER-LOBBY}
+
+\subsection{Tecnologias de comunicação utilizadas}\label{sec:4.2.2}
+
+O UDP é um protocolo de transporte baseado em datagramas. Sua especificação não garante entrega nem proteção contra duplicação de mensagens; requisitos adicionais devem ser tratados por outras camadas. No trabalho, ele aparece em dois contextos: como base da comunicação multijogador por ENet e como transporte direto das amostras enviadas à dashboard. A escolha do transporte, por si só, não determina se uma mensagem da aplicação será reenviada. \cite{UDP} \cite{GODOT-REDE} \fonteprojeto{LOGGER} \fonteprojeto{RECEPTOR}
+
+A Godot disponibiliza comunicação de alto nível por chamadas remotas de procedimento, ou RPCs. Uma função pode ser executada em outro participante, com restrições sobre quem pode chamá-la e sobre a forma de transferência. Essa API permite usar a estrutura de nós do jogo para organizar a comunicação; o projeto a utiliza nos componentes que representam o servidor e cada lobby. \cite{GODOT-REDE} \fonteprojeto{SERVER} \fonteprojeto{CLIENT-LOBBY}
+
+Os modos de transferência usados são confiável, não confiável e não confiável ordenado. No primeiro, há confirmação e tentativas de reenvio; no segundo, uma mensagem pode se perder ou chegar fora de ordem; no terceiro, mensagens atrasadas podem ser descartadas quando uma atualização posterior já foi recebida. Essa diferença fundamenta o uso de eventos confiáveis para mudanças discretas e de atualizações substituíveis para movimento. \cite{GODOT-PEER}
+
+Outra técnica utilizada foi a interpolação de snapshots. Um snapshot é um registro do estado em determinado instante. Ao manter um pequeno histórico dos registros recebidos, o Client pode apresentar uma posição intermediária entre dois deles, em vez de saltar diretamente para cada atualização. O buffer acrescenta um atraso de apresentação, em troca de uma transição visual mais contínua. \cite{FIEDLER-INTERPOLACAO}
+
+\section{Observabilidade}\label{sec:4.3}
+
+A observabilidade utiliza informações produzidas por um sistema para ajudar a compreender seu comportamento. A documentação do OpenTelemetry apresenta métricas como medições que descrevem aspectos de sua operação. No contexto deste jogo, elas permitem acompanhar condições como quantidade de participantes, tráfego de rede e tempo de execução de uma parte do servidor. O projeto possui instrumentação própria; não utiliza uma integração com o OpenTelemetry. \cite{OBSERVABILIDADE} \fonteprojeto{COLETOR}
+
+É necessário distinguir observar a execução de demonstrar seu desempenho. Uma dashboard pode mostrar uma alteração de latência durante uma partida, mas a comparação entre condições depende de registrar o cenário, o intervalo e a origem das amostras. O trabalho dispõe de gravação em CSV e apresentação em tempo real para apoiar esses dois usos, enquanto o plano de fechamento mantém a realização do experimento como uma atividade própria. \fonteprojeto{DOC-METRICAS} \fonteprojeto{LOGGER} \fonteprojeto{PLANO-FECHAMENTO}
+
+\section{Processo de desenvolvimento}\label{sec:4.4}
+
+A proposta do TCC1 indicou o modelo Double Diamond como referência de processo. O Design Council o apresenta por meio de atividades de descoberta, definição, desenvolvimento e entrega. No material disponível, há uma proposta inicial, diferentes funcionalidades implementadas e planos de fechamento posteriores; esses registros permitem acompanhar mudanças de escopo, mas não comprovam a execução formal de todas as etapas do modelo em cada iteração. Assim, o Double Diamond é apresentado como referência do planejamento original. \fonteprojeto{TCC1} \cite{DOUBLE-DIAMOND} \fonteprojeto{PLANO-FECHAMENTO}
+
+Para descrever o desenvolvimento realizado, o relatório organiza o produto pelas funcionalidades que podem ser identificadas no repositório. Jogador, combate, modos, interface e observabilidade são tratados a partir de seus comportamentos e das relações entre seus componentes. Essa organização acompanha a documentação técnica consolidada por feature e permite explicar as decisões sem depender de uma cronologia de commits ou de tarefas ainda não encerradas. \fonteprojeto{DOC-JOGADOR} \fonteprojeto{DOC-COMBATE} \fonteprojeto{DOC-MODOS} \fonteprojeto{DOC-HUD} \fonteprojeto{DOC-METRICAS}
+
+\section{Evolução da proposta do TCC1}\label{sec:4.5}
+
+A proposta original previa um participante hospedeiro e utilizava a denominação peer-to-peer para sua arquitetura. A implementação passou a separar o programa executado pelos jogadores do processo que mantém as partidas. Essa mudança permitiu executar o Server sem a apresentação do jogo e manter em um ponto comum as regras de dano, recursos, modos e resultados. RPCs e snapshots próprios substituíram a dependência do mecanismo de replicação automática descrito no protótipo inicial, tornando explícitas as responsabilidades de cada lado da comunicação. \fonteprojeto{TCC1} \fonteprojeto{SERVER} \fonteprojeto{CLIENT-LOBBY} \fonteprojeto{SERVER-LOBBY}
+
+A configuração livre por um jogador hospedeiro também foi substituída por presets compartilhados. Com isso, Client e Server trabalham com combinações previamente conhecidas de mapa, modo, tempo, pontuação e quantidade de participantes, e o gerenciador pode associar solicitações compatíveis ao mesmo lobby. Essa delimitação reduz as variações que precisam ser tratadas e verificadas na versão entregue. \fonteprojeto{PRESETS} \fonteprojeto{SERVER}
+
+O recorte de conteúdo foi ajustado para concentrar o desenvolvimento e a verificação em um conjunto menor de combinações. Foram disponibilizados TDM e KOTH em Highrise, enquanto Capture the Flag e o mapa Prototype ficaram fora da seleção principal. Highrise passou a reunir os elementos necessários aos dois modos entregues, como pontos de nascimento, recursos, jump pads e zona de controle. Dessa forma, o mesmo mapa pode ser utilizado no fluxo principal e nas duas modalidades avaliadas. \fonteprojeto{PLANO-FECHAMENTO} \fonteprojeto{PRESETS} \fonteprojeto{DOC-MAPA}
+
+O catálogo final de combate também foi revisto. Pistola, SMG e shotgun assumem papéis diferenciados por cadência, dispersão e quantidade de traços, enquanto as granadas acrescentam dano em área. A melhoria de velocidade de movimentação prevista inicialmente deu lugar ao aumento temporário de cadência, integrado ao mesmo ciclo de armas, munição e feedback da interface. Essas alterações descrevem o produto efetivamente consolidado e são sintetizadas na seção~\ref{sec:5.3.3}. \fonteprojeto{TCC1} \fonteprojeto{ARMAS} \fonteprojeto{BUFF-DANO} \fonteprojeto{BUFF-CADENCIA}
+
+\section{Organização do projeto}\label{sec:4.6}
+
+O código do jogo foi organizado em dois projetos Godot, cada um com sua configuração e suas cenas de entrada. O Client contém o controle local, a apresentação do mapa e as telas. O Server mantém conexões, lobbies, jogadores, recursos e modos de jogo. Um terceiro diretório, denominado \texttt{shared}, reúne definições interpretadas pelos dois lados, como identificadores, contratos de mensagens, configurações de partida e inventário de munição. \fonteprojeto{DOC-ARQUITETURA} \fonteprojeto{DOC-SHARED}
+
+O compartilhamento local é preparado por um script que cria links de diretório para a mesma origem. Portanto, o conteúdo acessado por cada projeto não corresponde a duas cópias independentes do código comum. Já os arquivos de autoria dos assets seguem o padrão existente de pastas \texttt{import/}. Esse arranjo faz parte da preparação do ambiente e precisa ser considerado ao reproduzir uma build em outra máquina. \fonteprojeto{SETUP-SHARED} \fonteprojeto{DOC-SHARED} \fonteprojeto{GUIA-ASSETS}
+
+\section{Método de verificação funcional}\label{sec:4.7}
+
+O procedimento documentado para uma verificação funcional consiste em executar o Server e conectar dois Clients, percorrendo o fluxo completo de partida. O roteiro inclui entrada no lobby, escolha de modo, nascimento dos personagens, combate, coleta de recursos, atualização da interface, encerramento e retorno ao menu. Para KOTH, é necessário observar separadamente a zona vazia, controlada e contestada, pois cada estado produz uma consequência diferente sobre a pontuação. \fonteprojeto{GUIA-RELEASE} \fonteprojeto{GUIA-LOCAL} \fonteprojeto{COLINA} \fonteprojeto{KOTH}
+
+A execução desse procedimento deve registrar a versão utilizada, a plataforma e a evidência de cada resultado. Uma função presente no código confirma a existência de uma implementação, mas não demonstra, isoladamente, que ela foi exercitada com sucesso em uma build exportada. Neste relatório, a inspeção do código sustenta a descrição funcional, enquanto a tabela de resultados mantém explícita a necessidade de anexar o registro da execução. \fonteprojeto{GUIA-RELEASE}
+
+\begin{quote}
+\small
+\textbf{Evidência pendente:} registro do teste integrado da versão escolhida para a entrega, com data, identificação da build, participantes ou instâncias utilizadas e resultado de cada cenário. O procedimento acima está definido; sua aprovação não foi presumida.
+\end{quote}
+
+\section{Método de coleta e análise de métricas}\label{sec:4.8}
+
+A implementação permite coletar amostras periódicas, com intervalo padrão de um segundo, e gravá-las em CSV ou transmiti-las à dashboard. O coletor utiliza contadores do host ENet, estatísticas dos peers e informações de lobbies e jogadores. Os Clients também informam seus FPS, que são reunidos pelo Server. Essa infraestrutura fornece as variáveis para o experimento, mas a quantidade de amostras e a duração efetiva de cada rodada precisam ser registradas durante sua execução. \fonteprojeto{COLETOR} \fonteprojeto{LOGGER} \fonteprojeto{FPS-CLIENT}
+
+Para a avaliação desta versão, propõe-se comparar o servidor sem partidas ativas com uma partida de dois jogadores em TDM e uma de dois jogadores em KOTH. Cada rodada deve usar a mesma build, intervalo de coleta e ambiente, registrando o período de espera e o de jogo ativo. Experimentos com mais lobbies podem ampliar essa comparação até o limite configurado, desde que sejam identificados separadamente. Trata-se do protocolo proposto para completar a avaliação, compatível com os presets atuais e com a finalidade do experimento previsto no plano de fechamento. \fonteprojeto{PRESETS} \fonteprojeto{SERVER} \fonteprojeto{PLANO-FECHAMENTO}
+
+A análise deverá relacionar tráfego, RTT, perda estimada de pacotes e tempo medido do processamento dos lobbies ao número de participantes e ao estado da partida. Para evitar comparar medidas diferentes, devem ser preservados os nomes, as unidades e os timestamps do contrato. A medição de CPU e memória requer um registro adicional: esses valores são consultados pela dashboard no sistema operacional e não integram automaticamente os CSVs produzidos pelo logger do Godot. \fonteprojeto{COLETOR} \fonteprojeto{CONTRATO-METRICAS} \fonteprojeto{LOGGER} \fonteprojeto{PROCESSO} \fonteprojeto{ARMAZENAMENTO}
+
+\begin{quote}
+\small
+\textbf{Evidência pendente:} ambiente de execução, duração e repetições das rodadas, arquivos de dados brutos e resultados calculados. Não foram atribuídos valores a latência, CPU, memória ou capacidade do servidor sem essas medições.
+\end{quote}

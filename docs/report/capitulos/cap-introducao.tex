@@ -1,0 +1,54 @@
+% Texto adaptado de docs/tcc2/relatorio_tcc2.md para a prévia do TCC2.
+\chapter{Introdução}\label{cap:tcc2-1}
+
+\begin{quote}\small
+\textbf{Prévia do TCC2.} As notas de evidência pendente identificam figuras e resultados experimentais ainda necessários. Nenhuma medição foi criada para preencher essas lacunas.
+\end{quote}
+
+Neste capítulo são apresentados o contexto do trabalho, o problema abordado e os objetivos do desenvolvimento. Também é delimitado o conjunto de funcionalidades da versão descrita no relatório, considerando as diferenças entre a proposta inicial e o sistema implementado.
+
+\section{Contextualização}\label{sec:1.1}
+
+O desenvolvimento de um jogo envolve a integração entre sua programação e os elementos com os quais o jogador interage. No presente trabalho, essa integração compreendeu o controle de um personagem, a construção de um cenário tridimensional, a apresentação de informações na interface e o processamento de uma partida compartilhada pela rede. A motivação registrada no TCC1 foi utilizar a criação de um jogo como oportunidade de aprendizado sobre essas diferentes atividades, tendo como proposta um jogo de tiro em primeira pessoa com elementos de plataforma. \fonteprojeto{TCC1}
+
+Para a implementação foi utilizado o motor de jogos Godot. Sua organização em nós e cenas permite representar tanto elementos do mundo, como personagens e armas, quanto telas e componentes de interface. Cenas podem ser reutilizadas e combinadas para formar sistemas maiores, enquanto sinais permitem comunicar a ocorrência de eventos entre os elementos. Essa organização oferece uma base para reunir, em um mesmo projeto, as diferentes partes necessárias à execução de um jogo. \cite{GODOT-CONCEITOS}
+
+A participação de vários jogadores exige manter informações coerentes entre computadores distintos, apesar dos atrasos de comunicação. No jogo desenvolvido, estados como posição, coleta de itens e pontuação foram tratados por um servidor dedicado, com mensagens de eventos e distribuição periódica de estados da partida. \cite{FIEDLER-REDE} \fonteprojeto{CLIENT-LOBBY} \fonteprojeto{SERVER-LOBBY}
+
+\section{Problema e motivação}\label{sec:1.2}
+
+O problema deste trabalho consistiu em desenvolver e integrar as funcionalidades de um jogo de tiro em primeira pessoa 3D, competitivo e executado em rede. A implementação deveria permitir que os participantes se movimentassem por uma arena, utilizassem armas, coletassem recursos e disputassem objetivos em equipes. Além das regras de combate, seria necessário organizar a entrada dos jogadores, o início e o encerramento das partidas e a apresentação de seus resultados. Esses requisitos derivaram do documento de projeto elaborado no TCC1. \fonteprojeto{TCC1}
+
+Uma das principais questões técnicas foi definir qual parte do sistema seria responsável por cada informação. O personagem controlado pelo jogador precisava responder à entrada local, enquanto resultados como dano, consumo de munição e pontuação deveriam ser mantidos no servidor. Essa divisão também exigiu decidir quais estados seriam enviados continuamente, quais poderiam ser comunicados apenas quando mudassem e quais detalhes visuais poderiam permanecer locais. A solução adotada é descrita na seção~\ref{sec:5.2}. \fonteprojeto{JOGADOR-LOCAL} \fonteprojeto{SERVER-LOBBY} \fonteprojeto{CLIENT-LOBBY}
+
+\section{Objetivos}\label{sec:1.3}
+
+\subsection{Objetivo geral}\label{sec:1.3.1}
+
+O objetivo geral do trabalho foi desenvolver um jogo 3D multijogador competitivo do gênero tiro em primeira pessoa, com combate em arena e elementos de plataforma. Na versão implementada, a comunicação foi organizada em uma arquitetura cliente-servidor com servidor dedicado, responsável pelas regras de combate, recursos e resultado das partidas. Esse objetivo retoma a proposta de aprendizado por desenvolvimento do TCC1, incorporando a arquitetura efetivamente construída. \fonteprojeto{TCC1} \fonteprojeto{SERVER-LOBBY}
+
+\subsection{Objetivos específicos}\label{sec:1.3.2}
+
+A partir desse objetivo, foram considerados os seguintes objetivos específicos, relacionados à proposta original e às funcionalidades documentadas no projeto. \fonteprojeto{TCC1} \fonteprojeto{DOC-JOGADOR} \fonteprojeto{DOC-COMBATE} \fonteprojeto{DOC-MAPA} \fonteprojeto{DOC-METRICAS}
+
+\begin{itemize}
+\item Implementar movimentação em primeira pessoa, corrida, salto duplo e interação com plataformas de impulso.
+\item Desenvolver armas, granadas, vida, morte, retorno à partida e coleta de recursos.
+\item Implementar modos de jogo competitivos em equipes, com acompanhamento de pontuação e encerramento da partida.
+\item Organizar a comunicação entre Client e Server e compartilhar contratos e definições usados pelos dois projetos.
+\item Construir uma arena e integrar os modelos, materiais, efeitos sonoros e componentes de interface necessários à experiência de jogo.
+\item Preparar configurações de exportação para os executáveis de Client e Server.
+\item Implementar coleta de métricas e uma dashboard para acompanhar a execução e apoiar a avaliação técnica.
+\end{itemize}
+
+\section{Escopo do trabalho}\label{sec:1.4}
+
+A versão descrita possui dois times, identificados pelas cores azul e vermelho, e dois modos selecionáveis: Team Deathmatch e King of the Hill. Ambos utilizam o mapa Highrise e presets com limite de 300 segundos, meta de 20 pontos e dois jogadores por partida. O processo servidor permite criar até quatro lobbies. Esses valores representam limites de configuração encontrados no código, e não uma capacidade de desempenho comprovada por ensaios de carga. \fonteprojeto{PRESETS} \fonteprojeto{SERVER}
+
+O conjunto de armas é composto por pistola, submetralhadora e espingarda, além de granadas. Também foram implementados pickups de vida e munição e efeitos temporários de dano e cadência de tiro. Capture the Flag, canhão laser, lança-foguetes e vidas limitadas fizeram parte da proposta ou do planejamento, mas não compõem o funcionamento descrito nesta versão. O mapa Prototype permaneceu registrado para desenvolvimento, sem integrar os presets apresentados no menu principal. \fonteprojeto{ARMAS} \fonteprojeto{PICKUPS} \fonteprojeto{PRESETS} \fonteprojeto{TCC1} \fonteprojeto{DOC-MAPA}
+
+O trabalho contempla configurações de exportação do Client para Windows e Linux e do Server para Linux. A avaliação apresentada neste texto distingue a existência dessas configurações, a implementação das funcionalidades e a comprovação experimental da versão distribuída. A geração de uma build a partir de um ambiente limpo e a execução dos cenários de avaliação ainda precisam ter suas evidências incorporadas ao relatório. \fonteprojeto{EXPORT-CLIENT} \fonteprojeto{EXPORT-SERVER} \fonteprojeto{GUIA-BUILD} \fonteprojeto{GUIA-RELEASE}
+
+\section{Estrutura do relatório}\label{sec:1.5}
+
+O Capítulo~\ref{cap:tcc2-2} apresenta a fundamentação necessária para caracterizar o jogo. O Capítulo~\ref{cap:tcc2-3} resume as inspirações visuais e de jogabilidade. O Capítulo~\ref{cap:tcc2-4} descreve as ferramentas, a arquitetura e as tecnologias empregadas, o processo de desenvolvimento e os procedimentos de avaliação. O Capítulo~\ref{cap:tcc2-5} apresenta primeiro o produto pela perspectiva do jogador e, em seguida, seu desenvolvimento técnico e os resultados disponíveis. Por fim, o Capítulo~\ref{cap:tcc2-6} discute os objetivos alcançados, as contribuições e as possibilidades de continuidade.

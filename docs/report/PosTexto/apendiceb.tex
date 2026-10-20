@@ -1,0 +1,116 @@
+\chapter{Fontes técnicas do projeto}\label{ap:fontes-tecnicas}
+O TCC1 foi utilizado como fonte da proposta e do estilo de escrita. Os documentos de features e manutenção contextualizam a organização; para comportamentos específicos, prevaleceram as implementações citadas. Os arquivos de planejamento foram usados somente para identificar propostas e pendências, sem assumir que suas atividades tenham sido executadas.
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr0.32\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.68\textwidth-2\tabcolsep\relax}}
+\caption{Grupos de fontes técnicas do projeto}\label{tab:apoio-2}\\
+\toprule
+Grupo & Fontes para conferência \\
+\midrule
+\endfirsthead
+\multicolumn{2}{l}{\small Material de apoio à revisão (continuação)}\\
+\toprule
+Grupo & Fontes para conferência \\
+\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{\small Continua na próxima página.}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Proposta e planejamento & \fonteprojeto{TCC1}, \fonteprojeto{PLANO-FECHAMENTO}. \\
+Arquitetura e manutenção & \fonteprojeto{DOC-ARQUITETURA}, \fonteprojeto{DOC-SHARED}, \fonteprojeto{GUIA-ASSETS}, \fonteprojeto{GUIA-BUILD}, \fonteprojeto{GUIA-RELEASE}, \fonteprojeto{GUIA-LOCAL}, \fonteprojeto{GUIA-METRICAS}. \\
+Documentação por feature & \fonteprojeto{DOC-JOGADOR}, \fonteprojeto{DOC-COMBATE}, \fonteprojeto{DOC-MODOS}, \fonteprojeto{DOC-MAPA}, \fonteprojeto{DOC-HUD}, \fonteprojeto{DOC-AUDIO}, \fonteprojeto{DOC-METRICAS}. \\
+Configuração e rede & \fonteprojeto{PROJETO-CLIENT}, \fonteprojeto{PROJETO-SERVER}, \fonteprojeto{PRESETS}, \fonteprojeto{SERVER}, \fonteprojeto{SERVER-LOBBY}, \fonteprojeto{CLIENT-LOBBY}, \fonteprojeto{CONEXAO-CLIENT}, \fonteprojeto{PAYLOADS}. \\
+Jogador e regras & \fonteprojeto{JOGADOR-LOCAL}, \fonteprojeto{JOGADOR-REMOTO}, \fonteprojeto{JOGADOR-SERVER}, \fonteprojeto{PERSONAGEM}, \fonteprojeto{TDM}, \fonteprojeto{KOTH}, \fonteprojeto{COLINA}. \\
+Combate e recursos & \fonteprojeto{ARMAS}, \fonteprojeto{PISTOLA}, \fonteprojeto{SMG}, \fonteprojeto{SHOTGUN}, \fonteprojeto{DISPARO-LOCAL}, \fonteprojeto{GRANADA-SERVER}, \fonteprojeto{INVENTARIO}, \fonteprojeto{PICKUPS}, \fonteprojeto{CONTROLADOR-BUFF}, \fonteprojeto{BUFF-DANO}, \fonteprojeto{BUFF-CADENCIA}. \\
+Mapa e apresentação & \fonteprojeto{MAPA-CLIENT}, \fonteprojeto{MAPA-SERVER}, \fonteprojeto{MAPA-BASE-SERVER}, \fonteprojeto{JUMP-PAD}, \fonteprojeto{ZONA-MORTE}, \fonteprojeto{HUD-CENA}, \fonteprojeto{HUD-BUFF}, \fonteprojeto{MENU}, \fonteprojeto{RESULTADO}, \fonteprojeto{RESULTADO-CENA}, \fonteprojeto{CENAS-CLIENT}, \fonteprojeto{AUDIO}, \fonteprojeto{ROSTO}. \\
+Métricas e dashboard & \fonteprojeto{COLETOR}, \fonteprojeto{LOGGER}, \fonteprojeto{CONTRATO-METRICAS}, \fonteprojeto{FPS-CLIENT}, \fonteprojeto{RECEPTOR}, \fonteprojeto{ARMAZENAMENTO}, \fonteprojeto{PROCESSO}, \fonteprojeto{DASHBOARD}. \\
+Preparação e exportação & \fonteprojeto{SETUP-SHARED}, \fonteprojeto{GERADOR-MAPA}, \fonteprojeto{EXPORT-CLIENT}, \fonteprojeto{EXPORT-SERVER}, \fonteprojeto{IGNORE}. \\
+\end{longtable}
+\endgroup
+
+
+\section{Localização dos arquivos}
+Os caminhos abaixo são relativos à raiz do repositório TCC. São registrados como material de conferência; a compilação do relatório utiliza somente arquivos desta pasta. Os identificadores entre colchetes ao longo do texto remetem a este índice.
+
+\begingroup\small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr.36\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr.64\textwidth-2\tabcolsep\relax}}
+\caption{Índice das fontes técnicas}\label{tab:fontes-tecnicas}\\
+\toprule Identificador & Caminho no repositório \\
+\midrule\endfirsthead
+\toprule Identificador & Caminho no repositório \\
+\midrule\endhead
+\bottomrule\endlastfoot
+\phantomsection\label{fonte:TCC1}\texttt{TCC1} & \nolinkurl{docs/tcc/TCC.md} \\
+\phantomsection\label{fonte:PLANO-FECHAMENTO}\texttt{PLANO-FECHAMENTO} & \nolinkurl{docs/tcc2/17_plano_fechamento_pontas_entrega_tcc.md} \\
+\phantomsection\label{fonte:DOC-ARQUITETURA}\texttt{DOC-ARQUITETURA} & \nolinkurl{docs/architecture/overview.md} \\
+\phantomsection\label{fonte:DOC-SHARED}\texttt{DOC-SHARED} & \nolinkurl{docs/architecture/shared-contracts-and-project-layout.md} \\
+\phantomsection\label{fonte:DOC-JOGADOR}\texttt{DOC-JOGADOR} & \nolinkurl{docs/features/player-and-network-session.md} \\
+\phantomsection\label{fonte:DOC-COMBATE}\texttt{DOC-COMBATE} & \nolinkurl{docs/features/weapons-combat-and-grenades.md} \\
+\phantomsection\label{fonte:DOC-MODOS}\texttt{DOC-MODOS} & \nolinkurl{docs/features/match-flow-and-game-modes.md} \\
+\phantomsection\label{fonte:DOC-MAPA}\texttt{DOC-MAPA} & \nolinkurl{docs/features/highrise-map-and-traversal.md} \\
+\phantomsection\label{fonte:DOC-HUD}\texttt{DOC-HUD} & \nolinkurl{docs/features/hud-menu-and-match-results.md} \\
+\phantomsection\label{fonte:DOC-AUDIO}\texttt{DOC-AUDIO} & \nolinkurl{docs/features/audio-and-visual-feedback.md} \\
+\phantomsection\label{fonte:DOC-METRICAS}\texttt{DOC-METRICAS} & \nolinkurl{docs/features/observability-metrics-and-dashboard.md} \\
+\phantomsection\label{fonte:GUIA-ASSETS}\texttt{GUIA-ASSETS} & \nolinkurl{docs/how_to/import-and-maintain-3d-assets.md} \\
+\phantomsection\label{fonte:GUIA-BUILD}\texttt{GUIA-BUILD} & \nolinkurl{docs/how_to/build-client-and-server.md} \\
+\phantomsection\label{fonte:GUIA-RELEASE}\texttt{GUIA-RELEASE} & \nolinkurl{docs/how_to/smoke-test-release.md} \\
+\phantomsection\label{fonte:GUIA-LOCAL}\texttt{GUIA-LOCAL} & \nolinkurl{docs/how_to/run-local-match.md} \\
+\phantomsection\label{fonte:GUIA-METRICAS}\texttt{GUIA-METRICAS} & \nolinkurl{docs/how_to/use-and-extend-metrics.md} \\
+\phantomsection\label{fonte:PROJETO-CLIENT}\texttt{PROJETO-CLIENT} & \nolinkurl{initial_project/Client/project.godot} \\
+\phantomsection\label{fonte:PROJETO-SERVER}\texttt{PROJETO-SERVER} & \nolinkurl{initial_project/Server/project.godot} \\
+\phantomsection\label{fonte:PRESETS}\texttt{PRESETS} & \nolinkurl{initial_project/shared/match_preset_registry.gd} \\
+\phantomsection\label{fonte:SERVER}\texttt{SERVER} & \nolinkurl{initial_project/Server/server/server.gd} \\
+\phantomsection\label{fonte:SERVER-LOBBY}\texttt{SERVER-LOBBY} & \nolinkurl{initial_project/Server/server/lobby.gd} \\
+\phantomsection\label{fonte:CLIENT-LOBBY}\texttt{CLIENT-LOBBY} & \nolinkurl{initial_project/Client/server/lobby.gd} \\
+\phantomsection\label{fonte:CONEXAO-CLIENT}\texttt{CONEXAO-CLIENT} & \nolinkurl{initial_project/Client/server/server.gd} \\
+\phantomsection\label{fonte:PAYLOADS}\texttt{PAYLOADS} & \nolinkurl{initial_project/shared/net/net_payloads.gd} \\
+\phantomsection\label{fonte:JOGADOR-LOCAL}\texttt{JOGADOR-LOCAL} & \nolinkurl{initial_project/Client/player/local/player_local.gd} \\
+\phantomsection\label{fonte:JOGADOR-REMOTO}\texttt{JOGADOR-REMOTO} & \nolinkurl{initial_project/Client/player/remote/player_remote.gd} \\
+\phantomsection\label{fonte:JOGADOR-SERVER}\texttt{JOGADOR-SERVER} & \nolinkurl{initial_project/Server/player/player_server_real.gd} \\
+\phantomsection\label{fonte:PERSONAGEM}\texttt{PERSONAGEM} & \nolinkurl{initial_project/Client/player/player_character.gd} \\
+\phantomsection\label{fonte:TDM}\texttt{TDM} & \nolinkurl{initial_project/Server/game_modes/team_deathmatch_mode.gd} \\
+\phantomsection\label{fonte:KOTH}\texttt{KOTH} & \nolinkurl{initial_project/Server/game_modes/king_of_the_hill_mode.gd} \\
+\phantomsection\label{fonte:COLINA}\texttt{COLINA} & \nolinkurl{initial_project/Server/game_modes/objectives/hill_zone.gd} \\
+\phantomsection\label{fonte:ARMAS}\texttt{ARMAS} & \nolinkurl{initial_project/shared/weapons/weapon_catalog.gd} \\
+\phantomsection\label{fonte:PISTOLA}\texttt{PISTOLA} & \nolinkurl{initial_project/shared/weapons/data/pistol_definition.tres} \\
+\phantomsection\label{fonte:SMG}\texttt{SMG} & \nolinkurl{initial_project/shared/weapons/data/smg_definition.tres} \\
+\phantomsection\label{fonte:SHOTGUN}\texttt{SHOTGUN} & \nolinkurl{initial_project/shared/weapons/data/shotgun_definition.tres} \\
+\phantomsection\label{fonte:DISPARO-LOCAL}\texttt{DISPARO-LOCAL} & \nolinkurl{initial_project/Client/player/local_weapon_holder.gd} \\
+\phantomsection\label{fonte:GRANADA-SERVER}\texttt{GRANADA-SERVER} & \nolinkurl{initial_project/Server/player/grenade/grenade.gd} \\
+\phantomsection\label{fonte:INVENTARIO}\texttt{INVENTARIO} & \nolinkurl{initial_project/shared/weapons/weapon_ammo_inventory.gd} \\
+\phantomsection\label{fonte:PICKUPS}\texttt{PICKUPS} & \nolinkurl{initial_project/Server/player/pickups/pickup.gd} \\
+\phantomsection\label{fonte:CONTROLADOR-BUFF}\texttt{CONTROLADOR-BUFF} & \nolinkurl{initial_project/Server/player/powerups/player_powerup_controller.gd} \\
+\phantomsection\label{fonte:BUFF-DANO}\texttt{BUFF-DANO} & \nolinkurl{initial_project/Server/player/pickups/data/damage_powerup_pickup_data.tres} \\
+\phantomsection\label{fonte:BUFF-CADENCIA}\texttt{BUFF-CADENCIA} & \nolinkurl{initial_project/Server/player/pickups/data/fire_rate_powerup_pickup_data.tres} \\
+\phantomsection\label{fonte:MAPA-CLIENT}\texttt{MAPA-CLIENT} & \nolinkurl{initial_project/Client/maps/highrise/map_highrise.tscn} \\
+\phantomsection\label{fonte:MAPA-SERVER}\texttt{MAPA-SERVER} & \nolinkurl{initial_project/Server/maps/highrise/server_map_highrise.tscn} \\
+\phantomsection\label{fonte:MAPA-BASE-SERVER}\texttt{MAPA-BASE-SERVER} & \nolinkurl{initial_project/shared/server_game_map.gd} \\
+\phantomsection\label{fonte:JUMP-PAD}\texttt{JUMP-PAD} & \nolinkurl{initial_project/Client/platforms/jump_pad.gd} \\
+\phantomsection\label{fonte:ZONA-MORTE}\texttt{ZONA-MORTE} & \nolinkurl{initial_project/Server/platforms/death_zone.gd} \\
+\phantomsection\label{fonte:HUD-CENA}\texttt{HUD-CENA} & \nolinkurl{initial_project/Client/player/local/player_local.tscn} \\
+\phantomsection\label{fonte:HUD-BUFF}\texttt{HUD-BUFF} & \nolinkurl{initial_project/Client/ui/hud/powerup_status_item.gd} \\
+\phantomsection\label{fonte:MENU}\texttt{MENU} & \nolinkurl{initial_project/Client/ui/main_menu/main_menu.tscn} \\
+\phantomsection\label{fonte:RESULTADO}\texttt{RESULTADO} & \nolinkurl{initial_project/Client/ui/match_end_info/match_end_info_ui.gd} \\
+\phantomsection\label{fonte:RESULTADO-CENA}\texttt{RESULTADO-CENA} & \nolinkurl{initial_project/Client/ui/match_end_info/match_end_info_ui.tscn} \\
+\phantomsection\label{fonte:CENAS-CLIENT}\texttt{CENAS-CLIENT} & \nolinkurl{initial_project/Client/game/local_game_scene_manager.gd} \\
+\phantomsection\label{fonte:AUDIO}\texttt{AUDIO} & \nolinkurl{initial_project/Client/game/audio/audio_manager.gd} \\
+\phantomsection\label{fonte:ROSTO}\texttt{ROSTO} & \nolinkurl{initial_project/Client/player/character/face_controller.gd} \\
+\phantomsection\label{fonte:COLETOR}\texttt{COLETOR} & \nolinkurl{initial_project/Server/server/server_metrics_collector.gd} \\
+\phantomsection\label{fonte:LOGGER}\texttt{LOGGER} & \nolinkurl{initial_project/shared/metrics/network_metrics_logger.gd} \\
+\phantomsection\label{fonte:CONTRATO-METRICAS}\texttt{CONTRATO-METRICAS} & \nolinkurl{initial_project/shared/metrics/network_metrics_sample_utils.gd} \\
+\phantomsection\label{fonte:FPS-CLIENT}\texttt{FPS-CLIENT} & \nolinkurl{initial_project/Client/server/client_metrics_reporter.gd} \\
+\phantomsection\label{fonte:RECEPTOR}\texttt{RECEPTOR} & \nolinkurl{metrics_dashboard/udp_receiver.py} \\
+\phantomsection\label{fonte:ARMAZENAMENTO}\texttt{ARMAZENAMENTO} & \nolinkurl{metrics_dashboard/metrics_store.py} \\
+\phantomsection\label{fonte:PROCESSO}\texttt{PROCESSO} & \nolinkurl{metrics_dashboard/process_monitor.py} \\
+\phantomsection\label{fonte:DASHBOARD}\texttt{DASHBOARD} & \nolinkurl{metrics_dashboard/main.py} \\
+\phantomsection\label{fonte:SETUP-SHARED}\texttt{SETUP-SHARED} & \nolinkurl{initial_project/setup_shared_links.ps1} \\
+\phantomsection\label{fonte:GERADOR-MAPA}\texttt{GERADOR-MAPA} & \nolinkurl{initial_project/generate_highrise_server_map.ps1} \\
+\phantomsection\label{fonte:EXPORT-CLIENT}\texttt{EXPORT-CLIENT} & \nolinkurl{initial_project/Client/export_presets.cfg} \\
+\phantomsection\label{fonte:EXPORT-SERVER}\texttt{EXPORT-SERVER} & \nolinkurl{initial_project/Server/export_presets.cfg} \\
+\phantomsection\label{fonte:IGNORE}\texttt{IGNORE} & \nolinkurl{.gitignore} \\
+\end{longtable}\endgroup

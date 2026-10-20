@@ -1,0 +1,60 @@
+% Texto adaptado de docs/tcc2/relatorio_tcc2.md para a prévia do TCC2.
+\chapter{Conclusão}\label{cap:tcc2-6}
+
+Este capítulo retoma os objetivos do trabalho e discute o produto descrito. As conclusões se limitam às funcionalidades identificadas e às evidências disponíveis, mantendo a avaliação quantitativa como uma etapa a completar antes do fechamento do relatório.
+
+\section{Síntese do trabalho}\label{sec:6.1}
+
+O trabalho resultou na implementação de um jogo de tiro em primeira pessoa 3D organizado em partidas entre equipes. A proposta de combinar combate em arena e elementos de plataforma foi materializada em movimentação local, salto duplo, jump pads, três armas, granadas, coleta de recursos e dois modos de jogo. A arena Highrise e os componentes de interface integram essas funcionalidades em um fluxo que vai da entrada no lobby à apresentação dos resultados. \fonteprojeto{JOGADOR-LOCAL} \fonteprojeto{ARMAS} \fonteprojeto{GRANADA-SERVER} \fonteprojeto{PICKUPS} \fonteprojeto{PRESETS} \fonteprojeto{MAPA-CLIENT} \fonteprojeto{RESULTADO}
+
+A arquitetura adotada utiliza um processo servidor dedicado para organizar as partidas e decidir dano, recursos e pontuação. A sincronização combina estados contínuos, eventos e apresentação local, com responsabilidades diferentes para cada informação. Também foram implementados mecanismos de coleta e uma dashboard, ampliando o produto com recursos para acompanhar sua operação e preparar uma avaliação técnica. \fonteprojeto{SERVER-LOBBY} \fonteprojeto{CLIENT-LOBBY} \fonteprojeto{COLETOR} \fonteprojeto{DASHBOARD}
+
+\section{Objetivos alcançados}\label{sec:6.2}
+
+O objetivo geral foi atendido quanto à construção das funcionalidades centrais e à sua integração descrita no código. A comprovação da qualidade da versão distribuída depende ainda do registro dos testes e do experimento indicados no relatório. A Tabela~\ref{tab:tcc2-7} relaciona cada objetivo específico ao resultado correspondente, sem equiparar a existência da implementação à validação de todas as suas condições de uso. \fonteprojeto{GUIA-RELEASE} \fonteprojeto{PLANO-FECHAMENTO}
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr0.32\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.68\textwidth-2\tabcolsep\relax}}
+\caption{Relação entre objetivos específicos e resultados}\label{tab:tcc2-7}\\
+\toprule
+Objetivo & Resultado sustentado nesta versão \\
+\midrule
+\endfirsthead
+\multicolumn{2}{l}{\small Relação entre objetivos específicos e resultados (continuação)}\\
+\toprule
+Objetivo & Resultado sustentado nesta versão \\
+\midrule
+\endhead
+\midrule
+\multicolumn{2}{r}{\small Continua na próxima página.}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Movimentação e plataforma & Controle em primeira pessoa, corrida, salto duplo e impulso local implementados. \fonteprojeto{JOGADOR-LOCAL} \fonteprojeto{JUMP-PAD} \\
+Combate e recursos & Três armas, granadas, vida, retorno à partida, inventário e pickups implementados. \fonteprojeto{ARMAS} \fonteprojeto{GRANADA-SERVER} \fonteprojeto{SERVER-LOBBY} \fonteprojeto{PICKUPS} \\
+Modos competitivos & TDM e KOTH configurados em presets, com regras próprias de pontuação. \fonteprojeto{PRESETS} \fonteprojeto{TDM} \fonteprojeto{KOTH} \\
+Comunicação e contratos & Client e Server utilizam RPCs, snapshots e definições compartilhadas. \fonteprojeto{CLIENT-LOBBY} \fonteprojeto{SERVER-LOBBY} \fonteprojeto{PAYLOADS} \\
+Arena e apresentação & Highrise, HUD, materiais de time e tratamento de áudio integrados ao projeto. \fonteprojeto{MAPA-CLIENT} \fonteprojeto{HUD-CENA} \fonteprojeto{JOGADOR-REMOTO} \fonteprojeto{AUDIO} \\
+Exportação & Presets para Windows/Linux e procedimento de build disponíveis; reprodução em checkout limpo ainda a documentar. \fonteprojeto{EXPORT-CLIENT} \fonteprojeto{EXPORT-SERVER} \fonteprojeto{GUIA-BUILD} \\
+Observação e avaliação & Coleta CSV/UDP e dashboard implementadas; resultados do experimento ainda a incorporar. \fonteprojeto{LOGGER} \fonteprojeto{DASHBOARD} \fonteprojeto{PLANO-FECHAMENTO} \\
+\end{longtable}
+\endgroup
+
+Fonte: correspondência entre os objetivos da seção~\ref{sec:1.3.2} e as evidências apresentadas no Capítulo~\ref{cap:tcc2-5}.
+
+\section{Contribuições e aprendizado}\label{sec:6.3}
+
+A principal contribuição técnica está na integração de funcionalidades que dependem umas das outras durante uma partida. O combate altera vida e estatísticas; a morte interfere na ocupação de objetivos e nos buffs; a coleta modifica recursos; e a interface precisa apresentar essas mudanças em cada Client. A organização por responsabilidades tornou possível descrever essas relações e identificar quais decisões pertencem ao Server e quais permanecem locais. \fonteprojeto{SERVER-LOBBY} \fonteprojeto{CLIENT-LOBBY} \fonteprojeto{PICKUPS} \fonteprojeto{CONTROLADOR-BUFF}
+
+O projeto também oferece um material de estudo sobre escolhas de sincronização em um jogo concreto. A implementação evidencia que posição, munição, objetivos, efeitos e skins não precisam usar o mesmo fluxo de comunicação. A documentação desses casos, acompanhada de suas limitações, contribui para a manutenção e para a compreensão das consequências de cada escolha. A infraestrutura de métricas complementa esse material ao fornecer instrumentos para confrontar a descrição do sistema com sua execução. \fonteprojeto{CLIENT-LOBBY} \fonteprojeto{JOGADOR-REMOTO} \fonteprojeto{COLETOR} \fonteprojeto{DOC-METRICAS}
+
+\section{Trabalhos futuros}\label{sec:6.4}
+
+Uma continuidade imediata é concluir a avaliação funcional e quantitativa da versão distribuída. Isso inclui preservar as rodadas de coleta, registrar o ambiente e comparar cenários com diferentes quantidades de partidas ativas. A build também deve ser reproduzida a partir de um checkout limpo, permitindo demonstrar que os arquivos e procedimentos documentados são suficientes para gerar os executáveis. Essas atividades já encontram suporte nos guias e no planejamento de fechamento. \fonteprojeto{GUIA-RELEASE} \fonteprojeto{GUIA-BUILD} \fonteprojeto{PLANO-FECHAMENTO}
+
+Na rede, as limitações identificadas motivam a avaliação de validação de movimento, controle de frequência dos disparos no Server, tratamento consistente da explosão de granadas e recuperação de estados após interrupções. O reenvio dos buffs pode ser ampliado para incluir o tempo restante, caso se deseje reconstruir também o indicador local. Essas possibilidades derivam dos caminhos atuais de processamento e devem ser acompanhadas de testes que verifiquem a coerência entre participantes. \fonteprojeto{SERVER-LOBBY} \fonteprojeto{CLIENT-LOBBY} \fonteprojeto{JOGADOR-LOCAL}
+
+No conteúdo, novos mapas e modos podem ampliar a variedade de partidas, mas a arena atual também oferece espaço para avaliar percursos e distribuição de recursos antes de aumentar o escopo. Na observabilidade, a persistência das medidas acrescentadas pela dashboard permitiria incluí-las de forma mais direta nas análises posteriores. Com isso, a continuidade do trabalho pode se apoiar nas funcionalidades existentes e nas limitações documentadas, preservando a relação entre desenvolvimento, verificação e evidência. \fonteprojeto{MAPA-SERVER} \fonteprojeto{PRESETS} \fonteprojeto{ARMAZENAMENTO} \fonteprojeto{PROCESSO}

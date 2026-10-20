@@ -1,0 +1,22 @@
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  bloco/.style={draw,rounded corners,align=center,text width=2.9cm,minimum height=.8cm,font=\small},
+  seta/.style={-{Latex[length=2mm]},thick}
+]
+\node[bloco] (client) at (0,0) {Clients: FPS e ping};
+\node[bloco] (server) at (0,-1.3) {Server: coletor};
+\node[bloco] (logger) at (0,-2.6) {Logger};
+\node[bloco] (csv) at (-3.6,-4.2) {Arquivos CSV};
+\node[bloco] (receiver) at (3.6,-4.2) {Receptor Python};
+\node[bloco] (store) at (3.6,-6.0) {Histórico em memória};
+\node[bloco] (psutil) at (7.5,-6.0) {psutil:\\processo local};
+\node[bloco] (browser) at (3.6,-7.8) {Navegador};
+\draw[seta] (client) -- (server);
+\draw[seta] (server) -- (logger);
+\draw[seta] (logger) -| (csv);
+\draw[seta] (logger) -| node[pos=.25,above,font=\footnotesize] {JSON por UDP} (receiver);
+\draw[seta] (receiver) -- (store);
+\draw[seta] (psutil) -- (store);
+\draw[seta] (store) -- node[right,font=\footnotesize] {HTTP e WebSocket} (browser);
+\end{tikzpicture}%
+}
