@@ -48,11 +48,11 @@ O trabalho contempla configurações de exportação do Client para Windows e Li
 
 ### 1.5 Estrutura do relatório
 
-O Capítulo 2 apresenta a fundamentação do trabalho. O Capítulo 3 resume as inspirações visuais e de jogabilidade. O Capítulo 4 descreve as ferramentas, a organização do desenvolvimento e os procedimentos de avaliação. O Capítulo 5 apresenta o sistema por funcionalidades, incluindo sua arquitetura de rede e os mecanismos de observação. Por fim, o Capítulo 6 discute os objetivos alcançados, as contribuições e as possibilidades de continuidade.
+O Capítulo 2 apresenta a fundamentação necessária para caracterizar o jogo. O Capítulo 3 resume as inspirações visuais e de jogabilidade. O Capítulo 4 descreve as ferramentas, a arquitetura e as tecnologias empregadas, o processo de desenvolvimento e os procedimentos de avaliação. O Capítulo 5 apresenta primeiro o produto pela perspectiva do jogador e, em seguida, seu desenvolvimento técnico e os resultados disponíveis. Por fim, o Capítulo 6 discute os objetivos alcançados, as contribuições e as possibilidades de continuidade.
 
 ## 2 Fundamentação teórica
 
-Este capítulo apresenta os conceitos necessários para compreender a implementação. A discussão se concentra nas características do jogo, na comunicação entre seus participantes e nos mecanismos utilizados para observar sua execução.
+Este capítulo apresenta os conceitos necessários para caracterizar o produto desenvolvido. A discussão se concentra nos motores de jogos, nos jogos de tiro em primeira pessoa, nos elementos de plataforma e na organização de partidas multijogador competitivas em tempo real.
 
 ### 2.1 Motores de jogos e Godot Engine
 
@@ -78,28 +78,6 @@ O TCC1 organizou os jogos multijogador segundo a disposição dos participantes,
 
 A participação em tempo real não implica ausência de atraso. Cada computador possui seu próprio ciclo de execução, e as informações levam tempo para atravessar a rede. Por isso, a aplicação precisa conciliar a resposta percebida pelo jogador com o estado conhecido pelos demais participantes. Predição e interpolação são estratégias distintas para lidar com esse problema: a primeira antecipa localmente uma resposta; a segunda constrói uma transição entre estados recebidos. [FIEDLER-REDE] [FIEDLER-INTERPOLACAO]
 
-### 2.5 Arquiteturas de comunicação para jogos
-
-A arquitetura define como os participantes trocam informações e onde são decididos os resultados. Fiedler apresenta tanto a troca de comandos entre pares quanto a organização cliente-servidor. Nesta última, o servidor mantém uma referência comum para os clientes; no modelo de simulação determinística entre pares, a reprodução consistente dos comandos depende de condições iniciais e regras equivalentes. Esses modelos exigem soluções diferentes para sincronização. [FIEDLER-REDE]
-
-No presente projeto, o servidor foi implementado como um processo separado dos jogadores. A autoridade, porém, deve ser descrita por responsabilidade: o Server calcula dano e pontuação, mas utiliza posições recebidas dos Clients para atualizar os personagens. A existência de um servidor dedicado, portanto, não significa que toda a movimentação seja recalculada e validada por ele. Essa delimitação é necessária para interpretar tanto a arquitetura quanto suas limitações. [SERVER] [SERVER-LOBBY]
-
-### 2.6 Tecnologias de rede utilizadas
-
-O UDP é um protocolo de transporte baseado em datagramas. Sua especificação não garante entrega nem proteção contra duplicação de mensagens; requisitos adicionais devem ser tratados por outras camadas. No trabalho, ele aparece em dois contextos: como base da comunicação multijogador por ENet e como transporte direto das amostras enviadas à dashboard. A escolha do transporte, por si só, não determina se uma mensagem da aplicação será reenviada. [UDP] [GODOT-REDE] [LOGGER] [RECEPTOR]
-
-A Godot disponibiliza comunicação de alto nível por chamadas remotas de procedimento, ou RPCs. Uma função pode ser executada em outro participante, com restrições sobre quem pode chamá-la e sobre a forma de transferência. Essa API permite usar a estrutura de nós do jogo para organizar a comunicação; o projeto a utiliza nos componentes que representam o servidor e cada lobby. [GODOT-REDE] [SERVER] [CLIENT-LOBBY]
-
-Os modos de transferência usados são confiável, não confiável e não confiável ordenado. No primeiro, há confirmação e tentativas de reenvio; no segundo, uma mensagem pode se perder ou chegar fora de ordem; no terceiro, mensagens atrasadas podem ser descartadas quando uma atualização posterior já foi recebida. Essa diferença fundamenta o uso de eventos confiáveis para mudanças discretas e de atualizações substituíveis para movimento. [GODOT-PEER]
-
-Outra técnica utilizada foi a interpolação de snapshots. Um snapshot é um registro do estado em determinado instante. Ao manter um pequeno histórico dos registros recebidos, o Client pode apresentar uma posição intermediária entre dois deles, em vez de saltar diretamente para cada atualização. O buffer acrescenta um atraso de apresentação, em troca de uma transição visual mais contínua. [FIEDLER-INTERPOLACAO]
-
-### 2.7 Observabilidade em jogos em rede
-
-A observabilidade utiliza informações produzidas por um sistema para ajudar a compreender seu comportamento. A documentação do OpenTelemetry apresenta métricas como medições que descrevem aspectos de sua operação. No contexto deste jogo, elas permitem acompanhar condições como quantidade de participantes, tráfego de rede e tempo de execução de uma parte do servidor. O projeto possui instrumentação própria; não utiliza uma integração com o OpenTelemetry. [OBSERVABILIDADE] [COLETOR]
-
-É necessário distinguir observar a execução de demonstrar seu desempenho. Uma dashboard pode mostrar uma alteração de latência durante uma partida, mas a comparação entre condições depende de registrar o cenário, o intervalo e a origem das amostras. O trabalho dispõe de gravação em CSV e apresentação em tempo real para apoiar esses dois usos, enquanto o plano de fechamento mantém a realização do experimento como uma atividade própria. [DOC-METRICAS] [LOGGER] [PLANO-FECHAMENTO]
-
 ## 3 Inspirações visuais e de jogabilidade
 
 Quake III Arena e Unreal Tournament inspiraram o combate em arena, a coleta de recursos e a disputa por objetivos. No jogo desenvolvido, essas ideias aparecem nas armas, nos itens coletáveis e nos modos Team Deathmatch e King of the Hill. [TCC1] [QUAKE] [UNREAL] [ARMAS] [PRESETS]
@@ -108,7 +86,7 @@ Lovely Planet serviu de referência para a combinação de tiros com saltos e pa
 
 ## 4 Materiais e métodos
 
-Este capítulo descreve as ferramentas utilizadas e a organização técnica do trabalho. Também apresenta o procedimento de verificação e o método de coleta previsto para a avaliação. A existência de um roteiro de testes é distinguida de sua execução documentada, para que atividades planejadas não sejam apresentadas como resultados concluídos.
+Este capítulo descreve os recursos e procedimentos empregados no desenvolvimento. São apresentadas as ferramentas, a arquitetura de comunicação, as tecnologias de rede, a infraestrutura de observabilidade, a organização do projeto e os métodos de verificação e coleta. A existência de um roteiro de testes é distinguida de sua execução documentada, para que atividades planejadas não sejam apresentadas como resultados concluídos.
 
 ### 4.1 Ferramentas e tecnologias
 
@@ -127,25 +105,53 @@ A Godot 4.5 foi utilizada nos projetos Client e Server, com comportamentos progr
 
 Fonte: proposta, guias de manutenção e arquivos de suporte do projeto. [TCC1] [GUIA-ASSETS] [SETUP-SHARED] [GERADOR-MAPA] [DASHBOARD] [PROCESSO]
 
-### 4.2 Processo de desenvolvimento
+### 4.2 Arquitetura e tecnologias de rede
+
+#### 4.2.1 Arquitetura de comunicação
+
+A arquitetura define como os participantes trocam informações e onde são decididos os resultados. Fiedler apresenta tanto a troca de comandos entre pares quanto a organização cliente-servidor. Nesta última, o servidor mantém uma referência comum para os clientes; no modelo de simulação determinística entre pares, a reprodução consistente dos comandos depende de condições iniciais e regras equivalentes. Esses modelos exigem soluções diferentes para sincronização. [FIEDLER-REDE]
+
+No presente projeto, o servidor foi implementado como um processo separado dos jogadores. A autoridade, porém, deve ser descrita por responsabilidade: o Server calcula dano e pontuação, mas utiliza posições recebidas dos Clients para atualizar os personagens. A existência de um servidor dedicado, portanto, não significa que toda a movimentação seja recalculada e validada por ele. Essa delimitação é necessária para interpretar tanto a arquitetura quanto suas limitações. [SERVER] [SERVER-LOBBY]
+
+#### 4.2.2 Tecnologias de comunicação utilizadas
+
+O UDP é um protocolo de transporte baseado em datagramas. Sua especificação não garante entrega nem proteção contra duplicação de mensagens; requisitos adicionais devem ser tratados por outras camadas. No trabalho, ele aparece em dois contextos: como base da comunicação multijogador por ENet e como transporte direto das amostras enviadas à dashboard. A escolha do transporte, por si só, não determina se uma mensagem da aplicação será reenviada. [UDP] [GODOT-REDE] [LOGGER] [RECEPTOR]
+
+A Godot disponibiliza comunicação de alto nível por chamadas remotas de procedimento, ou RPCs. Uma função pode ser executada em outro participante, com restrições sobre quem pode chamá-la e sobre a forma de transferência. Essa API permite usar a estrutura de nós do jogo para organizar a comunicação; o projeto a utiliza nos componentes que representam o servidor e cada lobby. [GODOT-REDE] [SERVER] [CLIENT-LOBBY]
+
+Os modos de transferência usados são confiável, não confiável e não confiável ordenado. No primeiro, há confirmação e tentativas de reenvio; no segundo, uma mensagem pode se perder ou chegar fora de ordem; no terceiro, mensagens atrasadas podem ser descartadas quando uma atualização posterior já foi recebida. Essa diferença fundamenta o uso de eventos confiáveis para mudanças discretas e de atualizações substituíveis para movimento. [GODOT-PEER]
+
+Outra técnica utilizada foi a interpolação de snapshots. Um snapshot é um registro do estado em determinado instante. Ao manter um pequeno histórico dos registros recebidos, o Client pode apresentar uma posição intermediária entre dois deles, em vez de saltar diretamente para cada atualização. O buffer acrescenta um atraso de apresentação, em troca de uma transição visual mais contínua. [FIEDLER-INTERPOLACAO]
+
+### 4.3 Observabilidade
+
+A observabilidade utiliza informações produzidas por um sistema para ajudar a compreender seu comportamento. A documentação do OpenTelemetry apresenta métricas como medições que descrevem aspectos de sua operação. No contexto deste jogo, elas permitem acompanhar condições como quantidade de participantes, tráfego de rede e tempo de execução de uma parte do servidor. O projeto possui instrumentação própria; não utiliza uma integração com o OpenTelemetry. [OBSERVABILIDADE] [COLETOR]
+
+É necessário distinguir observar a execução de demonstrar seu desempenho. Uma dashboard pode mostrar uma alteração de latência durante uma partida, mas a comparação entre condições depende de registrar o cenário, o intervalo e a origem das amostras. O trabalho dispõe de gravação em CSV e apresentação em tempo real para apoiar esses dois usos, enquanto o plano de fechamento mantém a realização do experimento como uma atividade própria. [DOC-METRICAS] [LOGGER] [PLANO-FECHAMENTO]
+
+### 4.4 Processo de desenvolvimento
 
 A proposta do TCC1 indicou o modelo Double Diamond como referência de processo. O Design Council o apresenta por meio de atividades de descoberta, definição, desenvolvimento e entrega. No material disponível, há uma proposta inicial, diferentes funcionalidades implementadas e planos de fechamento posteriores; esses registros permitem acompanhar mudanças de escopo, mas não comprovam a execução formal de todas as etapas do modelo em cada iteração. Assim, o Double Diamond é apresentado como referência do planejamento original. [TCC1] [DOUBLE-DIAMOND] [PLANO-FECHAMENTO]
 
 Para descrever o desenvolvimento realizado, o relatório organiza o produto pelas funcionalidades que podem ser identificadas no repositório. Jogador, combate, modos, interface e observabilidade são tratados a partir de seus comportamentos e das relações entre seus componentes. Essa organização acompanha a documentação técnica consolidada por feature e permite explicar as decisões sem depender de uma cronologia de commits ou de tarefas ainda não encerradas. [DOC-JOGADOR] [DOC-COMBATE] [DOC-MODOS] [DOC-HUD] [DOC-METRICAS]
 
-### 4.3 Evolução da proposta do TCC1
+### 4.5 Evolução da proposta do TCC1
 
-A proposta original previa um participante hospedeiro e utilizava a denominação peer-to-peer para sua arquitetura. A implementação passou a separar o programa executado pelos jogadores do processo que mantém as partidas. Também passou a utilizar RPCs e snapshots próprios para a sincronização, em vez de depender do mecanismo de replicação automática descrito no protótipo inicial. Essa mudança tornou explícitas as responsabilidades de cada lado da comunicação. [TCC1] [SERVER] [CLIENT-LOBBY] [SERVER-LOBBY]
+A proposta original previa um participante hospedeiro e utilizava a denominação peer-to-peer para sua arquitetura. A implementação passou a separar o programa executado pelos jogadores do processo que mantém as partidas. Essa mudança permitiu executar o Server sem a apresentação do jogo e manter em um ponto comum as regras de dano, recursos, modos e resultados. RPCs e snapshots próprios substituíram a dependência do mecanismo de replicação automática descrito no protótipo inicial, tornando explícitas as responsabilidades de cada lado da comunicação. [TCC1] [SERVER] [CLIENT-LOBBY] [SERVER-LOBBY]
 
-O recorte de conteúdo também mudou. A proposta já mencionava Rei do Pedaço, além de mata-mata e Capture the Flag; na implementação, foram disponibilizados TDM e KOTH, enquanto CTF ficou fora do escopo. Pistola, SMG e shotgun formam o catálogo atual, e a melhoria temporária de velocidade de movimentação deu lugar a uma melhoria de cadência de tiro. Essas diferenças são apresentadas na seção 5.13.3. Os arquivos demonstram o que mudou, mas não justificam atribuir a cada alteração um motivo que não tenha sido registrado. [TCC1] [PRESETS] [ARMAS] [BUFF-DANO] [BUFF-CADENCIA]
+A configuração livre por um jogador hospedeiro também foi substituída por presets compartilhados. Com isso, Client e Server trabalham com combinações previamente conhecidas de mapa, modo, tempo, pontuação e quantidade de participantes, e o gerenciador pode associar solicitações compatíveis ao mesmo lobby. Essa delimitação reduz as variações que precisam ser tratadas e verificadas na versão entregue. [PRESETS] [SERVER]
 
-### 4.4 Organização do projeto
+O recorte de conteúdo foi ajustado para concentrar o desenvolvimento e a verificação em um conjunto menor de combinações. Foram disponibilizados TDM e KOTH em Highrise, enquanto Capture the Flag e o mapa Prototype ficaram fora da seleção principal. Highrise passou a reunir os elementos necessários aos dois modos entregues, como pontos de nascimento, recursos, jump pads e zona de controle. Dessa forma, o mesmo mapa pode ser utilizado no fluxo principal e nas duas modalidades avaliadas. [PLANO-FECHAMENTO] [PRESETS] [DOC-MAPA]
+
+O catálogo final de combate também foi revisto. Pistola, SMG e shotgun assumem papéis diferenciados por cadência, dispersão e quantidade de traços, enquanto as granadas acrescentam dano em área. A melhoria de velocidade de movimentação prevista inicialmente deu lugar ao aumento temporário de cadência, integrado ao mesmo ciclo de armas, munição e feedback da interface. Essas alterações descrevem o produto efetivamente consolidado e são sintetizadas na seção 5.3.3. [TCC1] [ARMAS] [BUFF-DANO] [BUFF-CADENCIA]
+
+### 4.6 Organização do projeto
 
 O código do jogo foi organizado em dois projetos Godot, cada um com sua configuração e suas cenas de entrada. O Client contém o controle local, a apresentação do mapa e as telas. O Server mantém conexões, lobbies, jogadores, recursos e modos de jogo. Um terceiro diretório, denominado `shared`, reúne definições interpretadas pelos dois lados, como identificadores, contratos de mensagens, configurações de partida e inventário de munição. [DOC-ARQUITETURA] [DOC-SHARED]
 
 O compartilhamento local é preparado por um script que cria links de diretório para a mesma origem. Portanto, o conteúdo acessado por cada projeto não corresponde a duas cópias independentes do código comum. Já os arquivos de autoria dos assets seguem o padrão existente de pastas `import/`. Esse arranjo faz parte da preparação do ambiente e precisa ser considerado ao reproduzir uma build em outra máquina. [SETUP-SHARED] [DOC-SHARED] [GUIA-ASSETS]
 
-### 4.5 Método de verificação funcional
+### 4.7 Método de verificação funcional
 
 O procedimento documentado para uma verificação funcional consiste em executar o Server e conectar dois Clients, percorrendo o fluxo completo de partida. O roteiro inclui entrada no lobby, escolha de modo, nascimento dos personagens, combate, coleta de recursos, atualização da interface, encerramento e retorno ao menu. Para KOTH, é necessário observar separadamente a zona vazia, controlada e contestada, pois cada estado produz uma consequência diferente sobre a pontuação. [GUIA-RELEASE] [GUIA-LOCAL] [COLINA] [KOTH]
 
@@ -153,7 +159,7 @@ A execução desse procedimento deve registrar a versão utilizada, a plataforma
 
 > **Evidência pendente:** registro do teste integrado da versão escolhida para a entrega, com data, identificação da build, participantes ou instâncias utilizadas e resultado de cada cenário. O procedimento acima está definido; sua aprovação não foi presumida.
 
-### 4.6 Método de coleta e análise de métricas
+### 4.8 Método de coleta e análise de métricas
 
 A implementação permite coletar amostras periódicas, com intervalo padrão de um segundo, e gravá-las em CSV ou transmiti-las à dashboard. O coletor utiliza contadores do host ENet, estatísticas dos peers e informações de lobbies e jogadores. Os Clients também informam seus FPS, que são reunidos pelo Server. Essa infraestrutura fornece as variáveis para o experimento, mas a quantidade de amostras e a duração efetiva de cada rodada precisam ser registradas durante sua execução. [COLETOR] [LOGGER] [FPS-CLIENT]
 
@@ -165,9 +171,11 @@ A análise deverá relacionar tráfego, RTT, perda estimada de pacotes e tempo m
 
 ## 5 Desenvolvimento e resultados
 
-Este capítulo apresenta as funcionalidades implementadas e a forma como foram integradas. Primeiro são descritos o ciclo do jogo e sua arquitetura; em seguida, jogador, modos, mapa, combate e interface. A coleta de métricas e a dashboard são apresentadas como funcionalidades técnicas. A discussão dos resultados diferencia o comportamento identificado na implementação das evidências de execução ainda necessárias.
+Este capítulo apresenta o produto desenvolvido e os resultados disponíveis. A primeira parte descreve a experiência do ponto de vista do jogador, funcionando como um guia conciso do jogo entregue. A segunda constitui o relatório técnico, no qual são discutidas a arquitetura, a sincronização e a implementação das principais funcionalidades. A parte final reúne a verificação funcional, os resultados das métricas, a comparação com a proposta e as limitações identificadas.
 
-### 5.1 Visão geral do jogo
+### 5.1 Visão geral do jogo final
+
+Esta seção apresenta o jogo conforme percebido pelo participante, desde a entrada em uma partida até a exibição do resultado. Os detalhes internos que sustentam esse funcionamento são discutidos posteriormente, no relatório técnico.
 
 #### 5.1.1 Conceito e ciclo principal de jogabilidade
 
@@ -216,7 +224,27 @@ flowchart LR
 
 Figura 1 — Fluxo principal de telas e participação. Fonte: elaboração a partir dos gerenciadores de cena e lobby. O retorno após a morte depende de a partida continuar ativa. [CENAS-CLIENT] [CLIENT-LOBBY] [SERVER-LOBBY]
 
-### 5.2 Arquitetura do sistema
+#### 5.1.4 Modos de jogo e objetivos
+
+O jogador pode participar de Team Deathmatch ou King of the Hill. No primeiro modo, as equipes disputam pontos por meio das eliminações, e quedas que provoquem a morte também favorecem a equipe adversária. No segundo, o objetivo é ocupar a zona demarcada no mapa: uma equipe pontua enquanto controla sozinha a região, e a progressão é interrompida quando adversários entram na área. [TDM] [KOTH] [COLINA] [ZONA-MORTE]
+
+Nos presets disponíveis, as partidas utilizam meta de 20 pontos e duração máxima de 300 segundos. Ao atingir a meta ou terminar o tempo, o jogo apresenta a equipe vencedora e os dados individuais dos participantes. [PRESETS] [RESULTADO]
+
+#### 5.1.5 Armas, granadas e recursos da arena
+
+O arsenal é formado por pistola, SMG e shotgun. A pistola realiza disparos individuais, a SMG permite manter o gatilho pressionado e a shotgun dispara vários traços simultaneamente. O jogador escolhe uma arma antes de entrar ou retornar à arena e precisa administrar sua munição durante a partida. Também pode lançar granadas, que explodem após um intervalo e causam dano de acordo com a distância. [ARMAS] [PISTOLA] [SMG] [SHOTGUN] [GRANADA-SERVER]
+
+O mapa distribui pickups de vida, munição e granadas, além de dois power-ups temporários. Um deles aumenta o dano dos disparos e o outro reduz o intervalo entre tiros. Depois de coletados, os recursos permanecem indisponíveis por um período antes de reaparecerem. [PICKUPS] [BUFF-DANO] [BUFF-CADENCIA]
+
+#### 5.1.6 Interface e feedback ao jogador
+
+A HUD informa vida, equipe, arma equipada, munição, granadas e efeitos temporários. Durante a partida, também apresenta o tempo, o placar e, em KOTH, o estado da zona de controle. Cores, anéis e ícones auxiliam na identificação das equipes. [HUD-CENA] [JOGADOR-LOCAL] [CLIENT-LOBBY]
+
+Sons, recuo, efeitos de disparo e impacto e alterações visuais dos personagens complementam essas informações. Esses sinais permitem perceber a ocorrência de ações como disparos, coletas, explosões e recebimento de dano sem depender exclusivamente de mensagens textuais. [AUDIO] [DISPARO-LOCAL] [PERSONAGEM] [ROSTO]
+
+### 5.2 Relatório técnico
+
+Esta seção concentra a descrição do desenvolvimento. A organização acompanha as responsabilidades e relações entre os sistemas, utilizando as funcionalidades como exemplos da solução técnica em vez de enumerar arquivos e classes.
 
 #### 5.2.1 Separação entre Client, Server e shared
 
@@ -241,13 +269,13 @@ O disparo exemplifica essa divisão. O Client apresenta o efeito local e envia a
 
 A autoridade implementada possui limites. O Server aceita a transformação enviada pelo jogador após verificar a estrutura da mensagem, e o caminho de recepção do disparo não contém uma verificação explícita de intervalo mínimo entre solicitações. O cooldown e seu multiplicador de cadência são aplicados no Client. Assim, dano e munição são decididos no Server, mas a versão atual não equivale a uma validação completa de movimento e frequência de tiro contra um Client modificado. [SERVER-LOBBY] [DISPARO-LOCAL] [PERSONAGEM]
 
-#### 5.2.3 Sessões, lobbies e presets
+#### 5.2.3 Sessões, lobbies e presets de partida
 
 Uma conexão ao servidor e a participação em uma partida são estados diferentes. O Server recebe conexões e procura um lobby disponível para o preset solicitado. Quando necessário e permitido pelo limite configurado, cria outro lobby; quando o grupo está completo, inicia a preparação dos Clients. Os presets agrupam modo, mapa, tempo, pontuação e quantidade de participantes, tornando a configuração conhecida pelos dois lados. [SERVER] [PRESETS]
 
 Na configuração consultada, o peer aceita até 64 conexões, o gerenciador possui quatro posições de lobby e cada preset utiliza dois jogadores. Portanto, o limite de conexões não significa 64 jogadores na mesma partida. Cada lobby mantém seus próprios participantes e estado, e suas cenas são posicionadas com uma separação espacial no processo servidor. A comprovação de execução simultânea dos quatro lobbies exige um cenário de avaliação próprio. [SERVER] [PRESETS] [SERVER-LOBBY]
 
-#### 5.2.4 Estratégias de sincronização de rede
+#### 5.2.4 Sincronização de rede
 
 **Envio contínuo de movimento.** A cada ciclo de física, o Client envia posição, rotação horizontal, inclinação da mira e animação. O Server copia esses dados para a representação do jogador e os utiliza na composição do estado da partida. Esse envio emprega o modo não confiável ordenado, adequado ao tratamento de informações que serão substituídas por novas atualizações. O fluxo transmite o resultado local do movimento, em vez de uma sequência de comandos para o Server simular novamente. [CLIENT-LOBBY] [SERVER-LOBBY]
 
@@ -297,7 +325,7 @@ Esse procedimento pode ser entendido como uma consulta ao passado para validar o
 
 **Comparação com simulação determinística e catch-up.** O material Network Weapon with netfox apresenta uma alternativa em que projéteis avançam por passos determinísticos, recuperam passos perdidos por catch-up e reconciliam a posição inicial com a autoridade usando um limiar de distância. Essas estratégias servem como referência conceitual, mas não descrevem os tiros deste projeto: suas armas usam raycasts históricos, e as granadas recebem transformações periódicas. Não se deve confundir a compensação histórica de um acerto com a execução acelerada de passos de um projétil. [NETFOX] [SERVER-LOBBY]
 
-### 5.3 Jogador, times e ciclo de vida
+#### 5.2.5 Jogador, times e ciclo de vida
 
 Cada participante possui uma representação local em seu Client e representações remotas nos demais. O Server mantém os dados utilizados na partida, incluindo time, arma, vida e estatísticas. A criação transmite essas informações para que cada Client instancie o tipo de personagem adequado. O jogador remoto combina animação corporal e orientação da mira para apresentar o estado recebido pela rede. [SERVER-LOBBY] [CLIENT-LOBBY] [JOGADOR-REMOTO]
 
@@ -305,25 +333,25 @@ A identificação das equipes utiliza materiais do personagem, um anel e um íco
 
 O jogador possui vida máxima de 100 pontos. Quando o valor chega a zero, o Server remove suas representações, retira sua presença dos objetivos e limpa os power-ups. Se a partida continuar, aguarda cinco segundos antes de solicitar uma nova escolha de arma. O retorno ocorre com a preparação do estado de nascimento e da munição correspondente à escolha, sem um contador de vidas limitado nos presets atuais. [JOGADOR-SERVER] [SERVER-LOBBY] [INVENTARIO] [PRESETS]
 
-### 5.4 Modos de jogo e fluxo da partida
+#### 5.2.6 Modos de jogo e fluxo da partida
 
-#### 5.4.1 Team Deathmatch
+**Team Deathmatch.**
 
 No Team Deathmatch, o objetivo é obter a maior pontuação no confronto entre equipes. Na implementação, a pontuação de cada time corresponde à soma das mortes do time adversário. Isso produz uma particularidade: uma queda que provoque a morte também concede ponto à outra equipe, mesmo sem um abate atribuído a um adversário. O contador individual de eliminações é atualizado separadamente e não é incrementado quando o jogador é registrado como responsável por sua própria morte. [TDM] [ZONA-MORTE]
 
 Após cada morte, o modo atualiza o placar e verifica se a meta foi atingida. Nos presets consultados, o limite é de 20 pontos e a duração máxima é de 300 segundos. Portanto, a interpretação do resultado deve considerar a pontuação por mortes adversárias, em vez de presumir que o placar coletivo seja sempre igual à soma dos abates individuais. [TDM] [PRESETS]
 
-#### 5.4.2 King of the Hill
+**King of the Hill.**
 
 No King of the Hill, os jogadores disputam uma zona do mapa. Quando não há participantes válidos, a zona permanece vazia; quando apenas uma equipe está presente, ela controla a área; quando as duas equipes estão presentes, o estado é contestado. O modo consulta a equipe controladora e acumula um ponto por segundo de domínio, utilizando o tempo decorrido em cada ciclo de física. Não há ganho simultâneo para as duas equipes durante a contestação. [COLINA] [KOTH]
 
 O valor acumulado é mantido com casas decimais e convertido para inteiro na apresentação do placar. As eliminações e mortes continuam sendo registradas, mas não são a origem direta dos pontos do objetivo. A atualização da zona comunica aos Clients a condição de controle, e a pontuação é enviada pelo fluxo correspondente. Esse arranjo permite utilizar o mesmo combate do TDM com uma finalidade espacial diferente. [KOTH] [CLIENT-LOBBY]
 
-#### 5.4.3 Encerramento e resultado
+**Encerramento e resultado.**
 
 A partida termina quando o modo identifica o limite de pontuação ou quando o temporizador se esgota. Os modos também preveem encerramento quando, após uma desconexão, uma das equipes fica sem participantes conectados. O Server prepara então os pontos das equipes e os dados individuais, que são apresentados na tela final. A implementação dessa tela organiza os jogadores por time e mostra eliminações e mortes; sua função é apresentar o resultado recebido, sem recalcular a partida. [TDM] [KOTH] [SERVER-LOBBY] [RESULTADO]
 
-### 5.5 Mapa Highrise e level design
+#### 5.2.7 Mapa Highrise e level design
 
 Highrise foi organizado com uma área jogável, elementos de entorno e pontos de nascimento associados às equipes. A cena visual reúne ambiente, iluminação e fundo urbano, enquanto a versão do Server contém as entidades necessárias às regras, como pickups, zona de controle e área de morte. A distinção permite que a apresentação do cenário e a lógica de partida tenham composições diferentes. [MAPA-CLIENT] [MAPA-SERVER]
 
@@ -335,9 +363,9 @@ Para manter a correspondência entre os mapas foi criado um script de geração 
 
 > **Evidência pendente:** vista geral de Highrise com identificação das áreas de nascimento, zona KOTH, plataformas e recursos. A figura deve ser obtida da versão descrita, evitando reutilizar o protótipo inicial como se fosse a arena final.
 
-### 5.6 Armas, combate e granadas
+#### 5.2.8 Combate, granadas e recursos temporários
 
-#### 5.6.1 Armas disponíveis
+**Armas disponíveis.**
 
 As armas foram definidas em recursos compartilhados contendo dano, precisão, quantidade de traços por disparo, intervalo e limites de munição. O Client associa esses dados à apresentação da arma, enquanto o Server consulta o catálogo para processar o ataque. A Tabela 3 registra os parâmetros encontrados na versão consultada; são valores de configuração, sujeitos a revisão de balanceamento. [ARMAS] [PISTOLA] [SMG] [SHOTGUN] [DISPARO-LOCAL]
 
@@ -353,21 +381,21 @@ Fonte: recursos do catálogo compartilhado. Cada disparo consome uma unidade de 
 
 A pistola oferece disparos individuais, a SMG permite manter o gatilho pressionado e a shotgun distribui vários testes de acerto por disparo. O parâmetro de precisão controla a dispersão angular aplicada no Server. A combinação desses atributos diferencia o uso das armas sem exigir uma trajetória persistente para cada bala. Todas as três possuem munição finita na configuração atual. [DISPARO-LOCAL] [SERVER-LOBBY] [PISTOLA] [SMG] [SHOTGUN]
 
-#### 5.6.2 Processamento do disparo e dano
+**Processamento do disparo e dano.**
 
-O ataque começa com a entrada local e o consumo previsto de munição. A solicitação enviada ao Server inclui o estado do jogador e o instante do disparo. Após verificar e consumir o saldo autoritativo, o Server utiliza as representações históricas para realizar os raycasts, como descrito na seção 5.2.4. Um acerto em um jogador considera sua hitbox, enquanto um acerto no cenário gera a apresentação de impacto correspondente. [DISPARO-LOCAL] [CLIENT-LOBBY] [SERVER-LOBBY]
+O ataque começa com a entrada local e o consumo previsto de munição. A solicitação enviada ao Server inclui o estado do jogador e o instante do disparo. Após verificar e consumir o saldo autoritativo, o Server utiliza as representações históricas para realizar os raycasts, como descrito na seção 5.2.4.2. Um acerto em um jogador considera sua hitbox, enquanto um acerto no cenário gera a apresentação de impacto correspondente. [DISPARO-LOCAL] [CLIENT-LOBBY] [SERVER-LOBBY]
 
 O dano combina o valor da arma, o multiplicador de power-up, o multiplicador da hitbox e uma redução por distância. Na configuração atual, essa redução começa a partir de 10 unidades e chega a um fator mínimo de 0,4 a partir de 20 unidades. O teste de tiro ignora dano entre integrantes da mesma equipe. Esses critérios são aplicados no Server e o resultado altera a vida mantida para o jogador atingido. [SERVER-LOBBY] [JOGADOR-SERVER]
 
 Uma limitação desse fluxo é que a munição é consumida antes de confirmar a existência de um estado histórico adequado ao teste. Caso não seja encontrado um registro utilizável, a função encerra o cálculo sem produzir acerto. O código também utiliza a arma registrada no momento de etapas posteriores do processamento, que inclui uma espera por física. Esses detalhes reforçam a necessidade de testar disparos durante mudanças de estado e sob diferentes condições de rede. [SERVER-LOBBY]
 
-#### 5.6.3 Granadas
+**Granadas.**
 
 As granadas utilizam uma simulação física no Server. Após verificar a quantidade disponível, o servidor cria um corpo rígido, aplica o impulso de lançamento e inicia um temporizador. Os valores padrão são dois segundos de duração, impulso de 20, raio de dano de quatro unidades e dano máximo de 150. O personagem inicia com duas granadas e pode obter mais por coleta. A transformação da entidade é distribuída nos snapshots para sua apresentação nos Clients. [GRANADA-SERVER] [JOGADOR-SERVER] [PICKUPS] [SERVER-LOBBY]
 
 Na explosão, o dano diminui com a distância entre a granada e uma referência próxima ao corpo do jogador. O código consulta os corpos presentes na área e aplica o dano resultante. Ao contrário do raycast das armas, esse trecho não contém uma exclusão por equipe; também não realiza ali um teste de oclusão por paredes. Portanto, essas restrições não devem ser presumidas ao descrever o comportamento da granada. [GRANADA-SERVER] [SERVER-LOBBY]
 
-### 5.7 Munição e pickups
+**Munição e pickups.**
 
 O inventário armazena munição por identificador de arma. No nascimento, todos os saldos são zerados e somente a arma escolhida recebe sua quantidade inicial. Ao trocar de arma durante a partida, o jogador consulta o saldo correspondente, sem ganhar novamente a munição de nascimento. O compartilhamento dessa regra permite que Client e Server usem os mesmos limites, embora o saldo que vale para o combate seja o mantido no servidor. [INVENTARIO] [JOGADOR-LOCAL] [SERVER-LOBBY]
 
@@ -375,7 +403,7 @@ A coleta é processada quando o corpo do jogador entra na área de um pickup no 
 
 Os Clients recebem eventos de início e término da indisponibilidade para atualizar a representação visual do pickup. O som de coleta é comunicado separadamente. Essa divisão mantém a disponibilidade do recurso no Server e permite apresentar seu desaparecimento sem transferir a decisão de coleta ao computador do jogador. [PICKUPS] [SERVER-LOBBY] [CLIENT-LOBBY]
 
-### 5.8 Power-ups temporários
+**Power-ups temporários.**
 
 Foram implementados dois efeitos temporários: aumento de dano e aumento de cadência de tiro. O recurso de dano configura um multiplicador de 1,5 durante 10 segundos. O recurso de cadência configura um multiplicador de 0,6 sobre o intervalo local entre disparos, também por 10 segundos. Os pickups correspondentes possuem um intervalo próprio de reaparecimento de 15 segundos, que não deve ser confundido com a duração do efeito no personagem. [BUFF-DANO] [BUFF-CADENCIA] [DISPARO-LOCAL]
 
@@ -383,7 +411,9 @@ O controlador do Server mantém os efeitos ativos por tipo e agenda seu encerram
 
 Na HUD, cada efeito cria um indicador acima das informações de munição e granadas. O ícone de explosão representa dano e o de projétil representa cadência. O Client calcula o tempo restante a partir da duração recebida e atualiza o relógio visual; a expiração efetiva continua controlada pelo Server. Ao receber o evento de término, remove o indicador. O reenvio com duração zero, descrito na sincronização, não reinicia essa contagem. [HUD-BUFF] [JOGADOR-LOCAL] [CONTROLADOR-BUFF]
 
-### 5.9 Interface do jogador
+#### 5.2.9 Interface, áudio e feedback visual
+
+**Interface do jogador.**
 
 A interface reúne as informações necessárias para acompanhar a participação na partida. Próximos à vida estão os elementos de identificação do próprio time. A região de armamento apresenta a munição da arma equipada e a quantidade de granadas, com os buffs acima. O modo de jogo possui suas informações de placar, tempo e objetivo. Cada componente recebe alterações do estado local ou mensagens originadas no Server, conforme a responsabilidade de cada dado. [HUD-CENA] [JOGADOR-LOCAL] [CLIENT-LOBBY]
 
@@ -393,7 +423,7 @@ O controle da pausa considera conflitos entre navegação e ações do personage
 
 > **Evidência pendente:** capturas do menu, da HUD em TDM e KOTH, dos indicadores de buff e da tela de resultado, obtidas da mesma build usada na verificação funcional.
 
-### 5.10 Áudio e feedback visual
+**Áudio e feedback visual.**
 
 O áudio foi centralizado em um gerenciador que associa identificadores a recursos sonoros. O sistema diferencia música e efeitos e pode criar um emissor comum ou tridimensional conforme a chamada. Sons de disparo, passos, aterrissagem, coleta e explosão acompanham os eventos correspondentes. A seleção dos recursos fica concentrada em uma biblioteca, permitindo alterar o som sem modificar a regra de combate. [AUDIO] [JOGADOR-LOCAL] [DOC-AUDIO]
 
@@ -401,9 +431,9 @@ As armas também apresentam recuo e efeito visual de disparo. Esses elementos co
 
 As expressões faciais são tratadas por um controlador de material. O recebimento de dano pode iniciar uma sequência temporária de reação, enquanto a expressão base depende da proporção de vida; na configuração consultada, o limite de vida baixa é de 40%. Assim, a textura do rosto pode mudar sem substituir a animação corporal. As cores de time e os anéis são tratados por outro caminho de apresentação, preservando suas responsabilidades. [ROSTO] [JOGADOR-REMOTO]
 
-### 5.11 Coleta de métricas e dashboard
+#### 5.2.10 Coleta de métricas e dashboard
 
-#### 5.11.1 Coleta e contrato das métricas
+**Coleta e contrato das métricas.**
 
 A coleta foi implementada como um componente do Server, ativado por configuração de execução. A cada amostra, ele reúne quantidade de jogadores associados aos lobbies, quantidade de lobbies, estatísticas dos peers e contadores do host ENet. O payload transmitido identifica a versão do contrato, a origem, o timestamp e o PID do servidor. Os FPS dos Clients são informados por um componente próprio, cujo intervalo padrão de envio é de 0,25 segundo. [COLETOR] [LOGGER] [FPS-CLIENT]
 
@@ -425,7 +455,7 @@ O campo de processamento dos lobbies mede o tempo gasto no trecho instrumentado 
 
 Fonte: coletor, contrato, emissor do Client e monitor de processo. [COLETOR] [CONTRATO-METRICAS] [FPS-CLIENT] [PROCESSO]
 
-#### 5.11.2 Registro e transmissão
+**Registro e transmissão.**
 
 O logger possui dois destinos independentes: gravação em CSV e transmissão de amostras por UDP. A gravação permite preservar os valores para análise posterior; a transmissão permite observar a execução enquanto ela ocorre. Os modos podem ser habilitados conjuntamente. A configuração também define intervalo, diretório de saída e endereço do receptor, mantendo o uso da coleta separado das regras do jogo. [LOGGER] [GUIA-METRICAS]
 
@@ -444,7 +474,7 @@ Figura 5 — Fluxo da coleta e apresentação de métricas. Fonte: implementaç�
 
 A transmissão UDP utiliza mensagens JSON, recebidas e interpretadas pelo processo Python. Mensagens que não podem ser decodificadas ou que não representam um objeto são descartadas pelo receptor. Como o transporte não garante a entrega, lacunas na dashboard não devem ser confundidas automaticamente com ausência de atividade do jogo. O CSV produzido no Server constitui um registro independente desse caminho de transmissão. [RECEPTOR] [LOGGER] [UDP]
 
-#### 5.11.3 Dashboard
+**Dashboard.**
 
 A dashboard foi construída como uma aplicação separada do jogo. O receptor entrega as amostras a um componente que normaliza os campos, guarda o último estado e mantém um histórico limitado em memória. A configuração padrão comporta 300 amostras, substituindo as mais antigas quando o limite é atingido. O serviço disponibiliza consultas HTTP para o estado atual e o histórico, além de uma conexão WebSocket para enviar atualizações ao navegador. [RECEPTOR] [ARMAZENAMENTO] [DASHBOARD]
 
@@ -454,7 +484,7 @@ O histórico em memória facilita acompanhar variações durante a execução, m
 
 > **Evidência pendente:** captura da dashboard durante uma partida e dados preservados que permitam relacionar o estado exibido ao cenário experimental.
 
-### 5.12 Build e execução
+#### 5.2.11 Build e execução
 
 Foram configurados presets para Client Windows, Client Linux e Server Linux, todos com o pacote PCK embutido no executável. O PCK reúne recursos do projeto, e a opção de incorporá-lo evita sua distribuição como arquivo separado nesses presets. O Server pode ser iniciado em modo headless, sem apresentação gráfica. O guia do projeto orienta a preparação dos links compartilhados, a verificação dos recursos e a geração dos artefatos em diretórios de build. [EXPORT-CLIENT] [EXPORT-SERVER] [GODOT-SERVER] [GUIA-BUILD]
 
@@ -462,9 +492,9 @@ Há uma diferença entre executar sem interface e usar a opção específica de 
 
 A reprodutibilidade depende também dos arquivos disponíveis fora do cache da Godot. O `.gitignore` consultado já não contém uma exclusão geral da pasta de assets do Client, mas a remoção dessa regra, isoladamente, não demonstra que todos os recursos necessários estão versionados. O procedimento de build precisa ser concluído em um checkout limpo, com os links preparados e as dependências de importação disponíveis. Nesta redação, essa comprovação permanece como evidência a incorporar. [IGNORE] [SETUP-SHARED] [GUIA-BUILD]
 
-### 5.13 Verificação e análise dos resultados
+### 5.3 Verificação e análise dos resultados
 
-#### 5.13.1 Resultados funcionais
+#### 5.3.1 Resultados funcionais
 
 A inspeção identificou caminhos implementados para o ciclo de partida, os dois modos, combate, coleta, interface e observabilidade. A Tabela 5 reúne essas evidências e os cenários necessários para completar a verificação da release. A coluna de evidência registra o que pode ser sustentado pelos arquivos; não corresponde a uma declaração de aprovação de testes executados nesta etapa de escrita. [GUIA-RELEASE] [SERVER-LOBBY] [CLIENT-LOBBY]
 
@@ -484,21 +514,21 @@ A inspeção identificou caminhos implementados para o ciclo de partida, os dois
 
 Fonte: inspeção do projeto e roteiro documentado de smoke test. [GUIA-RELEASE]
 
-#### 5.13.2 Resultados das métricas
+#### 5.3.2 Resultados das métricas
 
 O resultado demonstrável nesta etapa é a existência da instrumentação e dos caminhos de registro e apresentação. O coletor produz as variáveis descritas na Tabela 4, e a dashboard mantém amostras para consulta durante a execução. Essa implementação permite realizar o experimento, mas não fornece, sozinha, uma conclusão sobre estabilidade de latência, taxa de perda aceitável ou quantidade de jogadores suportada. [COLETOR] [LOGGER] [ARMAZENAMENTO] [PLANO-FECHAMENTO]
 
-Não foram incorporados a esta versão do relatório conjuntos de rodadas controladas que sustentem médias, percentis ou gráficos comparativos. Consequentemente, não se afirma que o servidor manteve determinada taxa de atualização sob carga ou que as quatro partidas possíveis foram executadas simultaneamente com desempenho adequado. A discussão quantitativa deverá relacionar os dados preservados ao protocolo da seção 4.6, indicando também períodos sem participantes e eventuais lacunas de recepção. [PLANO-FECHAMENTO] [SERVER] [COLETOR]
+Não foram incorporados a esta versão do relatório conjuntos de rodadas controladas que sustentem médias, percentis ou gráficos comparativos. Consequentemente, não se afirma que o servidor manteve determinada taxa de atualização sob carga ou que as quatro partidas possíveis foram executadas simultaneamente com desempenho adequado. A discussão quantitativa deverá relacionar os dados preservados ao protocolo da seção 4.8, indicando também períodos sem participantes e eventuais lacunas de recepção. [PLANO-FECHAMENTO] [SERVER] [COLETOR]
 
 > **Evidência pendente:** tabela de resultados por cenário e gráficos produzidos a partir dos dados brutos. Após sua inclusão, esta subseção deve discutir as observações obtidas, preservando a distinção entre custo do trecho instrumentado, CPU do processo, RTT de transporte e ping da aplicação.
 
-#### 5.13.3 Comparação entre proposta e implementação
+#### 5.3.3 Comparação entre proposta e entrega
 
-A Tabela 6 consolida as principais diferenças entre o TCC1 e a versão consultada. A comparação utiliza a proposta para identificar os compromissos originais e o código para descrever o resultado, evitando tratar o planejamento como prova de uma funcionalidade concluída. [TCC1] [PRESETS] [SERVER-LOBBY]
+A Tabela 6 consolida as principais diferenças entre o TCC1 e a entrega descrita. A comparação utiliza a proposta para identificar os compromissos originais e o código para caracterizar o resultado, evitando tratar o planejamento como prova de uma funcionalidade concluída. As justificativas e consequências dessas alterações foram discutidas na seção 4.5 e não são repetidas integralmente nesta síntese. [TCC1] [PRESETS] [SERVER-LOBBY]
 
 **Tabela 6 — Evolução do escopo.**
 
-| Tema | Proposta do TCC1 | Implementação consultada |
+| Tema | Proposta do TCC1 | Entrega descrita |
 | --- | --- | --- |
 | Arquitetura | Participante hospedeiro, descrito como peer-to-peer. | Processo dedicado e divisão Client/Server; movimento originado no Client. |
 | Sincronização | Uso de MultiplayerSynchronizer no protótipo. | RPCs próprias, snapshots e interpolação. |
@@ -514,7 +544,7 @@ A Tabela 6 consolida as principais diferenças entre o TCC1 e a versão consulta
 
 Fonte: proposta, presets, catálogo e componentes do projeto. [TCC1] [PRESETS] [ARMAS] [SERVER-LOBBY] [DOC-MAPA] [DOC-METRICAS]
 
-#### 5.13.4 Limitações
+#### 5.3.4 Limitações
 
 As limitações de rede incluem a confiança na transformação recebida do Client, a ausência de controle explícito de cadência no caminho autoritativo de disparo e a dependência dos snapshots para apresentar a remoção das granadas. Também há informações visuais deliberadamente locais e indicadores que dependem de atualizações não confiáveis. Esses pontos delimitam o comportamento implementado e oferecem casos concretos para evolução e verificação. [SERVER-LOBBY] [CLIENT-LOBBY] [DISPARO-LOCAL] [JOGADOR-REMOTO]
 
@@ -606,12 +636,12 @@ Este apêndice reúne as pendências editoriais indicadas ao longo do texto. Ele
 | Evidência | Destino no relatório | Informação necessária |
 | --- | --- | --- |
 | Identificação da versão avaliada | Capítulo 4 | Commit ou versão, data, motor e plataformas. |
-| Registro do teste integrado | Seção 5.13.1 | Cenário, condições, resultado observado e vínculo com a build. |
-| Rodadas de métricas | Seções 4.6 e 5.13.2 | Ambiente, participantes, duração, repetições e dados brutos. |
-| Registro de CPU e memória, se utilizado | Seções 4.6 e 5.13.2 | Arquivo preservado e alinhamento temporal com as amostras do Godot. |
-| Imagens do jogo | Seções 5.5 e 5.9 | Highrise, menu, HUD, buffs e resultado na versão avaliada. |
-| Imagem da dashboard | Seção 5.11.3 | Captura durante uma rodada identificada. |
-| Build em checkout limpo | Seção 5.12 | Preparação do ambiente, recursos necessários e execução dos artefatos. |
+| Registro do teste integrado | Seção 5.3.1 | Cenário, condições, resultado observado e vínculo com a build. |
+| Rodadas de métricas | Seções 4.8 e 5.3.2 | Ambiente, participantes, duração, repetições e dados brutos. |
+| Registro de CPU e memória, se utilizado | Seções 4.8 e 5.3.2 | Arquivo preservado e alinhamento temporal com as amostras do Godot. |
+| Imagens do jogo | Seções 5.1 e 5.2.7–5.2.9 | Highrise, menu, HUD, buffs e resultado na versão avaliada. |
+| Imagem da dashboard | Seção 5.2.10 | Captura durante uma rodada identificada. |
+| Build em checkout limpo | Seção 5.2.11 | Preparação do ambiente, recursos necessários e execução dos artefatos. |
 | Consolidação bibliográfica | Referências | Adaptação das entradas e citações ao formato exigido pelo curso. |
 
 [GODOT-CONCEITOS]: https://docs.godotengine.org/en/4.5/getting_started/introduction/key_concepts_overview.html
