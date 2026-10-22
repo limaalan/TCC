@@ -1,4 +1,4 @@
-% Texto adaptado de docs/tcc2/relatorio_tcc2.md para a prévia do TCC2.
+% Relatório do TCC2: edição mantida diretamente neste arquivo LaTeX.
 \chapter{Fundamentação teórica}\label{cap:tcc2-2}
 
 Este capítulo apresenta os conceitos necessários para caracterizar o produto desenvolvido. A discussão se concentra nos motores de jogos, nos jogos de tiro em primeira pessoa, nos elementos de plataforma e na organização de partidas multijogador competitivas em tempo real.
@@ -7,23 +7,23 @@ Este capítulo apresenta os conceitos necessários para caracterizar o produto d
 
 Neste trabalho, o motor de jogos corresponde ao ambiente que reúne os recursos utilizados para construir e executar a aplicação. Na Godot, nós representam unidades de comportamento e podem ser organizados em cenas reutilizáveis. Uma cena de personagem, por exemplo, pode combinar corpo físico, câmera e apresentação visual. Essa composição também se aplica a menus e ao próprio mapa. A documentação da Godot apresenta nós, cenas, árvore de cenas e sinais como conceitos centrais de sua organização. \cite{GODOT-CONCEITOS}
 
-A implementação consultada utiliza GDScript para definir comportamentos e recursos próprios do motor para física tridimensional, entrada, interface, áudio e comunicação em rede. A mesma base tecnológica é empregada nos dois projetos Godot, embora o Client e o Server possuam responsabilidades diferentes. O primeiro concentra a interação e a apresentação; o segundo mantém as regras e os dados compartilhados da partida. \fonteprojeto{PROJETO-CLIENT} \fonteprojeto{PROJETO-SERVER} \fonteprojeto{DOC-ARQUITETURA}
+O jogo foi desenvolvido em GDScript para definir comportamentos e recursos próprios do motor para física tridimensional, entrada, interface, áudio e comunicação em rede. A mesma base tecnológica é empregada nos dois projetos Godot, embora o Client e o Server possuam responsabilidades diferentes. O primeiro concentra a interação e a apresentação; o segundo mantém as regras e os dados compartilhados da partida.
 
 \section{Jogos de tiro em primeira pessoa e arena shooters}\label{sec:2.2}
 
 Nos jogos de tiro em primeira pessoa, a exploração e o combate são apresentados a partir do ponto de vista do personagem controlado. Hullett e Whitehead descrevem esse tipo de jogo como uma navegação por um mundo tridimensional em que o jogador enfrenta outros personagens utilizando armas. Essa perspectiva relaciona o enquadramento da câmera à direção de observação e de ataque. \cite{HULLETT}
 
-O recorte adotado neste trabalho foi o de combate em arena, presente nas referências Quake III Arena e Unreal Tournament. Nesses exemplos, o confronto se organiza em espaços próprios para partidas, com diferentes armas e regras de disputa. A proposta do TCC aproveitou a combinação entre movimentação, combate e recursos distribuídos pelo cenário, sem incluir uma campanha narrativa ou progressão por níveis de personagem. \cite{QUAKE} \cite{UNREAL} \fonteprojeto{TCC1}
+O recorte adotado neste trabalho foi o de combate em arena, presente nas referências Quake III Arena e Unreal Tournament. Nesses exemplos, o confronto se organiza em espaços próprios para partidas, com diferentes armas e regras de disputa. A proposta do TCC aproveitou a combinação entre movimentação, combate e recursos distribuídos pelo cenário, sem incluir uma campanha narrativa ou progressão por níveis de personagem. \cite{QUAKE} \cite{UNREAL}
 
 \section{Elementos de jogos de plataforma em ambientes 3D}\label{sec:2.3}
 
-Os elementos de plataforma considerados no projeto são ações e estruturas que permitem vencer diferenças de altura e alcançar outras regiões do cenário. A proposta inicial incluiu salto duplo, plataformas suspensas e plataformas de impulso. A versão implementada preservou o salto duplo e os jump pads, relacionando o deslocamento vertical ao percurso pela arena. \fonteprojeto{TCC1} \fonteprojeto{JOGADOR-LOCAL} \fonteprojeto{JUMP-PAD}
+Os elementos de plataforma considerados no projeto são ações e estruturas que permitem vencer diferenças de altura e alcançar outras regiões do cenário. A proposta inicial incluiu salto duplo, plataformas suspensas e plataformas de impulso. A versão implementada preservou o salto duplo e os jump pads, relacionando o deslocamento vertical ao percurso pela arena.
 
-Lovely Planet oferece uma referência para a combinação entre saltar, mirar e disparar. A descrição do próprio desenvolvedor enfatiza a alternância entre desviar de projéteis e buscar uma posição de tiro. No presente trabalho, essa referência ajuda a contextualizar a intenção de reunir combate e movimentação, enquanto as regras concretas de salto e impulso são próprias da implementação. \cite{LOVELY} \fonteprojeto{TCC1} \fonteprojeto{JOGADOR-LOCAL}
+Lovely Planet oferece uma referência para a combinação entre saltar, mirar e disparar. A descrição do próprio desenvolvedor enfatiza a alternância entre desviar de projéteis e buscar uma posição de tiro. No presente trabalho, essa referência ajuda a contextualizar a intenção de reunir combate e movimentação, enquanto as regras concretas de salto e impulso são próprias da implementação. \cite{LOVELY}
 
 \section{Jogos multijogador competitivos em tempo real}\label{sec:2.4}
 
-O TCC1 organizou os jogos multijogador segundo a disposição dos participantes, sua forma de interação, os papéis desempenhados e o momento das ações. Dentro dessa classificação, o sistema desenvolvido pode ser descrito como um jogo em rede, competitivo, simétrico e de tempo real: os participantes executam instâncias em computadores conectados, disputam objetivos, utilizam o mesmo conjunto de ações e atuam durante a mesma partida. A simetria se refere às regras disponíveis aos jogadores, não a uma comprovação de equilíbrio entre as regiões do mapa. \fonteprojeto{TCC1} \fonteprojeto{PRESETS} \fonteprojeto{JOGADOR-LOCAL} \fonteprojeto{ARMAS}
+O TCC1 organizou os jogos multijogador segundo a disposição dos participantes, sua forma de interação, os papéis desempenhados e o momento das ações. Dentro dessa classificação, o sistema desenvolvido pode ser descrito como um jogo em rede, competitivo, simétrico e de tempo real: os participantes executam instâncias em computadores conectados, disputam objetivos, utilizam o mesmo conjunto de ações e atuam durante a mesma partida. Nesse contexto, a simetria corresponde ao conjunto de ações e regras disponível a ambas as equipes.
 
 A participação em tempo real não implica ausência de atraso. Cada computador possui seu próprio ciclo de execução, e as informações levam tempo para atravessar a rede. Por isso, a aplicação precisa conciliar a resposta percebida pelo jogador com o estado conhecido pelos demais participantes. Predição e interpolação são estratégias distintas para lidar com esse problema: a primeira antecipa localmente uma resposta; a segunda constrói uma transição entre estados recebidos. \cite{FIEDLER-REDE} \cite{FIEDLER-INTERPOLACAO}
 
