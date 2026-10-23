@@ -10,10 +10,14 @@ config_version=5
 
 [application]
 
-config/name="Client"
+config/name="Jump'n'Shoot Client"
 run/main_scene="uid://c1terp7e15t7o"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
+
+[filesystem]
+
+import/blender/enabled=false
 
 [autoload]
 
