@@ -1,0 +1,23 @@
+name: jumpnshoot
+
+services:
+  server:
+    image: ${SERVER_IMAGE:?Use uma imagem GHCR com digest sha256}
+    platform: linux/amd64
+    init: true
+    restart: unless-stopped
+    ports:
+      - "${SERVER_BIND_ADDRESS:-0.0.0.0}:${SERVER_PORT:-7777}:7777/udp"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /home/game/.local/share:uid=10001,gid=10001
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      XDG_CACHE_HOME: /tmp/cache
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
