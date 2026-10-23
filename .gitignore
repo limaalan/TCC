@@ -8,3 +8,16 @@ initial_project/Server/shared
 *.blend1
 /metrics_dashboard/__pycache__/
 settings.json
+__pycache__/
+*.pyc
+*.pyo
+*.log
+/tmp/
+/metrics-logs/
+/initial_project/Server/shrooter-server.x86_64
+
+# Local environment files; sanitized examples can be committed.
+.env
+.env.*
+!.env.example
+!.env.*.example

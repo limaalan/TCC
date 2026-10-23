@@ -10,6 +10,11 @@ O padrao de commit sera: `1. Breve descricao da tarefa`
 
 ex: `2. Criacao do modelo de personagem`
 
+## Build e teste local
+
+Veja [gerar Client/Server com Docker e testar no WSL/Windows](docs/how_to/build-client-and-server.md).
+O processo gera executáveis Windows/Linux, pacotes e checksums; a imagem de servidor usa o mesmo binário Linux exportado.
+
 ## Coleta de metricas de rede
 O contrato oficial de observabilidade do servidor passa a ser:
 

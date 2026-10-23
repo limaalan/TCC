@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 Server="*res://server/server.tscn"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [layer_names]
 
 3d_physics/layer_1="enviroment"

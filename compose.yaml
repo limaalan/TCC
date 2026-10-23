@@ -1,0 +1,56 @@
+services:
+  build:
+    profiles: [tools]
+    image: shrooter-builder:4.5.1
+    build:
+      context: .
+      dockerfile: docker/build.Dockerfile
+    working_dir: /source
+    volumes:
+      - .:/source:ro
+      - ./build/releases:/output
+    command: [--source, /source, --output, /output, --version, "${BUILD_VERSION:-local}"]
+
+  server:
+    image: shrooter-server:${BUILD_VERSION:-local}
+    build:
+      context: .
+      dockerfile: docker/server.Dockerfile
+      args:
+        RELEASE_DIR: build/releases/${BUILD_VERSION:-local}
+    init: true
+    restart: unless-stopped
+    ports:
+      - "${SERVER_BIND_ADDRESS:-127.0.0.1}:${SERVER_PORT:-7777}:7777/udp"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /home/game/.local/share:uid=10001,gid=10001
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      XDG_CACHE_HOME: /tmp/cache
+
+  smoke:
+    profiles: [tools]
+    image: shrooter-builder:4.5.1
+    volumes:
+      - .:/source:ro
+      - ./build/releases:/output
+    environment:
+      GODOT_SILENCE_ROOT_WARNING: "1"
+      HOME: /tmp/smoke-home
+    entrypoint: [bash, /source/scripts/smoke-test.sh]
+    command: [server, "7777"]
+
+  test:
+    profiles: [tools]
+    image: shrooter-builder:4.5.1
+    volumes:
+      - .:/source:ro
+      - ./build/releases:/output:ro
+      - ./build/smoke:/smoke
+    entrypoint: [python3, /source/scripts/test_exports.py]
+    command: [--release, "/output/${BUILD_VERSION:-local}", --platform, linux,
+              --host, server, --port, "7777", --preset, "${MATCH_PRESET:-tdm_highrise}",
+              --logs, "/smoke/linux-${MATCH_PRESET:-tdm_highrise}"]
