@@ -1,7 +1,7 @@
 services:
   build:
     profiles: [tools]
-    image: shrooter-builder:4.5.1
+    image: jumpnshoot-builder:4.5.1
     build:
       context: .
       dockerfile: docker/build.Dockerfile
@@ -12,7 +12,7 @@ services:
     command: [--source, /source, --output, /output, --version, "${BUILD_VERSION:-local}"]
 
   server:
-    image: shrooter-server:${BUILD_VERSION:-local}
+    image: jumpnshoot-server:${BUILD_VERSION:-local}
     build:
       context: .
       dockerfile: docker/server.Dockerfile
@@ -33,7 +33,7 @@ services:
 
   smoke:
     profiles: [tools]
-    image: shrooter-builder:4.5.1
+    image: jumpnshoot-builder:4.5.1
     volumes:
       - .:/source:ro
       - ./build/releases:/output
@@ -45,7 +45,7 @@ services:
 
   test:
     profiles: [tools]
-    image: shrooter-builder:4.5.1
+    image: jumpnshoot-builder:4.5.1
     volumes:
       - .:/source:ro
       - ./build/releases:/output:ro

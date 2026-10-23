@@ -57,7 +57,7 @@ class ReleaseTests(unittest.TestCase):
     def test_package_contains_dependencies_and_manifest(self):
         target = self.root / "client-windows"
         target.mkdir()
-        (target / "shrooter-client.exe").write_bytes(b"exe")
+        (target / "jumpnshoot-client.exe").write_bytes(b"exe")
         (target / "dependency.dll").write_bytes(b"dll")
         metadata = {"version": "local", "commit": "abc123", "godot": "4.5.1"}
         archive = self.builder.package_target(target, "windows", metadata, self.root)

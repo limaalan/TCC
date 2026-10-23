@@ -37,3 +37,20 @@ Builds com alterações locais (`dirty=true`); nenhum commit ou push feito.
 - `build/smoke/windows-native-tdm/`: Server Windows e dois Clients Windows.
 - `build/smoke/linux/` e `linux-koth/`: testes Linux iniciais; novas execuções separam logs por preset.
 - `build/local-runtime-build.log`: construção do runtime.
+
+## Validação após atualização dos nomes técnicos para jumpnshoot
+
+Commit-base: `9dc6de2`, com alterações locais. As releases anteriores foram preservadas.
+
+- Nova release `build/releases/jumpnshoot-local/`: quatro executáveis e pacotes com o novo nome; todos os arquivos de `SHA256SUMS` conferidos.
+- Importações limpas, quatro exportações e teste dedicado/stripping do Server Linux passaram.
+- Onze testes dos scripts, sintaxe Bash, configuração Compose e JSON do design system passaram.
+- Runtime `jumpnshoot-server:jumpnshoot-local` reconstruído e iniciado no Docker.
+- Dois Clients Linux contra Docker: TDM; dois Clients Windows contra Docker: KOTH; Server Windows com dois Clients Windows: TDM. Todos receberam os marcadores de partida esperados.
+- Os avisos conhecidos de recursos no encerramento continuam registrados; não houve erro novo nesses testes. A conferência manual completa de gameplay continua pendente.
+- Evidências: `build/jumpnshoot-build.log`, `build/releases/jumpnshoot-local.logs/`, `build/smoke/linux-tdm_highrise/`, `build/smoke/jumpnshoot-native/` e `build/smoke/jumpnshoot-windows-docker/`.
+
+Após essa validação, o nome de apresentação foi corrigido nos fontes para
+**Jump'n'Shoot**, mantendo `jumpnshoot` nos nomes técnicos. Os onze testes e
+as conferências de sintaxe/configuração passaram novamente; os artefatos
+acima não foram regenerados após essa correção textual.

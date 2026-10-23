@@ -9,14 +9,14 @@ Iniciar uma build exportada do Server em modo headless e confirmar que a porta e
 No Linux, torne o executável exportado executável e inicie-o com a porta desejada:
 
 ```bash
-chmod +x ./shrooter-server.x86_64
-./shrooter-server.x86_64 --headless -- --port=7777
+chmod +x ./jumpnshoot-server.x86_64
+./jumpnshoot-server.x86_64 --headless -- --port=7777
 ```
 
 Para registrar métricas em CSV durante a execução:
 
 ```bash
-./shrooter-server.x86_64 --headless -- --port=7777 --record-metrics --metrics-output-dir=./metrics-logs
+./jumpnshoot-server.x86_64 --headless -- --port=7777 --record-metrics --metrics-output-dir=./metrics-logs
 ```
 
 ## Diagnóstico

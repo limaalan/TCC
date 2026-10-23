@@ -27,6 +27,19 @@ Saída: `build/releases/local/`, com `client-windows`, `client-linux`,
 `server-windows`, `server-linux`, quatro ZIP/tar.gz, `BUILD.json` e `SHA256SUMS`.
 Cada pacote inclui instruções e todos os arquivos produzidos pelo preset.
 
+Os executáveis usam `jumpnshoot-client` e `jumpnshoot-server`, com extensão
+`.exe` no Windows e `.x86_64` no Linux. As imagens locais são
+`jumpnshoot-builder:4.5.1` e `jumpnshoot-server:${BUILD_VERSION:-local}`.
+Depois de atualizar o nome do projeto, gere uma nova release com outra
+`BUILD_VERSION` e reconstrua a imagem do runtime: builds anteriores preservam
+seus nomes originais e não são sobrescritas pelo processo.
+
+O nome de apresentação do jogo é **Jump'n'Shoot**; `jumpnshoot` é usado em nomes técnicos de arquivos e imagens.
+Os nomes das aplicações Godot são `Jump'n'Shoot Client` e `Jump'n'Shoot Server`.
+Isso mantém os diretórios `user://` separados. Configurações de instalações
+anteriores, cujos projetos se chamavam `Client` e `Server`, não são migradas
+automaticamente: configure novamente nome, endereço e porta no cliente.
+
 O script único é `scripts/build_release.py`, chamado por `scripts/build.sh`.
 Ele copia os projetos para workspace temporário sem `.godot`, materializa
 `initial_project/shared` em cada projeto e importa cada projeto separadamente.
@@ -139,7 +152,7 @@ python3 -m unittest discover -s scripts/tests -v
 
 ## Conferência manual
 
-Abra `build/releases/local/client-windows/shrooter-client.exe` duas vezes e
+Abra `build/releases/local/client-windows/jumpnshoot-client.exe` duas vezes e
 configure o servidor local. Confira imagem, áudio, entrada, movimento/colisões,
 tiro/dano, morte/respawn, pickups, granadas e final da partida em TDM/KOTH.
 Os testes headless não comprovam esses aspectos visuais e de jogabilidade.

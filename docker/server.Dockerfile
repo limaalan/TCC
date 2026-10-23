@@ -5,9 +5,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends libfontconfig1 
     && useradd --create-home --uid 10001 game
 ARG RELEASE_DIR=build/releases/local
 COPY --chown=game:game ${RELEASE_DIR}/server-linux/ /app/
-RUN chmod 755 /app/shrooter-server.x86_64
+RUN chmod 755 /app/jumpnshoot-server.x86_64
 USER game
 WORKDIR /app
 EXPOSE 7777/udp
-ENTRYPOINT ["stdbuf", "-oL", "-eL", "/app/shrooter-server.x86_64", "--headless", "--"]
+ENTRYPOINT ["stdbuf", "-oL", "-eL", "/app/jumpnshoot-server.x86_64", "--headless", "--"]
 CMD ["--port=7777"]

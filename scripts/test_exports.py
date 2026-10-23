@@ -42,8 +42,8 @@ def main():
     args.logs.mkdir(parents=True, exist_ok=True)
     suffix = ".exe" if args.platform == "windows" else ".x86_64"
     release = args.release.resolve()
-    client = release / f"client-{args.platform}" / f"shrooter-client{suffix}"
-    server = release / f"server-{args.platform}" / f"shrooter-server{suffix}"
+    client = release / f"client-{args.platform}" / f"jumpnshoot-client{suffix}"
+    server = release / f"server-{args.platform}" / f"jumpnshoot-server{suffix}"
     driver = Path(__file__).resolve().parent / "smoke" / "export_client.gd"
     server_driver = driver.with_name("export_server.gd")
     processes, handles, clients = [], [], []

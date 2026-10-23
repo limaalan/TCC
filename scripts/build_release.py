@@ -13,10 +13,10 @@ import zipfile
 
 GODOT_VERSION = "4.5.1"
 TARGETS = {
-    "client-windows": ("Client", "Windows Client", "shrooter-client.exe", "windows"),
-    "client-linux": ("Client", "Linux Client", "shrooter-client.x86_64", "linux"),
-    "server-windows": ("Server", "Windows Server", "shrooter-server.exe", "windows"),
-    "server-linux": ("Server", "Linux Server", "shrooter-server.x86_64", "linux"),
+    "client-windows": ("Client", "Windows Client", "jumpnshoot-client.exe", "windows"),
+    "client-linux": ("Client", "Linux Client", "jumpnshoot-client.x86_64", "linux"),
+    "server-windows": ("Server", "Windows Server", "jumpnshoot-server.exe", "windows"),
+    "server-linux": ("Server", "Linux Server", "jumpnshoot-server.x86_64", "linux"),
 }
 ENGINE_ERROR = re.compile(r"(?:^|\n)(?:SCRIPT ERROR:|ERROR:|USER ERROR:)")
 
@@ -56,15 +56,15 @@ def run_checked(command, log):
 def package_target(directory, platform, metadata, output):
     (directory / "BUILD.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     readme = "Server" if directory.name.startswith("server") else "Client"
-    instructions = f"Shrooter {readme} - {metadata['version']}\nCommit: {metadata['commit']}\n"
+    instructions = f"Jump'n'Shoot {readme} - {metadata['version']}\nCommit: {metadata['commit']}\n"
     if readme == "Server":
-        executable = "shrooter-server.exe" if platform == "windows" else "./shrooter-server.x86_64"
+        executable = "jumpnshoot-server.exe" if platform == "windows" else "./jumpnshoot-server.x86_64"
         instructions += f"Run: {executable} --headless -- --port=7777\nNetwork: UDP 7777.\n"
     else:
-        instructions += "Open shrooter-client and configure the server address/port in Settings.\n"
+        instructions += "Open jumpnshoot-client and configure the server address/port in Settings.\n"
     instructions += "Use Client and Server from the same release. Keep all package files together.\n"
     (directory / "README.txt").write_text(instructions, encoding="utf-8")
-    name = f"shrooter-{directory.name}-x86_64-{metadata['version']}"
+    name = f"jumpnshoot-{directory.name}-x86_64-{metadata['version']}"
     if platform == "windows":
         archive = output / f"{name}.zip"
         with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as package:
@@ -133,7 +133,7 @@ def main():
         raise RuntimeError(f"Expected Godot {GODOT_VERSION}.stable, got {engine}")
     metadata = {"version": version, "commit": commit, "dirty": dirty,
                 "godot": engine, "architecture": "x86_64", "targets": args.targets}
-    with tempfile.TemporaryDirectory(prefix="shrooter-build-") as temp:
+    with tempfile.TemporaryDirectory(prefix="jumpnshoot-build-") as temp:
         workspace = Path(temp)
         staging = workspace / "release"
         staging.mkdir()

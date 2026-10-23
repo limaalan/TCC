@@ -1,5 +1,5 @@
 [Unit]
-Description=Shrooter realtime metrics dashboard
+Description=Jump'n'Shoot realtime metrics dashboard
 After=network.target
 
 [Service]

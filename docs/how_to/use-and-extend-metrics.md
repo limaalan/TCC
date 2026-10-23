@@ -5,13 +5,13 @@
 Para gravar CSV, inicie o Server com um diretório explícito:
 
 ```bash
-./shrooter-server.x86_64 --headless -- --port=7777 --record-metrics --metrics-output-dir=/caminho/metrics-logs
+./jumpnshoot-server.x86_64 --headless -- --port=7777 --record-metrics --metrics-output-dir=/caminho/metrics-logs
 ```
 
 Para transmitir à dashboard local:
 
 ```bash
-./shrooter-server.x86_64 --headless -- --port=7777 --stream-metrics --metrics-stream-host=127.0.0.1 --metrics-stream-port=8765
+./jumpnshoot-server.x86_64 --headless -- --port=7777 --stream-metrics --metrics-stream-host=127.0.0.1 --metrics-stream-port=8765
 ```
 
 Para executar a dashboard, use o Python do ambiente virtual onde suas dependências foram instaladas:

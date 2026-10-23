@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Server"
+config/name="Jump'n'Shoot Server"
 run/main_scene="uid://cxv1rnsfib65d"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
