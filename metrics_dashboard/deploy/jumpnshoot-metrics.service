@@ -1,0 +1,14 @@
+[Unit]
+Description=Jump'n'Shoot realtime metrics dashboard
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/metrics_dashboard
+ExecStart=/root/metrics_dashboard/.venv/bin/python /root/metrics_dashboard/main.py --udp-host=127.0.0.1 --udp-port=8765 --http-host=127.0.0.1 --http-port=8000
+Restart=on-failure
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target

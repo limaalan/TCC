@@ -235,7 +235,7 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
-text = "Jump’n’Shoot"
+text = "Jump'n'Shoot"
 
 [node name="ProjectDescriptionLabel" type="Label" parent="ScreenMargins/CenterContainer/CreditsPanel/PanelMargins/PanelLayout/ScrollContainer/Content/ProjectSection/Text"]
 unique_name_in_owner = true

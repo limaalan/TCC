@@ -1,0 +1,26 @@
+% Diagrama equivalente ao fluxo Mermaid da prévia.
+\resizebox{0.96\linewidth}{!}{%
+\begin{tikzpicture}[
+  bloco/.style={draw,rounded corners,align=center,text width=2.8cm,minimum height=.75cm,font=\small},
+  seta/.style={-{Latex[length=2mm]},thick}
+]
+\node[bloco] (menu) at (0,0) {Menu principal};
+\node[bloco] (espera) at (0,-1.2) {Espera por partida};
+\node[bloco] (mapa) at (0,-2.4) {Carregamento do mapa};
+\node[bloco] (arma) at (0,-3.6) {Seleção de arma};
+\node[bloco] (partida) at (0,-4.8) {Partida e HUD};
+\node[bloco] (pausa) at (-4,-4.8) {Pausa local};
+\node[bloco] (morte) at (4,-4.8) {Morte e espera};
+\node[bloco] (resultado) at (0,-6.2) {Resultado};
+\draw[seta] (menu) -- (espera);
+\draw[seta] (espera) -- (mapa);
+\draw[seta] (mapa) -- (arma);
+\draw[seta] (arma) -- (partida);
+\draw[seta] (partida) to[bend right=15] (pausa);
+\draw[seta] (pausa) to[bend right=15] (partida);
+\draw[seta] (partida) -- (morte);
+\draw[seta] (morte) |- (arma);
+\draw[seta] (partida) -- (resultado);
+\draw[seta] (resultado.south) -- ++(0,-.6) -- (-6,-6.8) -- (-6,0) -- (menu.west);
+\end{tikzpicture}%
+}

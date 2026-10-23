@@ -1,0 +1,50 @@
+# PDFs produzidos na raiz; PDFs usados como recursos continuam versionáveis.
+/main.pdf
+/exemploPDF.pdf
+
+# Arquivos intermediários e logs de compilação LaTeX/BibTeX.
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex
+*.synctex.gz
+*.xdv
+*.dvi
+*.mw
+
+# Índices, glossários, siglas e nomenclaturas gerados.
+*.idx
+*.ind
+*.ilg
+*.glo
+*.gls
+*.glg
+*.glsdefs
+*.acn
+*.acr
+*.alg
+*.alg2
+*.alg3
+*.acr2
+*.acr3
+*.nlo
+*.nls
+*.nlg
+/main.ist
+
+# Auxiliares gerados pelo pdfx; manter arquivos-fonte .xmpdata e perfis de cor.
+/creationdate.lua
+/pdfa.xmpi
+/pdfx.xmpi
+/main.xmpi
+
+# Diretórios opcionais de saída da compilação.
+/build/
+/out/

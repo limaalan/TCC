@@ -1,0 +1,12 @@
+*
+!docker/
+!docker/**
+!build/
+build/*
+!build/releases/
+!build/releases/**
+build/releases/**/*.zip
+build/releases/**/*.tar.gz
+build/releases/**/client-windows/
+build/releases/**/client-linux/
+build/releases/**/server-windows/
