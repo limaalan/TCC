@@ -1,7 +1,7 @@
 % Relatório do TCC2: edição mantida diretamente neste arquivo LaTeX.
 \chapter{Desenvolvimento e resultados}\label{cap:tcc2-5}
 
-Este capítulo apresenta o produto desenvolvido e os resultados disponíveis. A primeira parte descreve a experiência do ponto de vista do jogador, funcionando como um guia conciso do jogo entregue. A segunda constitui o relatório técnico, no qual são discutidas a arquitetura, a sincronização e a implementação das principais funcionalidades. A parte final reúne a verificação funcional, os resultados das métricas, a comparação com a proposta e as limitações identificadas.
+Este capítulo apresenta o produto desenvolvido e os resultados disponíveis. A primeira parte descreve a experiência do ponto de vista do jogador, funcionando como um guia conciso do jogo entregue. A segunda constitui o relatório técnico, no qual são discutidas a arquitetura, a sincronização e a implementação das principais funcionalidades. A parte final reúne a verificação funcional, a comparação com a proposta e as limitações identificadas.
 
 \section{Visão geral do jogo final}\label{sec:5.1}
 
@@ -61,7 +61,7 @@ O gerenciador de cenas abre o menu principal quando o Client inicia. A formaçã
 \caption{Fluxo principal de telas e participação}
 \label{fig:tcc2-1}
 \input{figuras/tcc2/fluxo-telas.tex}
-\fonte{elaboração própria.}
+\fonte{elaboração própria}
 \end{figure}
 
 \subsection{Modos de jogo e objetivos}\label{sec:5.1.4}
@@ -72,7 +72,7 @@ Nos presets disponíveis, as partidas utilizam meta de 20 pontos e duração má
 
 \subsection{Armas, granadas e recursos da arena}\label{sec:5.1.5}
 
-O arsenal é formado por pistola, SMG e shotgun. A pistola realiza disparos individuais, a SMG permite manter o gatilho pressionado e a shotgun dispara vários traços simultaneamente. O jogador escolhe uma arma antes de entrar ou retornar à arena e precisa administrar sua munição durante a partida. Também pode lançar granadas, que explodem após um intervalo e causam dano de acordo com a distância.
+O arsenal é formado por pistola, submetralhadora (SMG) e espingarda (shotgun). A pistola realiza disparos individuais, a SMG permite manter o gatilho pressionado e a shotgun dispara vários traços simultaneamente. O jogador escolhe uma arma antes de entrar ou retornar à arena e precisa administrar sua munição durante a partida. Também pode lançar granadas, que explodem após um intervalo e causam dano de acordo com a distância.
 
 O mapa distribui pickups de vida, munição e granadas, além de dois power-ups temporários. Um deles aumenta o dano dos disparos e o outro reduz o intervalo entre tiros. Depois de coletados, os recursos permanecem indisponíveis por um período antes de reaparecerem.
 
@@ -87,7 +87,7 @@ A Figura~\ref{fig:hud-geral} apresenta os elementos comuns dessa interface. A ma
 \caption{Elementos comuns da interface durante uma partida}
 \label{fig:hud-geral}
 \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{figuras/tcc2/hud-geral-anotada.png}
-\fonte{captura do jogo desenvolvido, com marcações explicativas de autoria própria.}
+\fonte{captura do jogo desenvolvido, com marcações explicativas de autoria própria}
 \end{figure}
 
 Sons, recuo, efeitos de disparo e impacto e alterações visuais dos personagens complementam essas informações. Esses sinais permitem perceber a ocorrência de ações como disparos, coletas, explosões e recebimento de dano sem depender exclusivamente de mensagens textuais.
@@ -107,7 +107,7 @@ A Figura~\ref{fig:tcc2-2} apresenta esses agrupamentos por responsabilidade, sem
 \caption{Arquitetura geral do jogo organizada por responsabilidades}
 \label{fig:tcc2-2}
 \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{figuras/tcc2/arquitetura-geral.png}
-\fonte{elaboração própria.}
+\fonte{elaboração própria}
 \end{figure}
 
 \subsection{Comunicação e autoridade do servidor}\label{sec:5.2.2}
@@ -130,7 +130,7 @@ O servidor foi configurado para aceitar até 64 conexões e gerenciar até quatr
 
 O Server distribui snapshots do estado do mundo a cada três ciclos de física, enquanto o Client produz novos quadros continuamente. Como o tempo de trânsito pela rede pode variar, os snapshots podem chegar em intervalos irregulares. Se cada quadro utilizasse apenas o estado mais recente, uma renderização poderia ocorrer antes da chegada da atualização seguinte, mantendo temporariamente a última posição conhecida ou exigindo uma estimativa do movimento.
 
-Para reduzir essas descontinuidades, o Client mantém um buffer e calcula um instante de apresentação 100 milissegundos no passado. O desvio estimado entre os relógios do Client e do Server também participa desse cálculo. A cada quadro, o sistema procura dois estados conhecidos ao redor do instante de apresentação e interpola entre eles as posições e rotações dos jogadores remotos.
+Para reduzir essas descontinuidades, o Client mantém um buffer e calcula um instante de apresentação 100 milissegundos no passado. O desvio estimado entre os relógios do Client e do Server também participa desse cálculo. A cada ciclo de física do Client, o sistema procura dois estados conhecidos ao redor do instante de apresentação e interpola entre eles as posições e rotações dos jogadores remotos.
 
 A Figura~\ref{fig:tcc2-3} compara os dois casos com o mesmo conjunto de snapshots disponíveis, posicionados na linha do tempo pelo timestamp do Server, e não pelo instante de chegada ao Client. Sem atraso de apresentação, o instante desejado de 10,000 segundos está além do último estado conhecido, sem um estado posterior para formar o par de interpolação. Com o buffer de 100 milissegundos, o instante de apresentação $R$ passa a ser 9,900 segundos, entre os estados S1 e S2, permitindo calcular uma posição intermediária. Os valores temporais do diagrama são ilustrativos.
 
@@ -139,7 +139,7 @@ A Figura~\ref{fig:tcc2-3} compara os dois casos com o mesmo conjunto de snapshot
 \caption[Interpolação de snapshots com buffer de apresentação]{Interpolação de snapshots: comparação entre a apresentação sem atraso e com buffer de 100 milissegundos}
 \label{fig:tcc2-3}
 \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{figuras/tcc2/interpolacao-snapshots.png}
-\fonte{elaboração própria a partir da implementação.}
+\fonte{elaboração própria a partir da implementação}
 \end{figure}
 
 O atraso de 100 milissegundos é intencional e pertence à apresentação visual; ele não representa uma medição da latência da conexão. Essa estratégia troca uma pequena quantidade fixa de atraso por maior continuidade visual. Na implementação atual, o fator de interpolação não é limitado explicitamente ao intervalo entre zero e um. Caso não exista um estado posterior adequado, o cálculo não garante que o resultado permaneça estritamente entre os dois snapshots utilizados.
@@ -157,7 +157,7 @@ A Figura~\ref{fig:tcc2-4} ilustra o processo com todos os instantes expressos na
 \caption[Compensação de latência na validação de disparos]{Compensação de latência: relação entre o disparo, a recepção e a consulta histórica para validação por raycast}
 \label{fig:tcc2-4}
 \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{figuras/tcc2/compensacao-latencia-disparos.png}
-\fonte{elaboração própria a partir da implementação.}
+\fonte{elaboração própria a partir da implementação}
 \end{figure}
 
 Esse procedimento pode ser entendido como uma consulta ao passado para validar o disparo, mas não realiza um rollback completo da partida. O estado corrente do mundo não é integralmente reconstruído nem simulado novamente. Somente as representações auxiliares usadas nos testes de colisão são reposicionadas a partir do histórico recente. O mecanismo busca aproximar a decisão autoritativa da situação vista pelo jogador, sem garantir sincronização exata entre os relógios.
@@ -177,8 +177,6 @@ Esse procedimento pode ser entendido como uma consulta ao passado para validar o
 \textbf{Eventos visuais e dados substituíveis.} Efeitos remotos de tiro, impacto e coleta utilizam mensagens não confiáveis. Vida, quantidade de granadas e tempo de partida possuem atualizações não confiáveis ordenadas. A perda de uma mensagem de apresentação não modifica o estado calculado no Server, mas pode deixar um indicador desatualizado até uma comunicação posterior. No caso da vida, por exemplo, não se deve presumir uma correção periódica independente se nenhuma nova atualização ocorrer.
 
 \textbf{Variações visuais locais.} O time do jogador é enviado na mensagem de criação, mas a variante de cor da skin não faz parte desse contrato. Cada Client escolhe uma cor da paleta correspondente ao criar sua representação remota. Por isso, o mesmo personagem pode ter tonalidades diferentes em computadores distintos. O anel utiliza um material fixo para cada equipe, mantendo essa identificação vinculada ao time recebido.
-
-\textbf{Comparação com simulação determinística e catch-up.} O material Network Weapon with netfox apresenta uma alternativa em que projéteis avançam por passos determinísticos, recuperam passos perdidos por catch-up e reconciliam a posição inicial com a autoridade usando um limiar de distância. Essas estratégias servem como referência conceitual, mas não descrevem os tiros deste projeto: suas armas usam raycasts históricos, e as granadas recebem transformações periódicas. Não se deve confundir a compensação histórica de um acerto com a execução acelerada de passos de um projétil. \cite{NETFOX}
 
 \subsection{Jogador, times e ciclo de vida}\label{sec:5.2.5}
 
@@ -209,7 +207,7 @@ A Figura~\ref{fig:hud-koth} mostra a apresentação desse objetivo durante uma p
 \caption{Zona de King of the Hill e indicação da equipe controladora}
 \label{fig:hud-koth}
 \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{figuras/tcc2/hud-koth-anotada.png}
-\fonte{captura do jogo desenvolvido, com marcação explicativa de autoria própria.}
+\fonte{captura do jogo desenvolvido, com marcação explicativa de autoria própria}
 \end{figure}
 
 \textbf{Encerramento e resultado.}
@@ -224,7 +222,7 @@ A disposição combina alturas e destinos distintos para o deslocamento. Os grup
 
 O Server registra os dados dos jump pads e os envia ao Client, que constrói as plataformas de apresentação. Ao entrar em contato, o jogador recebe o impulso local. Uma zona de morte abaixo da arena trata quedas para fora da área útil. Essas duas interações relacionam o mapa ao ciclo do personagem: as plataformas ampliam suas possibilidades de percurso, e a queda encerra sua participação atual antes do retorno previsto pelo modo.
 
-Para manter a correspondência entre as duas representações do mapa, foi criado um script de geração da cena do Server. Durante sua execução, o servidor remove nós estritamente visuais, como malhas, iluminação e partículas, preservando os elementos necessários às regras. O empacotamento desses recursos é tratado separadamente na seção~\ref{sec:5.2.11}.
+Para manter a correspondência entre as duas representações do mapa, foi criado um script de geração da cena do Server. Durante a execução do jogo, o servidor remove nós estritamente visuais, como malhas, iluminação e partículas, preservando os elementos necessários às regras. O empacotamento desses recursos é tratado separadamente na seção~\ref{sec:5.2.11}.
 
 \subsection{Combate, granadas e recursos temporários}\label{sec:5.2.8}
 
@@ -299,7 +297,7 @@ A Figura~\ref{fig:hud-buffs} apresenta um detalhe desses indicadores. A marcaç�
 \caption{Detalhe dos indicadores de efeitos temporários e seus tempos restantes}
 \label{fig:hud-buffs}
 \includegraphics[width=0.72\linewidth,height=0.45\textheight,keepaspectratio]{figuras/tcc2/buffs-ativos-anotados.png}
-\fonte{recorte de captura do jogo desenvolvido, com marcação explicativa de autoria própria.}
+\fonte{recorte de captura do jogo desenvolvido, com marcação explicativa de autoria própria}
 \end{figure}
 
 \subsection{Interface, áudio e feedback visual}\label{sec:5.2.9}
@@ -308,7 +306,7 @@ A Figura~\ref{fig:hud-buffs} apresenta um detalhe desses indicadores. A marcaç�
 
 A interface reúne as informações necessárias para acompanhar a participação na partida, distribuídas entre a HUD geral, o indicador de objetivo e os efeitos temporários ilustrados nas Figuras~\ref{fig:hud-geral}, \ref{fig:hud-koth} e~\ref{fig:hud-buffs}. Cada componente recebe alterações do estado local ou mensagens originadas no Server, conforme a responsabilidade de cada dado.
 
-O menu principal e a tela de resultado utilizam recursos de tema para compartilhar características visuais. O menu permite informar o nome e escolher o preset, enquanto a tela final agrupa os participantes por equipe e apresenta seus resultados. A ação “Voltar ao menu” encerra esse percurso e devolve o jogador à seleção inicial.
+O menu principal e a tela de resultado utilizam recursos de tema para compartilhar características visuais. O menu permite informar o nome e escolher o preset, enquanto a tela final agrupa os participantes por equipe e apresenta seus resultados. A ação ``Voltar ao menu'' encerra esse percurso e devolve o jogador à seleção inicial.
 
 O controle da pausa considera conflitos entre navegação e ações do personagem. Ao retornar ao jogo, ações como salto, disparo e granada que ainda estiverem pressionadas são bloqueadas até sua liberação. Esse tratamento busca evitar que o mesmo botão utilizado para sair de uma tela produza imediatamente uma ação de combate. A verificação de foco também participa do tratamento da entrada por controle.
 
@@ -319,94 +317,29 @@ O controle da pausa considera conflitos entre navegação e ações do personage
 
 \textbf{Áudio e feedback visual.}
 
-O áudio foi centralizado em um gerenciador que associa identificadores a recursos sonoros. O sistema diferencia música e efeitos e pode criar um emissor comum ou tridimensional conforme a chamada. Sons de disparo, passos, aterrissagem, coleta e explosão acompanham os eventos correspondentes. A seleção dos recursos fica concentrada em uma biblioteca, permitindo alterar o som sem modificar a regra de combate.
+O áudio foi centralizado em um gerenciador que associa identificadores a recursos sonoros. Os recursos de áudio foram gerados pelo autor com Stable Audio Open executado localmente. O sistema diferencia música e efeitos e pode criar um emissor comum ou tridimensional conforme a chamada. Sons de disparo, passos, aterrissagem, coleta e explosão acompanham os eventos correspondentes. A seleção dos recursos fica concentrada em uma biblioteca, permitindo alterar o som sem modificar a regra de combate.
 
 As armas também apresentam recuo e efeito visual de disparo. Esses elementos começam localmente e são reproduzidos para os outros jogadores a partir das mensagens recebidas. Para os buffs, o personagem possui uma representação visual ativada enquanto houver efeito vigente. A separação entre apresentação e regra permite que um som ou uma animação seja alterado sem redefinir o dano ou a duração autoritativa.
 
 As expressões faciais são tratadas por um controlador de material. O recebimento de dano pode iniciar uma sequência temporária de reação, enquanto a expressão base depende da proporção de vida; na configuração do personagem, o limite de vida baixa é de 40\%. Assim, a textura do rosto pode mudar sem substituir a animação corporal. As cores de time e os anéis são tratados por outro caminho de apresentação, preservando suas responsabilidades.
 
-\subsection{Coleta de métricas e dashboard}\label{sec:5.2.10}
+\subsection{Coleta de métricas e registro em CSV}\label{sec:5.2.10}
 
-\textbf{Coleta e contrato das métricas.}
-
-A coleta foi implementada como um componente do Server, ativado por configuração de execução. A cada amostra, ele reúne quantidade de jogadores associados aos lobbies, quantidade de lobbies, estatísticas dos peers e contadores do host ENet. O payload transmitido identifica a versão do contrato, a origem, o timestamp e o PID do servidor. Os FPS dos Clients são informados por um componente próprio, cujo intervalo padrão de envio é de 0,25 segundo.
-
-As taxas de tráfego são calculadas a partir dos bytes e pacotes contabilizados no intervalo transcorrido. O resultado em KiB/s corresponde à quantidade de bytes dividida por 1024 e pela duração da janela. O RTT e a estimativa de perda são obtidos por peer; o coletor também produz agregações. Essas origens precisam permanecer distinguíveis: os contadores de tráfego pertencem ao host ENet, enquanto a lista usada nas agregações de peers é formada pelos jogadores associados aos lobbies.
-
-O campo de processamento dos lobbies mede o tempo gasto no trecho instrumentado de sua função de física. O Server informa o maior valor e a soma dos valores mais recentes dos lobbies. Essa medida não corresponde automaticamente a todo o custo de física do motor, ao uso de CPU do processo ou à duração de um tick completo. A distinção evita interpretar como desempenho global uma medição com escopo mais restrito.
-
-\begingroup
-\small
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.18}
-\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr0.23\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.35\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.42\textwidth-2\tabcolsep\relax}}
-\caption{Origem e significado dos principais indicadores}\label{tab:tcc2-4}\\
-\toprule
-Indicador & Origem & Interpretação \\
-\midrule
-\endfirsthead
-\multicolumn{3}{l}{\small Origem e significado dos principais indicadores (continuação)}\\
-\toprule
-Indicador & Origem & Interpretação \\
-\midrule
-\endhead
-\midrule
-\multicolumn{3}{r}{\small Continua na próxima página.}\\
-\endfoot
-\bottomrule
-\endlastfoot
-Jogadores e lobbies & Gerenciador do Server & Ocupação lógica do sistema. \\
-RTT e perda estimada & Estatísticas ENet dos peers & Condições da comunicação observadas pelo transporte. \\
-Ping da aplicação & Valor informado pelo Client & Medida da troca usada pela aplicação, distinta do RTT ENet. \\
-Tráfego em KiB/s e pacotes/s & Contadores do host ENet & Taxas calculadas no intervalo de coleta. \\
-Processamento de lobbies, máximo e soma & Trecho instrumentado de cada lobby & Custo medido dessa parte do código. \\
-FPS por Client & Motor executado no Client & Último valor de quadros por segundo informado pelo participante. \\
-CPU e memória RSS & psutil na máquina da dashboard & Uso do processo local identificado pelo PID recebido. \\
-\end{longtable}
-\endgroup
-
-Fonte: coletor, contrato, emissor do Client e monitor de processo.
-
-\textbf{Registro e transmissão.}
-
-O logger possui dois destinos independentes: gravação em CSV e transmissão de amostras por UDP. A gravação permite preservar os valores para análise posterior; a transmissão permite observar a execução enquanto ela ocorre. Os modos podem ser habilitados conjuntamente. A configuração também define intervalo, diretório de saída e endereço do receptor, mantendo o uso da coleta separado das regras do jogo.
-
-\begin{figure}[htbp]
-\centering
-\caption{Fluxo da coleta e apresentação de métricas}
-\label{fig:tcc2-5}
-\input{figuras/tcc2/fluxo-metricas.tex}
-\fonte{implementação dos componentes de telemetria.}
-\end{figure}
-
-A transmissão UDP utiliza mensagens JSON, recebidas e interpretadas pelo processo Python. Mensagens que não podem ser decodificadas ou que não representam um objeto são descartadas pelo receptor. Como o transporte não garante a entrega, lacunas na dashboard não devem ser confundidas automaticamente com ausência de atividade do jogo. O CSV produzido no Server constitui um registro independente desse caminho de transmissão. \cite{UDP}
-
-\textbf{Dashboard.}
-
-A dashboard foi construída como uma aplicação separada do jogo. O receptor entrega as amostras a um componente que normaliza os campos, guarda o último estado e mantém um histórico limitado em memória. A configuração padrão comporta 300 amostras, substituindo as mais antigas quando o limite é atingido. O serviço disponibiliza consultas HTTP para o estado atual e o histórico, além de uma conexão WebSocket para enviar atualizações ao navegador.
-
-CPU e memória são acrescentadas durante a normalização. O monitor lê o PID informado pelo Server e consulta o processo correspondente com psutil; quando o identificador muda, tenta associar a nova instância. Essa consulta ocorre no sistema operacional em que a dashboard está executando. Portanto, receber uma amostra de outro computador não torna seu PID consultável localmente: o uso atual dessas duas medidas pressupõe que o monitor consiga acessar o processo do Godot no mesmo ambiente.
-
-O histórico em memória facilita acompanhar variações durante a execução, mas não é um arquivo permanente do experimento. Além disso, CPU e memória acrescentadas pela dashboard não retornam ao logger do Godot para gravação nos seus CSVs. Se essas variáveis forem utilizadas nos resultados, sua preservação deve fazer parte do procedimento de coleta. Essa limitação não impede a observação ao vivo, mas define o que pode ser recuperado depois.
-
-\begin{quote}
-\small
-\textbf{Evidência pendente:} captura da dashboard durante uma partida e dados preservados que permitam relacionar o estado exibido ao cenário experimental.
-\end{quote}
+O Client consulta os FPS informados pelo motor e os envia periodicamente ao Server. Quando o registro em CSV está habilitado, o Server registra esses valores em um CSV e grava, em outro arquivo, indicadores próprios de rede, latência de ida e volta (RTT) obtida pelo ENet e tempo do trecho instrumentado de processamento dos lobbies. O registro fica no servidor e pode apoiar análises posteriores.
 
 \subsection{Build e execução}\label{sec:5.2.11}
 
-Foram configurados presets para Client Windows, Client Linux e Server Linux, todos com o pacote PCK embutido no executável. O PCK reúne recursos do projeto, e a opção de incorporá-lo evita sua distribuição como arquivo separado nesses presets. O Server pode ser iniciado em modo headless, sem apresentação gráfica. O guia do projeto orienta a preparação dos links compartilhados, a verificação dos recursos e a geração dos artefatos em diretórios de build. \cite{GODOT-SERVER}
+Foram configurados quatro presets: Client Windows, Client Linux, Server Windows e Server Linux, todos com o pacote PCK embutido no executável. O PCK reúne recursos do projeto, e a opção de incorporá-lo evita sua distribuição como arquivo separado nesses presets. O artefato Server Linux é utilizado pela configuração de hospedagem em contêiner. O guia do projeto descreve a preparação do ambiente, a verificação dos recursos e a geração desses artefatos. \cite{GODOT-SERVER}
 
-Há uma diferença entre executar sem interface e usar a opção específica de exportação para servidor dedicado. O preset do Server mantém \texttt{dedicated\_server=false}, e a execução headless é escolhida na inicialização. Os presets também utilizam \texttt{all\_resources}. Assim, a remoção de elementos visuais na cena em execução não equivale à sua exclusão do pacote exportado. A execução headless e a composição do executável são, portanto, etapas distintas da distribuição. \cite{GODOT-SERVER}
+Ambos os presets do Server utilizam a opção de exportação para servidor dedicado e aplicam a política Strip Visuals aos recursos do projeto. Esse tratamento durante a exportação é distinto da remoção de nós visuais feita pelo mapa durante a execução. O processo servidor também é iniciado em modo headless, sem apresentação gráfica; a execução sem interface e a composição dos recursos exportados constituem, portanto, decisões separadas da distribuição. \cite{GODOT-SERVER}
 
-A reprodução da build exige os arquivos-fonte, os recursos visuais e sonoros e a preparação dos links compartilhados, sem depender de um cache local anterior da Godot. Para verificar esse procedimento, a exportação e a execução dos artefatos devem ser registradas a partir de uma cópia limpa do repositório. A comprovação dessa etapa permanece como evidência a incorporar ao relatório.
+A reprodução da build parte dos arquivos-fonte e dos recursos visuais e sonoros do repositório. O builder prepara cópias dos dois projetos em um diretório temporário, materializa as definições compartilhadas em cada um e os importa separadamente com a Godot 4.5.1, sem reutilizar o cache local dos projetos. Para verificar esse procedimento, a exportação e a execução dos artefatos devem ser registradas a partir de uma cópia limpa do repositório. A comprovação dessa etapa permanece como evidência a incorporar ao relatório.
 
 \section{Verificação e análise dos resultados}\label{sec:5.3}
 
 \subsection{Resultados funcionais}\label{sec:5.3.1}
 
-O desenvolvimento reuniu o ciclo de partida, os dois modos, combate, coleta, interface e observabilidade. A Tabela~\ref{tab:tcc2-5} relaciona os comportamentos implementados aos cenários previstos para a verificação funcional. Os registros de execução ainda precisam ser incorporados; por isso, a tabela organiza a verificação sem atribuir aprovação aos testes pendentes.
+O desenvolvimento reuniu o ciclo de partida, os dois modos, combate, coleta de recursos e interface. A Tabela~\ref{tab:tcc2-5} relaciona os comportamentos implementados aos cenários previstos para a verificação funcional. Os registros de execução ainda precisam ser incorporados; por isso, a tabela organiza a verificação sem atribuir aprovação aos testes pendentes.
 
 \begingroup
 \small
@@ -435,23 +368,45 @@ Combate & Catálogo, raycasts históricos, dano e inventário. & Três armas, fa
 Granadas & Corpo físico, dano radial e snapshots. & Lançamento e explosão observados nos dois Clients. \\
 Pickups e buffs & Coleta, cooldown, aplicação e término de efeito. & Consumo, reaparecimento, renovação e limpeza após morte. \\
 HUD e resultado & Componentes locais e aplicação dos dados recebidos. & Coerência dos indicadores e retorno ao menu. \\
-Observabilidade & Coletor, CSV, UDP e dashboard. & Preservação do CSV e apresentação de amostras da partida. \\
+Registro em CSV & Recepção de FPS e coleta de indicadores no Server. & Geração dos arquivos com a coleta habilitada. \\
 Distribuição & Presets e procedimento de preparação. & Exportação e execução a partir de checkout limpo. \\
 \end{longtable}
 \endgroup
 
 Fonte: elaboração própria com base nas funcionalidades desenvolvidas e no roteiro de verificação.
 
-\subsection{Resultados das métricas}\label{sec:5.3.2}
+\subsection{Resultados do ensaio exploratório de carga}\label{sec:ensaio-carga-resultados}
 
-A infraestrutura desenvolvida reúne o coletor das variáveis descritas na Tabela~\ref{tab:tcc2-4}, o registro em CSV e a dashboard para acompanhamento em tempo real. Esses componentes fornecem os meios de execução do protocolo da seção~\ref{sec:4.8}.
+A Tabela~\ref{tab:carga-local} apresenta os indicadores das três rodadas locais que completaram os 300 segundos de observação, conforme o método da seção~\ref{sec:ensaio-carga-metodo}. Durante essas janelas, os registros do Server mantiveram uma sala e a quantidade prevista de participantes conectados. Os valores apresentados são médias temporais dos indicadores coletados, com arredondamento apenas para apresentação.
 
-As rodadas controladas e seus resultados ainda não foram incorporados ao relatório. A análise quantitativa deverá apresentar as condições de cada cenário, os dados preservados e as estatísticas calculadas, relacionando os indicadores aos períodos sem participantes e aos de partida ativa. A capacidade do servidor e o comportamento dos quatro lobbies simultâneos permanecem questões de avaliação, não resultados já demonstrados.
-
-\begin{quote}
+\begin{table}[htbp]
+\centering
+\caption{Indicadores médios das rodadas locais de 300 segundos}
+\label{tab:carga-local}
+\begingroup
 \small
-\textbf{Evidência pendente:} tabela de resultados por cenário e gráficos produzidos a partir dos dados brutos. Após sua inclusão, esta subseção deve discutir as observações obtidas, preservando a distinção entre custo do trecho instrumentado, CPU do processo, RTT de transporte e ping da aplicação.
-\end{quote}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{rrrr}
+\toprule
+Participantes & RTT (ms) & Perda ENet (\%) & Lobby parcial (ms) \\
+\midrule
+8 & 18,73 & 0,108 & 0,376 \\
+16 & 18,69 & 0,095 & 0,698 \\
+32 & 18,42 & 0,324 & 2,302 \\
+\bottomrule
+\end{tabular}
+\endgroup
+\fonte{elaboração própria a partir dos CSVs do ensaio}
+\end{table}
+
+O RTT médio permaneceu próximo de 19 ms nas três cargas. O custo parcial médio do lobby passou de 0,376 ms, com oito participantes, para 2,302 ms, com 32; a maior amostra desse trecho em cada rodada foi, respectivamente, 0,834 ms, 1,321 ms e 4,471 ms. A perda estimada pelo ENet foi maior na rodada com 32 participantes. As médias de atualizações observadas por Client ficaram entre 19,886 e 20,003 por segundo no conjunto das três rodadas. Essa proximidade entre médias não demonstra ausência de oscilações curtas: na rodada com 32, houve um intervalo de amostragem próximo de um segundo com taxa de aproximadamente 12,8 atualizações por segundo.
+
+As rodadas com oito e 16 bots atenderam ao controle operacional de atividade. Na rodada com 32, quatro bots tiveram personagem ativo entre 48,3\% e 49,0\% da janela, abaixo do mínimo escolhido de 50\%. Os dados dos 300 segundos foram preservados, mas essa ressalva limita a equivalência da carga ativa entre rodadas. O resultado desse controle, associado a mortes e retornos dos personagens, não constitui por si só evidência de que o Server deixou de atender aos participantes. Foram registrados 724, 1.453 e 2.692 disparos nas rodadas com oito, 16 e 32 bots, respectivamente.
+
+\textbf{Tentativa com 64 participantes.} Todos os bots chegaram à mesma sala, mas a execução foi interrompida durante o aquecimento, antes da janela de 300 segundos. Nas 11 amostras posteriores à barreira comum de início, durante o aquecimento e com os 64 ainda conectados, o RTT médio foi de 310,585 ms e a perda estimada média foi de 1,747\%. A maior amostra de RTT de um participante atingiu 1.272 ms; esse pico não deve ser confundido com a média. Houve uma desconexão e, posteriormente, um erro ao tentar enviar uma RPC ao participante desconectado. O controlador do ensaio encerrou a execução; não foi observado encerramento espontâneo do processo Server. A causa da desconexão não foi isolada. Por corresponder a uma observação parcial no aquecimento, essa tentativa não é diretamente comparável às rodadas da tabela.
+
+Os resultados mostram crescimento do custo parcial de processamento e degradação acentuada de latência na tentativa com 64 participantes, nas condições locais descritas. Eles não determinam um máximo de jogadores ou a cadência efetiva da física. A ausência de renderização nos Clients também impede avaliar a apresentação visual por essas rodadas. Na demonstração do cenário com 32 participantes, um jogador substitui um dos bots, mantendo o total de participantes.
 
 \subsection{Comparação entre proposta e entrega}\label{sec:5.3.3}
 
@@ -487,7 +442,7 @@ Melhorias temporárias & Dano e velocidade de movimentação. & Dano e cadência
 Plataformas & Fixas, móveis, quebradiças e de impulso. & Salto duplo e jump pads integrados a Highrise; demais tipos fora do escopo entregue. \\
 Vidas & Possibilidade de contagem limitada. & Presets sem limite de vidas e retorno após seleção de arma. \\
 Arena & Protótipo associado às referências iniciais. & Highrise selecionável; Prototype preservado para desenvolvimento. \\
-Avaliação técnica & Sem a atual infraestrutura de telemetria descrita. & Coleta CSV/UDP e dashboard implementadas; experimento ainda a incorporar. \\
+Registro técnico & Sem a atual infraestrutura de coleta descrita. & Coleta em CSV e ensaio exploratório local com participantes automatizados. \\
 \end{longtable}
 \endgroup
 
@@ -501,4 +456,4 @@ Na apresentação remota, a explosão de granadas depende da transição entre s
 
 Quanto ao conteúdo, a versão reúne um mapa e dois modos, com dois jogadores por preset. A distribuição das áreas de nascimento, alturas e recursos ainda exige avaliação de equilíbrio entre equipes, considerando percursos, tempos de chegada e resultados de partidas. A entrada por controle requer verificação em dispositivos físicos, e a interface precisa ser avaliada em diferentes resoluções. A localização dos textos também é parcial, com rótulos em português e inglês.
 
-A avaliação funcional, a exportação em ambiente limpo e os resultados quantitativos permanecem pendentes dos registros indicados nas seções anteriores. O limite de quatro lobbies é uma configuração do sistema, e não uma capacidade comprovada por ensaio de carga. Para CPU e memória, há ainda uma condição de coleta: o monitor precisa acessar o processo do Server no mesmo ambiente, e as medidas acrescentadas pela dashboard devem ser preservadas separadamente de seu histórico temporário.
+A verificação funcional e a exportação em ambiente limpo permanecem pendentes dos registros indicados nas seções anteriores. O limite de quatro lobbies é uma configuração do sistema; o ensaio exploratório utilizou somente uma sala. Seus resultados se restringem à máquina e ao perfil automatizado descritos, sem comprovar a capacidade do ambiente de hospedagem ou a jogabilidade percebida por participantes humanos.

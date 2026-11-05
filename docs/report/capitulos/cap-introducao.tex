@@ -2,14 +2,14 @@
 \chapter{Introdução}\label{cap:tcc2-1}
 
 \begin{quote}\small
-\textbf{Prévia do TCC2.} As notas de evidência pendente identificam figuras e resultados experimentais ainda necessários. Nenhuma medição foi criada para preencher essas lacunas.
+\textbf{Prévia do TCC2.} As notas de evidência pendente identificam capturas e registros de verificação funcional ainda necessários à revisão final.
 \end{quote}
 
 Neste capítulo são apresentados o contexto do trabalho, o problema abordado e os objetivos do desenvolvimento. Também é delimitado o conjunto de funcionalidades da versão descrita no relatório, considerando as diferenças entre a proposta inicial e o sistema implementado.
 
 \section{Contextualização}\label{sec:1.1}
 
-O desenvolvimento de um jogo envolve a integração entre sua programação e os elementos com os quais o jogador interage. No presente trabalho, essa integração compreendeu o controle de um personagem, a construção de um cenário tridimensional, a apresentação de informações na interface e o processamento de uma partida compartilhada pela rede. A motivação registrada no TCC1 foi utilizar a criação de um jogo como oportunidade de aprendizado sobre essas diferentes atividades, tendo como proposta um jogo de tiro em primeira pessoa com elementos de plataforma.
+O desenvolvimento de um jogo envolve a integração entre sua programação e os elementos com os quais o jogador interage. No jogo jumpnshoot, desenvolvido neste trabalho, essa integração compreendeu o controle de um personagem, a construção de um cenário tridimensional, a apresentação de informações na interface e o processamento de uma partida compartilhada pela rede. A motivação registrada no TCC1 foi utilizar a criação de um jogo como oportunidade de aprendizado sobre essas diferentes atividades, tendo como proposta um jogo de tiro em primeira pessoa com elementos de plataforma.
 
 Para a implementação foi utilizado o motor de jogos Godot. Sua organização em nós e cenas permite representar tanto elementos do mundo, como personagens e armas, quanto telas e componentes de interface. Cenas podem ser reutilizadas e combinadas para formar sistemas maiores, enquanto sinais permitem comunicar a ocorrência de eventos entre os elementos. Essa organização oferece uma base para reunir, em um mesmo projeto, as diferentes partes necessárias à execução de um jogo. \cite{GODOT-CONCEITOS}
 
@@ -38,17 +38,16 @@ A partir desse objetivo, foram considerados os seguintes objetivos específicos,
 \item Organizar a comunicação entre Client e Server e compartilhar contratos e definições usados pelos dois projetos.
 \item Construir uma arena e integrar os modelos, materiais, efeitos sonoros e componentes de interface necessários à experiência de jogo.
 \item Preparar configurações de exportação para os executáveis de Client e Server.
-\item Implementar coleta de métricas e uma dashboard para acompanhar a execução e apoiar a avaliação técnica.
 \end{itemize}
 
 \section{Escopo do trabalho}\label{sec:1.4}
 
-A versão descrita possui dois times, identificados pelas cores azul e vermelho, e dois modos selecionáveis: Team Deathmatch e King of the Hill. Ambos utilizam o mapa Highrise e presets com limite de 300 segundos, meta de 20 pontos e dois jogadores por partida. O processo servidor permite criar até quatro lobbies. Esses parâmetros delimitam a configuração da versão preparada para entrega; a avaliação de sua capacidade é tratada na seção~\ref{sec:5.3}.
+A versão descrita possui dois times, identificados pelas cores azul e vermelho, e dois modos selecionáveis: Team Deathmatch e King of the Hill. Ambos utilizam o mapa Highrise e presets com limite de 300 segundos, meta de 20 pontos e dois jogadores por partida. O processo servidor permite criar até quatro lobbies. Esses são os parâmetros usuais da versão descrita. Complementarmente, um modo experimental ampliou a lotação de uma única sala para um ensaio exploratório local, apresentado nas seções~\ref{sec:ensaio-carga-metodo} e~\ref{sec:ensaio-carga-resultados}. O ensaio não estabelece a capacidade do ambiente de hospedagem nem substitui a avaliação humana de jogabilidade.
 
 O conjunto de armas é composto por pistola, submetralhadora e espingarda, além de granadas. Também foram implementados pickups de vida e munição e efeitos temporários de dano e cadência de tiro. Capture the Flag, canhão laser, lança-foguetes e vidas limitadas fizeram parte da proposta ou do planejamento, mas não compõem o funcionamento descrito nesta versão. O mapa Prototype permaneceu registrado para desenvolvimento, sem integrar os presets apresentados no menu principal.
 
-O trabalho contempla a exportação do Client para Windows e Linux e do Server para Linux, além de procedimentos de verificação funcional e coleta de métricas. A preparação dos executáveis é descrita na seção~\ref{sec:5.2.11}, e os registros de execução ainda necessários estão assinalados nas seções de avaliação.
+O trabalho contempla a exportação de Client e Server para Windows e Linux e procedimentos de verificação funcional. O artefato Server Linux é destinado à hospedagem. A preparação dos executáveis é descrita na seção~\ref{sec:5.2.11}, e os registros de execução ainda necessários estão assinalados nas seções de verificação.
 
 \section{Estrutura do relatório}\label{sec:1.5}
 
-O Capítulo~\ref{cap:tcc2-2} apresenta a fundamentação necessária para caracterizar o jogo. O Capítulo~\ref{cap:tcc2-3} resume as inspirações visuais e de jogabilidade. O Capítulo~\ref{cap:tcc2-4} descreve as ferramentas, a arquitetura e as tecnologias empregadas, o processo de desenvolvimento e os procedimentos de avaliação. O Capítulo~\ref{cap:tcc2-5} apresenta primeiro o produto pela perspectiva do jogador e, em seguida, seu desenvolvimento técnico e os resultados disponíveis. Por fim, o Capítulo~\ref{cap:tcc2-6} discute os objetivos alcançados, as contribuições e as possibilidades de continuidade.
+O Capítulo~\ref{cap:tcc2-2} apresenta a fundamentação necessária para caracterizar o jogo. O Capítulo~\ref{cap:tcc2-3} resume as inspirações visuais e de jogabilidade. O Capítulo~\ref{cap:tcc2-4} descreve as ferramentas, a arquitetura e as tecnologias empregadas, o processo de desenvolvimento e os procedimentos de verificação funcional e de ensaio de carga. O Capítulo~\ref{cap:tcc2-5} apresenta primeiro o produto pela perspectiva do jogador e, em seguida, seu desenvolvimento técnico e os resultados disponíveis. Por fim, o Capítulo~\ref{cap:tcc2-6} discute os objetivos alcançados, as contribuições e as possibilidades de continuidade.
