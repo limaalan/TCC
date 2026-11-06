@@ -7,19 +7,19 @@ Este capítulo apresenta os conceitos necessários para caracterizar o produto d
 
 Neste trabalho, o motor de jogos corresponde ao ambiente que reúne os recursos utilizados para construir e executar a aplicação. Na Godot, nós representam unidades de comportamento e podem ser organizados em cenas reutilizáveis. Uma cena de personagem, por exemplo, pode combinar corpo físico, câmera e apresentação visual. Essa composição também se aplica a menus e ao próprio mapa. A documentação da Godot apresenta nós, cenas, árvore de cenas e sinais como conceitos centrais de sua organização. \cite{GODOT-CONCEITOS}
 
-O jogo foi desenvolvido em GDScript para definir comportamentos e recursos próprios do motor para física tridimensional, entrada, interface, áudio e comunicação em rede. A mesma base tecnológica é empregada nos dois projetos Godot, embora o Client e o Server possuam responsabilidades diferentes. O primeiro concentra a interação e a apresentação; o segundo mantém as regras e os dados compartilhados da partida.
+Os comportamentos do jogo foram programados em GDScript. Para física tridimensional, entrada, interface, áudio e comunicação em rede, foram utilizados recursos do motor. A mesma base tecnológica é empregada nos dois projetos Godot, embora o cliente e o servidor possuam responsabilidades diferentes. O primeiro concentra a interação e a apresentação; o segundo mantém as regras e os dados compartilhados da partida.
 
 \section{Jogos de tiro em primeira pessoa e arena shooters}\label{sec:2.2}
 
 Nos jogos de tiro em primeira pessoa, a exploração e o combate são apresentados a partir do ponto de vista do personagem controlado. Hullett e Whitehead descrevem esse tipo de jogo como uma navegação por um mundo tridimensional em que o jogador enfrenta outros personagens utilizando armas. Essa perspectiva relaciona o enquadramento da câmera à direção de observação e de ataque. \cite{HULLETT}
 
-O recorte adotado neste trabalho foi o de combate em arena, presente nas referências Quake III Arena e Unreal Tournament. Nesses exemplos, o confronto se organiza em espaços próprios para partidas, com diferentes armas e regras de disputa. A proposta do TCC aproveitou a combinação entre movimentação, combate e recursos distribuídos pelo cenário, sem incluir uma campanha narrativa ou progressão por níveis de personagem. \cite{QUAKE} \cite{UNREAL}
+O recorte de combate em arena adotado neste trabalho diz respeito às funcionalidades de movimentação, combate e coleta de recursos distribuídos pelo cenário. O jogo desenvolvido não inclui campanha narrativa ou progressão por níveis de personagem.
 
 \section{Elementos de jogos de plataforma em ambientes 3D}\label{sec:2.3}
 
-Os elementos de plataforma considerados no projeto são ações e estruturas que permitem vencer diferenças de altura e alcançar outras regiões do cenário. A proposta inicial incluiu salto duplo, plataformas suspensas e plataformas de impulso. A versão implementada preservou o salto duplo e os jump pads, relacionando o deslocamento vertical ao percurso pela arena.
+Os elementos de plataforma considerados no projeto são ações e estruturas que permitem vencer diferenças de altura e alcançar outras regiões do cenário. A proposta inicial incluiu salto duplo, plataformas suspensas e plataformas de impulso. A versão implementada preservou o salto duplo e as plataformas de impulso, relacionando o deslocamento vertical ao percurso pela arena.
 
-Lovely Planet oferece uma referência para a combinação entre saltar, mirar e disparar. A descrição do próprio desenvolvedor enfatiza a alternância entre desviar de projéteis e buscar uma posição de tiro. No presente trabalho, essa referência ajuda a contextualizar a intenção de reunir combate e movimentação, enquanto as regras concretas de salto e impulso são próprias da implementação. \cite{LOVELY}
+\textit{Lovely Planet} oferece uma referência para a combinação entre saltar, mirar e disparar. A descrição do próprio desenvolvedor enfatiza a alternância entre desviar de projéteis e buscar uma posição de tiro. No presente trabalho, essa referência ajuda a contextualizar a intenção de reunir combate e movimentação, enquanto as regras concretas de salto e impulso são próprias da implementação. \cite{LOVELY}
 
 \section{Jogos multijogador competitivos em tempo real}\label{sec:2.4}
 

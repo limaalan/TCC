@@ -1,17 +1,19 @@
 % Relatório do TCC2: edição mantida diretamente neste arquivo LaTeX.
 \chapter{Conclusão}\label{cap:tcc2-6}
 
-Este capítulo retoma os objetivos do trabalho e discute o produto descrito. A síntese reúne as funcionalidades desenvolvidas, as decisões de arquitetura e as possibilidades de continuidade. Os registros de avaliação ainda necessários permanecem indicados no capítulo de resultados.
+Este capítulo retoma os objetivos do trabalho e discute o produto descrito. A síntese reúne as funcionalidades desenvolvidas, as decisões de arquitetura, a verificação funcional e as possibilidades de continuidade.
 
 \section{Síntese do trabalho}\label{sec:6.1}
 
-O trabalho resultou na implementação de um jogo de tiro em primeira pessoa 3D organizado em partidas entre equipes. A proposta de combinar combate em arena e elementos de plataforma foi materializada em movimentação local, salto duplo, jump pads, três armas, granadas, coleta de recursos e dois modos de jogo. A arena Highrise e os componentes de interface integram essas funcionalidades em um fluxo que vai da entrada no lobby à apresentação dos resultados.
+O trabalho resultou na implementação de um jogo de tiro em primeira pessoa 3D organizado em partidas entre equipes. A proposta de combinar combate em arena e elementos de plataforma foi materializada em movimentação local, salto duplo, plataformas de impulso, três armas, granadas, coleta de recursos e dois modos de jogo. O mapa desenvolvido e os componentes de interface integram essas funcionalidades em um fluxo que vai da entrada na sala à apresentação dos resultados.
 
-A arquitetura adotada utiliza um processo servidor dedicado para organizar as partidas e decidir dano, recursos e pontuação. A sincronização combina estados contínuos, eventos e apresentação local, com responsabilidades diferentes para cada informação. Também foram implementados mecanismos de coleta e uma dashboard, ampliando o produto com recursos para acompanhar sua operação e preparar uma avaliação técnica.
+A arquitetura adotada utiliza um processo servidor dedicado para organizar as partidas e decidir dano, recursos e pontuação. A sincronização combina estados contínuos, eventos e apresentação local, com responsabilidades diferentes para cada informação.
+
+O ensaio exploratório reuniu o servidor e participantes automatizados na mesma máquina e oferece uma referência local, com rodadas completas até 32 participantes. As rodadas com oito, 16 e 32 participantes completaram 300 segundos de observação com RTT médio próximo de 19 ms e crescimento do tempo parcial do ciclo de atualização da sala. A tentativa com 64 participantes foi interrompida durante o aquecimento após degradação aguda da latência e uma desconexão. Como servidor e geradores de carga compartilharam recursos com outros processos, sem isolamento nem repetições independentes, os registros caracterizam esse cenário, sem estabelecer capacidade máxima geral ou atribuir a degradação a uma causa específica.
 
 \section{Objetivos alcançados}\label{sec:6.2}
 
-As funcionalidades centrais do objetivo geral foram implementadas e integradas ao projeto. A Tabela~\ref{tab:tcc2-7} relaciona os objetivos específicos ao produto desenvolvido e assinala os registros de avaliação ainda necessários. A conclusão da verificação funcional e quantitativa depende das evidências indicadas na seção~\ref{sec:5.3}.
+As funcionalidades centrais do objetivo geral foram implementadas e integradas ao projeto. A Tabela~\ref{tab:tcc2-7} relaciona os objetivos específicos ao produto desenvolvido. A verificação funcional realizada pelo autor percorreu os sistemas apresentados na seção~\ref{sec:5.3.1}, enquanto o ensaio exploratório forneceu uma referência local para seu comportamento sob carga.
 
 \begingroup
 \small
@@ -34,12 +36,11 @@ Objetivo & Resultado sustentado nesta versão \\
 \bottomrule
 \endlastfoot
 Movimentação e plataforma & Controle em primeira pessoa, corrida, salto duplo e impulso local implementados. \\
-Combate e recursos & Três armas, granadas, vida, retorno à partida, inventário e pickups implementados. \\
-Modos competitivos & TDM e KOTH configurados em presets, com regras próprias de pontuação. \\
-Comunicação e contratos & Client e Server utilizam RPCs, snapshots e definições compartilhadas. \\
-Arena e apresentação & Highrise, HUD, materiais de time e tratamento de áudio integrados ao projeto. \\
-Exportação & Presets para Windows/Linux e procedimento de build disponíveis; reprodução em checkout limpo ainda a documentar. \\
-Observação e avaliação & Coleta CSV/UDP e dashboard implementadas; resultados do experimento ainda a incorporar. \\
+Combate e recursos & Três armas, granadas, vida, retorno à partida, inventário e coletáveis implementados. \\
+Modos competitivos & TDM e KOTH configurados em predefinições, com regras próprias de pontuação. \\
+Comunicação e contratos & Cliente e servidor utilizam RPCs, snapshots e definições compartilhadas. \\
+Mapa e apresentação & Mapa desenvolvido, HUD, materiais de time e tratamento de áudio integrados ao projeto. \\
+Exportação & Cliente e servidor exportados para Windows/Linux, verificados pelo GitHub Actions e publicados na versão \texttt{v0.1.0}; versão publicada utilizada pelo autor. \\
 \end{longtable}
 \endgroup
 
@@ -47,14 +48,14 @@ Fonte: correspondência entre os objetivos da seção~\ref{sec:1.3.2} e as evid�
 
 \section{Contribuições e aprendizado}\label{sec:6.3}
 
-A principal contribuição técnica está na integração de funcionalidades que dependem umas das outras durante uma partida. O combate altera vida e estatísticas; a morte interfere na ocupação de objetivos e nos buffs; a coleta modifica recursos; e a interface precisa apresentar essas mudanças em cada Client. A organização por responsabilidades tornou possível descrever essas relações e identificar quais decisões pertencem ao Server e quais permanecem locais.
+A principal contribuição técnica está na integração de funcionalidades que dependem umas das outras durante uma partida. O combate altera vida e estatísticas; a morte interfere na ocupação de objetivos e nas melhorias temporárias; a coleta modifica recursos; e a interface precisa apresentar essas mudanças em cada cliente. A organização por responsabilidades tornou possível descrever essas relações e identificar quais decisões pertencem ao servidor e quais permanecem locais.
 
-O projeto também oferece um material de estudo sobre escolhas de sincronização em um jogo concreto. Posição, munição, objetivos, efeitos e skins utilizam fluxos distintos conforme a frequência de mudança e a necessidade de atualização. A documentação desses casos, acompanhada de suas limitações, contribui para a manutenção e para a compreensão das consequências de cada escolha. A infraestrutura de métricas complementa esse material ao fornecer instrumentos para confrontar a descrição do sistema com sua execução.
+O projeto também oferece um material de estudo sobre escolhas de sincronização em um jogo concreto. Posição, munição, objetivos, efeitos e skins utilizam fluxos distintos conforme a frequência de mudança e a necessidade de atualização. A documentação desses casos, acompanhada de suas limitações, contribui para a manutenção e para a compreensão das consequências de cada escolha.
 
 \section{Trabalhos futuros}\label{sec:6.4}
 
-Uma continuidade imediata é concluir a avaliação funcional e quantitativa da versão distribuída. Isso inclui preservar as rodadas de coleta, registrar o ambiente e comparar cenários com diferentes quantidades de partidas ativas. A build também deve ser reproduzida a partir de um checkout limpo, permitindo demonstrar que os arquivos e procedimentos documentados são suficientes para gerar os executáveis. Os procedimentos de preparação e execução estão reunidos na documentação técnica complementar.
+A avaliação de capacidade no ambiente de hospedagem permanece como continuidade do ensaio exploratório local. Uma avaliação posterior pode separar servidor e geradores de carga, repetir as execuções e medir a cadência efetiva da física e o consumo de recursos. Esses procedimentos permitiriam sustentar conclusões mais específicas sobre o número de participantes atendidos em um mapa e uma máquina determinados.
 
-Na rede, as limitações identificadas motivam a avaliação de validação de movimento, controle de frequência dos disparos no Server, tratamento consistente da explosão de granadas e recuperação de estados após interrupções. O reenvio dos buffs pode ser ampliado para incluir o tempo restante, caso se deseje reconstruir também o indicador local. Essas possibilidades derivam dos caminhos atuais de processamento e devem ser acompanhadas de testes que verifiquem a coerência entre participantes.
+Na rede, as limitações identificadas motivam a avaliação de validação de movimento, controle de frequência dos disparos no servidor, tratamento consistente da explosão de granadas e recuperação de estados após interrupções. O reenvio das melhorias temporárias pode ser ampliado para incluir o tempo restante, caso se deseje reconstruir também o indicador local. Essas possibilidades derivam dos caminhos atuais de processamento e devem ser acompanhadas de testes que verifiquem a coerência entre participantes.
 
-No conteúdo, novos mapas e modos podem ampliar a variedade de partidas, mas a arena atual também oferece espaço para avaliar percursos e distribuição de recursos antes de aumentar o escopo. Na observabilidade, a persistência das medidas acrescentadas pela dashboard permitiria incluí-las de forma mais direta nas análises posteriores. Com isso, a continuidade do trabalho pode se apoiar nas funcionalidades existentes e nas limitações documentadas, preservando a relação entre desenvolvimento, verificação e evidência.
+No conteúdo, novos mapas e modos podem ampliar a variedade de partidas, mas o mapa atual também oferece espaço para avaliar percursos e distribuição de recursos antes de aumentar o escopo. Essa continuidade pode se apoiar nas funcionalidades existentes e nas limitações documentadas, preservando a relação entre desenvolvimento, verificação e evidência.

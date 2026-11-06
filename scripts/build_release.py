@@ -114,6 +114,8 @@ def main():
     parser.add_argument("--commit")
     parser.add_argument("--targets", nargs="+", choices=TARGETS, default=list(TARGETS))
     parser.add_argument("--godot", default="godot")
+    parser.add_argument("--no-package", action="store_true",
+                        help="Keep exports unpacked without generating release archives")
     args = parser.parse_args()
     version = validate_version(args.version)
     source = args.source.resolve()
@@ -132,7 +134,8 @@ def main():
     if not engine.startswith(GODOT_VERSION + ".stable."):
         raise RuntimeError(f"Expected Godot {GODOT_VERSION}.stable, got {engine}")
     metadata = {"version": version, "commit": commit, "dirty": dirty,
-                "godot": engine, "architecture": "x86_64", "targets": args.targets}
+                "godot": engine, "architecture": "x86_64", "targets": args.targets,
+                "packaged": not args.no_package}
     with tempfile.TemporaryDirectory(prefix="jumpnshoot-build-") as temp:
         workspace = Path(temp)
         staging = workspace / "release"
@@ -161,7 +164,8 @@ def main():
                                      logs / "server-dedicated-check.log")
                 if "EXPORT_SERVER_READY" not in result:
                     raise RuntimeError("Dedicated server/stripped resource check did not pass")
-            package_target(target, platform, metadata, staging)
+            if not args.no_package:
+                package_target(target, platform, metadata, staging)
         (staging / "BUILD.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
         files = sorted(path for path in staging.rglob("*") if path.is_file())
         checksums = [f"{sha256(path)}  "

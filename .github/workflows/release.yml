@@ -45,6 +45,7 @@ jobs:
     uses: ./.github/workflows/ci.yml
     with:
       version: ${{ needs.prepare.outputs.version }}
+      full: true
 
   publish:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
@@ -85,6 +86,8 @@ jobs:
           assert metadata['commit'] == os.environ['GITHUB_SHA'], 'Artifact commit differs from release commit'
           assert metadata['version'] == os.environ['BUILD_VERSION'], 'Artifact version differs from tag'
           assert metadata['dirty'] is False, 'Release must come from a clean checkout'
+          assert metadata['packaged'] is True, 'Release requires packaged exports'
+          assert set(metadata['targets']) == {'client-linux', 'client-windows', 'server-linux', 'server-windows'}, 'Release requires all four targets'
           PY
       - name: Publish the runtime containing the tested Linux executable
         id: image

@@ -1,0 +1,4 @@
+participants,duration_sec,rtt_temporal_mean_ms,enet_reliable_loss_est_mean_percent,lobby_partial_mean_ms,lobby_partial_max_sample_ms,updates_observed_mean_min_hz,updates_observed_mean_max_hz,workload_gate
+8,300,18.7292,0.1077,0.3757,0.834,19.913,20.003,completed
+16,300,18.6859,0.0947,0.6976,1.321,19.886,20.003,completed
+32,300,18.4245,0.3244,2.3016,4.471,19.893,19.993,failed

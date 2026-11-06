@@ -1,10 +1,12 @@
-% Bibliografia externa transposta da prévia docs/tcc2/relatorio_tcc2.md.
-% Datas não informadas na prévia permanecem indicadas como s.d.
-% Acesso de 05/09/2026 preservado da prévia; o acesso de NETFOX não foi presumido.
+% Bibliografia do relatório ativo; conferência documental em 29/10/2026.
+% Acessos históricos de 05/09/2026 preservados; novas consultas estão registradas
+% em docs/revisoes/2026-10-29-bibliografia.md.
+% s.d. indica ausência de data da página/obra, sem usar o lançamento de um jogo
+% ou o copyright do site como se fosse a publicação da página consultada.
 
 @misc{GODOT-CONCEITOS,
   author = {{Godot Engine}},
-  title = {Overview of Godot's key concepts},
+  title = {Overview of {Godot}'s key concepts},
   year = {s.d.},
   url = {https://docs.godotengine.org/en/4.5/getting_started/introduction/key_concepts_overview.html},
   urlaccessdate = {5 set. 2026},
@@ -42,6 +44,7 @@
   author = {Fiedler, Glenn},
   title = {What Every Programmer Needs To Know About Game Networking},
   year = {2010},
+  month = feb,
   url = {https://www.gafferongames.com/post/what_every_programmer_needs_to_know_about_game_networking/},
   urlaccessdate = {5 set. 2026},
   note = {Gaffer On Games},
@@ -51,6 +54,7 @@
   author = {Fiedler, Glenn},
   title = {Snapshot Interpolation},
   year = {2014},
+  month = nov,
   url = {https://www.gafferongames.com/post/snapshot_interpolation/},
   urlaccessdate = {5 set. 2026},
   note = {Gaffer On Games},
@@ -60,18 +64,25 @@
   author = {Postel, Jon},
   title = {User Datagram Protocol},
   year = {1980},
+  month = aug,
+  howpublished = {RFC 768},
+  publisher = {{RFC Editor}},
   url = {https://www.rfc-editor.org/rfc/rfc768.txt},
   urlaccessdate = {5 set. 2026},
-  note = {RFC 768},
+  note = {DOI: 10.17487/RFC768},
 }
 
-@misc{HULLETT,
+@inproceedings{HULLETT,
   author = {Hullett, Kenneth and Whitehead, Jim},
   title = {Design Patterns in {FPS} Levels},
+  booktitle = {Proceedings of the Fifth International Conference on the Foundations of Digital Games},
   year = {2010},
+  pages = {78--85},
+  publisher = {ACM},
+  address = {New York, NY, USA},
   url = {https://users.soe.ucsc.edu/~ejw/papers/hullett-fps-fdg2010.pdf},
   urlaccessdate = {5 set. 2026},
-  note = {Foundations of Digital Games},
+  note = {FDG 2010},
 }
 
 @misc{DOUBLE-DIAMOND,
@@ -96,7 +107,7 @@
   year = {s.d.},
   url = {https://store.steampowered.com/app/2200/Quake_III_Arena/},
   urlaccessdate = {5 set. 2026},
-  note = {Descrição do produto disponibilizada na Steam},
+  note = {Página do produto na Steam; jogo lançado em 1999},
 }
 
 @misc{UNREAL,
@@ -105,22 +116,61 @@
   year = {s.d.},
   url = {https://www.epicgames.com/unrealtournament/},
   urlaccessdate = {5 set. 2026},
-  note = {Apresentação oficial da série, seção referente ao jogo de 1999},
+  note = {Apresentação oficial da série; seção referente ao jogo lançado em 30 nov. 1999},
+}
+
+@inproceedings{CLAYPOOL-LATENCIA-2010,
+  author = {Claypool, Mark and Claypool, Kajal},
+  title = {Latency Can Kill: Precision and Deadline in Online Games},
+  booktitle = {Proceedings of the First ACM Multimedia Systems Conference},
+  year = {2010},
+  address = {Scottsdale, AZ, USA},
+  publisher = {ACM},
+  url = {https://web.cs.wpi.edu/~claypool/papers/precision-deadline-mmsys/claypool-precision-deadline.pdf},
+  urlaccessdate = {29 out. 2026}
+}
+
+@misc{GODOT-ENET-METRICAS,
+  author = {{Godot Engine}},
+  title = {{ENetPacketPeer}},
+  year = {s.d.},
+  note = {Documentação da versão 4.5},
+  url = {https://docs.godotengine.org/en/4.5/classes/class_enetpacketpeer.html},
+  urlaccessdate = {29 out. 2026}
+}
+
+@misc{GODOT-FISICA-ENGINE,
+  author = {{Godot Engine}},
+  title = {{Engine}},
+  year = {s.d.},
+  note = {Documentação da versão 4.5; physics\_ticks\_per\_second},
+  url = {https://docs.godotengine.org/en/4.5/classes/class_engine.html},
+  urlaccessdate = {29 out. 2026}
+}
+
+@misc{VALVE-IMAGEM-LAG,
+  author = {{Valve Developer Community}},
+  title = {Lag compensation: imagem de {Counter-Strike: Source}},
+  year = {s.d.},
+  url = {https://developer.valvesoftware.com/w/images/c/ca/Lag_compensation.jpg},
+  urlaccessdate = {5 nov. 2026},
+  note = {Imagem com visualização de hitboxes}
+}
+
+@misc{VALVE-SDK-LAG,
+  author = {{Valve Corporation}},
+  title = {{Source SDK 2013}: implementação da compensação de latência},
+  year = {s.d.},
+  url = {https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/game/server/player_lagcompensation.cpp},
+  urlaccessdate = {5 nov. 2026},
+  note = {Código-fonte; comando sv\_showlagcompensation}
 }
 
 @misc{LOVELY,
-  author = {{Quicktequila}},
+  author = {{quicktequila}},
   title = {{Lovely Planet}},
   year = {s.d.},
   url = {https://quicktequila.com/lovelyplanet.html},
   urlaccessdate = {5 set. 2026},
-  note = {Apresentação do desenvolvedor},
-}
-
-@misc{NETFOX,
-  author = {{imakebadgames}},
-  title = {Network Weapon with netfox},
-  year = {s.d.},
-  url = {https://imakebad.games/course/network-weapon},
-  note = {Material interativo sobre armas em rede},
+  note = {Página oficial do desenvolvedor; versão para computadores lançada em 2014},
 }

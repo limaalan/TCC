@@ -65,6 +65,58 @@ class ReleaseTests(unittest.TestCase):
             self.assertIn("dependency.dll", package.namelist())
             self.assertEqual(json.loads(package.read("BUILD.json")), metadata)
 
+
+    def test_build_supports_packaged_and_unpacked_linux_exports(self):
+        source = self.root / "source"
+        projects = source / "initial_project"
+        for name in ("Client", "Server"):
+            project = projects / name
+            project.mkdir(parents=True)
+            (project / "project.godot").write_text("config_version=5")
+        shared = projects / "shared"
+        shared.mkdir()
+        (shared / "contract.gd").write_text("extends RefCounted")
+
+        def fake_run(command, log):
+            if "--version" in command:
+                return "4.5.1.stable.official"
+            if "--export-release" in command:
+                executable = Path(command[-1])
+                executable.parent.mkdir(parents=True, exist_ok=True)
+                executable.write_bytes(b"exported binary")
+            if "--script" in command:
+                return "EXPORT_SERVER_READY"
+            return ""
+
+        for no_package in (False, True):
+            with self.subTest(no_package=no_package):
+                output = self.root / ("unpacked" if no_package else "packed")
+                argv = ["build_release.py", "--source", str(source),
+                        "--output", str(output), "--version", "ci-test",
+                        "--commit", "a" * 40,
+                        "--targets", "client-linux", "server-linux"]
+                if no_package:
+                    argv.append("--no-package")
+                with patch("sys.argv", argv), patch.object(
+                    self.builder, "run_checked", side_effect=fake_run
+                ):
+                    self.builder.main()
+
+                release = output / "ci-test"
+                metadata = json.loads((release / "BUILD.json").read_text())
+                self.assertEqual(metadata["packaged"], not no_package)
+                self.assertEqual(metadata["targets"], ["client-linux", "server-linux"])
+                self.assertEqual(len(list(release.glob("*.tar.gz"))),
+                                 0 if no_package else 2)
+                self.assertEqual((release / "server-linux" / "BUILD.json").exists(),
+                                 not no_package)
+                for role in ("client", "server"):
+                    executable = release / f"{role}-linux" / f"jumpnshoot-{role}.x86_64"
+                    self.assertEqual(executable.read_bytes(), b"exported binary")
+                for entry in (release / "SHA256SUMS").read_text().splitlines():
+                    digest, relative_path = entry.split("  ", 1)
+                    self.assertEqual(self.builder.sha256(release / relative_path), digest)
+
     def test_existing_release_is_preserved_instead_of_overwritten(self):
         staging = self.root / "staging"
         staging.mkdir()

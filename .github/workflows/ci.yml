@@ -21,11 +21,19 @@ on:
       - '.dockerignore'
       - '.gitattributes'
   workflow_dispatch:
+    inputs:
+      full:
+        description: Generate all packages and test Windows too (no publication/deploy)
+        type: boolean
+        default: true
   workflow_call:
     inputs:
       version:
         type: string
         default: ''
+      full:
+        type: boolean
+        default: false
     outputs:
       version:
         description: Version of the tested packages
@@ -42,9 +50,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test scripts and validate Compose
+        run: |
+          python3 -m unittest discover -s scripts/tests -v
+          bash -n scripts/build.sh scripts/build-container.sh scripts/smoke-test.sh scripts/deploy-vps.sh
+          docker compose --profile tools config --quiet
+          SERVER_IMAGE=ghcr.io/example/jumpnshoot-server@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+            docker compose -f compose.prod.yaml config --quiet
+
   linux:
+    needs: checks
+    # Pushes to main run only checks. PRs/manual/reusable calls can export the game.
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || inputs.full
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    env:
+      DOCKER_BUILD_RECORD_UPLOAD: 'false'
     outputs:
       version: ${{ steps.version.outputs.version }}
       artifact: ${{ steps.version.outputs.artifact }}
@@ -65,17 +93,29 @@ jobs:
           echo "BUILD_VERSION=$version" >> "$GITHUB_ENV"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "artifact=exports-$version" >> "$GITHUB_OUTPUT"
-      - name: Test scripts and validate Compose
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Build and cache the Godot tools image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: docker/build.Dockerfile
+          tags: jumpnshoot-builder:4.5.1
+          load: true
+          push: false
+          cache-from: type=gha,scope=jumpnshoot-builder-amd64,version=2
+          cache-to: type=gha,scope=jumpnshoot-builder-amd64,version=2,mode=max,ignore-error=true,timeout=2m
+      - name: Build exports with the common local script
+        env:
+          FULL_VALIDATION: ${{ inputs.full || false }}
         run: |
-          python3 -m unittest discover -s scripts/tests -v
-          bash -n scripts/build.sh scripts/build-container.sh scripts/smoke-test.sh scripts/deploy-vps.sh
-          docker compose --profile tools config --quiet
-          SERVER_IMAGE=ghcr.io/example/jumpnshoot-server@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
-            docker compose -f compose.prod.yaml config --quiet
-      - name: Build the same four exports used locally
-        run: |
-          docker compose --profile tools build build
-          docker compose --profile tools run --rm build
+          if [[ "$FULL_VALIDATION" == true ]]; then
+            docker compose --profile tools run --rm --pull never build
+          else
+            docker compose --profile tools run --rm --pull never build \
+              --source /source --output /output --version "$BUILD_VERSION" \
+              --targets client-linux server-linux --no-package
+          fi
           cd "build/releases/$BUILD_VERSION"
           sha256sum --check SHA256SUMS
       - name: Start the runtime and verify ENet
@@ -96,6 +136,7 @@ jobs:
           mkdir -p build/diagnostics
           docker compose logs --no-color server > build/diagnostics/server.log 2>&1 || true
       - name: Upload tested exports
+        if: inputs.full
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ steps.version.outputs.artifact }}
@@ -108,7 +149,7 @@ jobs:
           compression-level: 0
           retention-days: 3
       - name: Upload diagnostics
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: linux-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
@@ -122,6 +163,7 @@ jobs:
         run: docker compose --profile tools down --remove-orphans
 
   windows:
+    if: inputs.full
     needs: linux
     runs-on: windows-2025
     timeout-minutes: 15
@@ -154,7 +196,7 @@ jobs:
           python scripts/test_exports.py --release "build/releases/$BUILD_VERSION" --platform windows \
             --local-server --port 17777 --preset koth_highrise --logs build/smoke/windows-koth
       - name: Upload Windows diagnostics
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: windows-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
