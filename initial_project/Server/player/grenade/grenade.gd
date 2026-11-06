@@ -20,13 +20,18 @@ var lobby : Lobby
 
 var direction:Vector3
 var thrower: PlayerServerReal
+var thrower_peer_id := 0
 var network_id: StringName
 var has_thrower_collision_exception := false
 
-func set_data(_lobby:Lobby , _direction:Vector3 , _thrower:PlayerServerReal)->void:
+func set_data(_lobby:Lobby , _direction:Vector3 , _thrower:PlayerServerReal, _thrower_peer_id: int = 0)->void:
 	lobby = _lobby
 	direction= _direction
 	thrower = _thrower
+	# Attribution outlives the thrower's current character node (death/respawn).
+	thrower_peer_id = _thrower_peer_id
+	if thrower_peer_id <= 0 and is_instance_valid(thrower):
+		thrower_peer_id = thrower.name.to_int()
 
 
 func set_network_id(value: StringName) -> void:
@@ -75,10 +80,6 @@ func _on_self_destruct_timer_timeout() -> void:
 	explode()
 	
 func explode()->void:
-	var killer_id := 0
-	if is_instance_valid(thrower):
-		killer_id = thrower.name.to_int()
-
 	for body in explosion_damage_area.get_overlapping_bodies():
 		var player := body as PlayerServerReal
 		if player == null or not is_instance_valid(player):
@@ -86,7 +87,7 @@ func explode()->void:
 
 		var distance := global_position.distance_to(player.global_position + Vector3.UP * HEIGHT_PADDING)
 		var damage := roundi(max_damage - remap(clampf(distance, 0.0, damage_radius), 0.0, damage_radius, 0.0, float(max_damage)))
-		player.change_health(-maxi(damage, 0), killer_id)
+		player.change_health(-maxi(damage, 0), thrower_peer_id)
 
 	if lobby != null and is_instance_valid(lobby):
 		lobby.grenade_exploded(self)

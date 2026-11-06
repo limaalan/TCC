@@ -53,7 +53,7 @@ def run_checked(command, log):
     return result.stdout
 
 
-def package_target(directory, platform, metadata, output):
+def package_target(directory, platform, metadata, output, create_archive=True):
     (directory / "BUILD.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     readme = "Server" if directory.name.startswith("server") else "Client"
     instructions = f"Jump'n'Shoot {readme} - {metadata['version']}\nCommit: {metadata['commit']}\n"
@@ -64,6 +64,8 @@ def package_target(directory, platform, metadata, output):
         instructions += "Open jumpnshoot-client and configure the server address/port in Settings.\n"
     instructions += "Use Client and Server from the same release. Keep all package files together.\n"
     (directory / "README.txt").write_text(instructions, encoding="utf-8")
+    if not create_archive:
+        return None
     name = f"jumpnshoot-{directory.name}-x86_64-{metadata['version']}"
     if platform == "windows":
         archive = output / f"{name}.zip"
@@ -114,6 +116,8 @@ def main():
     parser.add_argument("--commit")
     parser.add_argument("--targets", nargs="+", choices=TARGETS, default=list(TARGETS))
     parser.add_argument("--godot", default="godot")
+    parser.add_argument("--no-package", action="store_true",
+                        help="Keep exported binaries/manifests but skip ZIP/tar.gz compression")
     args = parser.parse_args()
     version = validate_version(args.version)
     source = args.source.resolve()
@@ -132,7 +136,8 @@ def main():
     if not engine.startswith(GODOT_VERSION + ".stable."):
         raise RuntimeError(f"Expected Godot {GODOT_VERSION}.stable, got {engine}")
     metadata = {"version": version, "commit": commit, "dirty": dirty,
-                "godot": engine, "architecture": "x86_64", "targets": args.targets}
+                "godot": engine, "architecture": "x86_64", "targets": args.targets,
+                "packaged": not args.no_package}
     with tempfile.TemporaryDirectory(prefix="jumpnshoot-build-") as temp:
         workspace = Path(temp)
         staging = workspace / "release"
@@ -161,7 +166,7 @@ def main():
                                      logs / "server-dedicated-check.log")
                 if "EXPORT_SERVER_READY" not in result:
                     raise RuntimeError("Dedicated server/stripped resource check did not pass")
-            package_target(target, platform, metadata, staging)
+            package_target(target, platform, metadata, staging, create_archive=not args.no_package)
         (staging / "BUILD.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
         files = sorted(path for path in staging.rglob("*") if path.is_file())
         checksums = [f"{sha256(path)}  "

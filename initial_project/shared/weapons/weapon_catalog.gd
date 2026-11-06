@@ -2,6 +2,7 @@ class_name WeaponCatalog
 extends RefCounted
 
 const WeaponDefinition = preload("res://shared/weapons/weapon_definition.gd")
+const LoadTestConfig = preload("res://shared/loadtest_config.gd")
 const WEAPON_DEFINITION_PATHS := [
 	"res://shared/weapons/data/pistol_definition.tres",
 	"res://shared/weapons/data/smg_definition.tres",
@@ -21,11 +22,17 @@ static func _ensure_loaded() -> void:
 	var loaded_weapons: Array[WeaponDefinition] = []
 	var weapons_by_id: Dictionary = {}
 	var weapons_by_slot: Dictionary = {}
+	var experimental := LoadTestConfig.parse(OS.get_cmdline_user_args())
 
 	for path in WEAPON_DEFINITION_PATHS:
 		var weapon := _load_weapon_definition(path)
 		if weapon == null:
 			continue
+		if experimental.ok and experimental.enabled:
+			# Change only this process's experimental copy, never the base resource.
+			weapon = weapon.duplicate() as WeaponDefinition
+			weapon.start_ammo = experimental.ammo
+			weapon.max_ammo = maxi(weapon.max_ammo, experimental.ammo)
 
 		if weapons_by_id.has(weapon.id):
 			push_warning("Duplicate WeaponDefinition id '%s' found at '%s'. Keeping the first entry." % [weapon.id, path])

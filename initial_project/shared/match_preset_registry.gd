@@ -1,6 +1,8 @@
 class_name MatchPresetRegistry
 extends RefCounted
 
+const LoadTestConfig = preload("res://shared/loadtest_config.gd")
+
 const TDM_HIGHRISE := &"tdm_highrise"
 const KOTH_HIGHRISE := &"koth_highrise"
 
@@ -44,4 +46,15 @@ static func make_match_config(preset_id: StringName) -> MatchConfig:
 			push_warning("Invalid match preset '%s'. Using default preset." % String(preset_id))
 			return make_match_config(DEFAULT_PRESET_ID)
 
+	var experimental := LoadTestConfig.parse(OS.get_cmdline_user_args())
+	if not experimental.ok:
+		printerr("LOADTEST_CONFIG_FAILED: %s" % experimental.error)
+		var tree := Engine.get_main_loop() as SceneTree
+		if tree != null:
+			tree.quit(2)
+		return null
+	if experimental.enabled:
+		config.max_players = experimental.players
+		config.time_limit_sec = experimental.duration
+		config.score_to_win = experimental.score
 	return config

@@ -3,6 +3,7 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -75,6 +76,52 @@ class ReleaseTests(unittest.TestCase):
         with self.assertRaises(FileExistsError):
             self.builder.publish_release(staging, output)
         self.assertEqual((output / "keep.txt").read_text(), "previous release")
+
+    def test_unpacked_output_preserves_manifest_instructions_and_dependencies(self):
+        for platform in ("linux", "windows"):
+            with self.subTest(platform=platform):
+                target = self.root / f"client-{platform}"
+                target.mkdir()
+                (target / "dependency.bin").write_bytes(b"keep dependency")
+                metadata = {"version": "preview", "commit": "abc123"}
+                archive = self.builder.package_target(target, platform, metadata, self.root,
+                                                      create_archive=False)
+                self.assertIsNone(archive)
+                self.assertEqual(json.loads((target / "BUILD.json").read_text()), metadata)
+                self.assertIn("Jump'n'Shoot", (target / "README.txt").read_text())
+                self.assertEqual((target / "dependency.bin").read_bytes(), b"keep dependency")
+                self.assertFalse(list(self.root.glob("*.zip")))
+                self.assertFalse(list(self.root.glob("*.tar.gz")))
+
+    def test_preview_cli_builds_selected_targets_without_archives(self):
+        source = self.root / "source"
+        for project in ("Client", "Server", "shared"):
+            directory = source / "initial_project" / project
+            directory.mkdir(parents=True)
+            (directory / "project.godot").write_text("config_version=5\n")
+
+        def engine(command, log):
+            if "--version" in command:
+                return "4.5.1.stable.official.test"
+            if "--export-release" in command:
+                Path(command[-1]).write_bytes(b"exported game")
+            if "--script" in command:
+                return "EXPORT_SERVER_READY dedicated_server=true strip_visuals=true"
+            return ""
+
+        arguments = ["build_release.py", "--source", str(source), "--output", str(self.root / "out"),
+                     "--version", "preview", "--commit", "abcdef0", "--no-package",
+                     "--targets", "client-linux", "server-linux"]
+        with patch.object(sys, "argv", arguments), patch.object(self.builder, "run_checked", side_effect=engine):
+            self.builder.main()
+        output = self.root / "out/preview"
+        metadata = json.loads((output / "BUILD.json").read_text())
+        self.assertFalse(metadata["packaged"])
+        self.assertEqual(metadata["targets"], ["client-linux", "server-linux"])
+        self.assertTrue((output / "server-linux/jumpnshoot-server.x86_64").is_file())
+        self.assertFalse((output / "client-windows").exists())
+        self.assertFalse(list(output.glob("*.tar.gz")))
+        self.assertIn("server-linux/jumpnshoot-server.x86_64", (output / "SHA256SUMS").read_text())
 
 
 if __name__ == "__main__":
