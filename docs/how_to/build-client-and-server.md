@@ -1,7 +1,7 @@
 # Build local de Client e Server
 
-O mesmo processo pode ser chamado localmente e futuramente pelo GitHub Actions.
-Nesta etapa não há workflow, publicação, assinatura ou acesso à VPS.
+O mesmo processo é chamado localmente e pelo GitHub Actions.
+Veja [CI rápido, validação completa e cache](ci-cd.md) para os gatilhos e a configuração remota.
 
 ## Pré-requisitos
 
@@ -19,6 +19,7 @@ sistema vêm dos repositórios Debian: não se promete identidade byte a byte.
 ## Gerar as quatro builds
 
 ```bash
+mkdir -p build/releases build/smoke build/diagnostics
 docker compose --profile tools build build
 docker compose --profile tools run --rm build
 ```
@@ -30,12 +31,14 @@ Cada pacote inclui instruções e todos os arquivos produzidos pelo preset.
 Os executáveis usam `jumpnshoot-client` e `jumpnshoot-server`, com extensão
 `.exe` no Windows e `.x86_64` no Linux. As imagens locais são
 `jumpnshoot-builder:4.5.1` e `jumpnshoot-server:${BUILD_VERSION:-local}`.
-Depois de atualizar o nome do projeto, gere uma nova release com outra
+Após uma futura atualização do nome do projeto, gere uma nova release com outra
 `BUILD_VERSION` e reconstrua a imagem do runtime: builds anteriores preservam
 seus nomes originais e não são sobrescritas pelo processo.
 
-O nome de apresentação do jogo é **Jump'n'Shoot**; `jumpnshoot` é usado em nomes técnicos de arquivos e imagens.
-Os nomes das aplicações Godot são `Jump'n'Shoot Client` e `Jump'n'Shoot Server`.
+O nome canônico do jogo é **jumpnshoot**, também usado nos nomes técnicos de arquivos e imagens.
+Os valores atuais de `config/name` nas aplicações Godot continuam sendo
+`Jump'n'Shoot Client` e `Jump'n'Shoot Server`. Esses títulos ainda usam a grafia
+histórica e não foram normalizados nesta revisão documental.
 Isso mantém os diretórios `user://` separados. Configurações de instalações
 anteriores, cujos projetos se chamavam `Client` e `Server`, não são migradas
 automaticamente: configure novamente nome, endereço e porta no cliente.
@@ -50,6 +53,12 @@ textura virou `PlaceholderTexture2D` antes de publicar o diretório de release.
 Erros de importação/exportação falham a build mesmo se o Godot retornar código zero.
 O manifesto registra commit, alterações locais, versão da engine e alvos. Os logs
 ficam em `build/releases/local.logs/`, inclusive quando a build falha.
+
+Para reproduzir o CI rápido dos PRs, use `--targets client-linux server-linux
+--no-package` junto de `--source /source --output /output --version SUA_VERSAO` no
+comando `docker compose --profile tools run --rm build`. Mantém executáveis,
+dependências, manifestos e checksums, mas dispensa a compressão ZIP/tar.gz.
+O manifesto registra `packaged: false`; a build completa mantém `packaged: true`.
 
 Releases existentes **não são sobrescritas**. Para repetir em saída limpa:
 
@@ -164,4 +173,3 @@ docker compose stop server
 ```
 
 O `.gitignore` mantém executáveis, pacotes, logs e perfis fora do Git.
-Veja o [registro de verificação](local-build-verification.md).

@@ -20,7 +20,7 @@ Para executar a dashboard, use o Python do ambiente virtual onde suas dependênc
 <ambiente-virtual>/bin/python <caminho-da-dashboard>/main.py --udp-host=127.0.0.1 --udp-port=8765 --http-host=0.0.0.0 --http-port=8000
 ```
 
-Se ocorrer `address already in use`, uma instância da dashboard ou do receptor UDP já está ativa. Identifique o processo com `ss -ltnp` antes de iniciar outro.
+Se ocorrer `address already in use`, identifique a porta e o processo antes de iniciar outra instância. Para o receptor de métricas UDP, consulte `ss -lunp` (porta padrão 8765); para o serviço HTTP/WebSocket TCP, use `ss -ltnp` (porta padrão 8000).
 
 ## Adicionar uma métrica
 

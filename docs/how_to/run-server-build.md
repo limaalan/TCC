@@ -24,7 +24,7 @@ Para registrar métricas em CSV durante a execução:
 Se a porta estiver ocupada, descubra o processo antes de encerrá-lo:
 
 ```bash
-ss -ltnp | grep ':7777'
+ss -lunp | grep ':7777'
 ps -fp <pid>
 ```
 
