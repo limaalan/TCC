@@ -5,7 +5,7 @@ Este capítulo descreve os recursos e procedimentos empregados no desenvolviment
 
 \section{Ferramentas e tecnologias}\label{sec:4.1}
 
-A Godot 4.5 foi utilizada nos projetos Client e Server, com comportamentos programados em GDScript. O Blender integra o fluxo de autoria dos recursos visuais, e o projeto utiliza Git para controle de versão. Scripts PowerShell dão suporte à preparação dos diretórios compartilhados no desenvolvimento local e à sincronização do mapa. O empacotamento utiliza scripts Python em um ambiente Docker com a Godot 4.5.1. A Tabela~\ref{tab:tcc2-1} resume o papel desses materiais.
+A Godot 4.5 foi utilizada para desenvolver o cliente e o servidor dedicado, com comportamentos programados em GDScript. O Blender integra o fluxo de autoria dos recursos visuais, e o projeto utiliza Git para controle de versão. Scripts PowerShell dão suporte à preparação dos diretórios compartilhados no desenvolvimento local e à sincronização do mapa. O empacotamento utiliza scripts Python em um ambiente Docker com a Godot 4.5.1. A Tabela~\ref{tab:tcc2-1} resume o papel desses materiais.
 
 \begingroup
 \small
@@ -31,7 +31,7 @@ Godot e GDScript & Cenas, física, regras, interface, áudio e comunicação do 
 Blender & Autoria e manutenção dos modelos e recursos visuais. \\
 Git & Organização e versionamento do projeto. \\
 PowerShell & Preparação dos links compartilhados no desenvolvimento local e geração de cenas do mapa de servidor. \\
-Python e Docker & Preparação do ambiente de build e geração dos executáveis de Client e Server. \\
+Python e Docker & Preparação do ambiente de build e geração dos executáveis de cliente e servidor. \\
 \end{longtable}
 \endgroup
 
@@ -43,17 +43,17 @@ Fonte: elaboração própria.
 
 A arquitetura define como os participantes trocam informações e onde são decididos os resultados. Fiedler apresenta tanto a troca de comandos entre pares quanto a organização cliente-servidor. Nesta última, o servidor mantém uma referência comum para os clientes; no modelo de simulação determinística entre pares, a reprodução consistente dos comandos depende de condições iniciais e regras equivalentes. Esses modelos exigem soluções diferentes para sincronização. \cite{FIEDLER-REDE}
 
-No projeto, adotou-se um processo servidor separado dos programas executados pelos jogadores. A entrada e a movimentação permanecem no Client, enquanto dano, recursos e pontuação são decididos pelo Server. Essa divisão combina resposta local ao controle com uma referência comum para os resultados das partidas. A organização dos componentes e o alcance dessa autoridade são detalhados na seção~\ref{sec:5.2}.
+No projeto, adotou-se um processo servidor separado dos programas executados pelos jogadores. A entrada e a movimentação permanecem no cliente, enquanto dano, recursos e pontuação são decididos pelo servidor. Essa divisão combina resposta local ao controle com uma referência comum para os resultados das partidas. A organização dos componentes e o alcance dessa autoridade são detalhados na seção~\ref{sec:5.2}.
 
 \subsection{Tecnologias de comunicação utilizadas}\label{sec:4.2.2}
 
 O UDP é um protocolo de transporte baseado em datagramas. Sua especificação não garante entrega nem proteção contra duplicação de mensagens; requisitos adicionais devem ser tratados por outras camadas. No trabalho, ele é utilizado como base da comunicação multijogador por ENet. A escolha do transporte, por si só, não determina se uma mensagem da aplicação será reenviada. \cite{UDP} \cite{GODOT-REDE}
 
-A Godot disponibiliza comunicação de alto nível por chamadas remotas de procedimento, ou RPCs. Uma função pode ser executada em outro participante, com restrições sobre quem pode chamá-la e sobre a forma de transferência. Essa API permite usar a estrutura de nós do jogo para organizar a comunicação; o projeto a utiliza nos componentes que representam o servidor e cada lobby. \cite{GODOT-REDE}
+A Godot disponibiliza comunicação de alto nível por chamadas remotas de procedimento, ou RPCs. Uma função pode ser executada em outro participante, com restrições sobre quem pode chamá-la e sobre a forma de transferência. Essa API permite usar a estrutura de nós do jogo para organizar a comunicação; o projeto a utiliza nos componentes que representam o servidor e cada sala. \cite{GODOT-REDE}
 
 Os modos de transferência usados são confiável, não confiável e não confiável ordenado. No primeiro, há confirmação e tentativas de reenvio; no segundo, uma mensagem pode se perder ou chegar fora de ordem; no terceiro, mensagens atrasadas podem ser descartadas quando uma atualização posterior já foi recebida. Essa diferença fundamenta o uso de eventos confiáveis para mudanças discretas e de atualizações substituíveis para movimento. \cite{GODOT-PEER}
 
-Outra técnica utilizada foi a interpolação de snapshots. Um snapshot é um registro do estado em determinado instante. Ao manter um pequeno histórico dos registros recebidos, o Client pode apresentar uma posição intermediária entre dois deles, em vez de saltar diretamente para cada atualização. O buffer acrescenta um atraso de apresentação, em troca de uma transição visual mais contínua. \cite{FIEDLER-INTERPOLACAO}
+Outra técnica utilizada foi a interpolação de snapshots. Um snapshot é um registro do estado em determinado instante. Ao manter um pequeno histórico dos registros recebidos, o cliente pode apresentar posições intermediárias entre dois deles. Visualmente, o movimento dos outros jogadores é apresentado por transições suaves entre as posições recebidas, reduzindo os saltos bruscos a cada atualização. O buffer acrescenta um atraso de apresentação, em troca dessa continuidade visual. \cite{FIEDLER-INTERPOLACAO}
 
 \section{Registro de métricas}\label{sec:4.3}
 
@@ -65,19 +65,19 @@ O planejamento original do TCC1 adotou o Double Diamond como referência de proc
 
 O desenvolvimento integrou progressivamente os sistemas de jogador, combate, modos de partida e interface. O relatório apresenta essa organização por responsabilidades, relacionando as soluções adotadas aos problemas de interação e sincronização. A evolução do escopo é discutida na seção seguinte, e o funcionamento dos sistemas é detalhado no capítulo~\ref{cap:tcc2-5}.
 
-\section{Evolução da proposta do TCC1}\label{sec:4.5}
+\section{Da proposta do TCC1 à implementação}\label{sec:4.5}
 
-A proposta original previa um participante hospedeiro e utilizava a denominação peer-to-peer para sua arquitetura. A implementação passou a separar o programa executado pelos jogadores do processo que mantém as partidas. Essa mudança permitiu executar o Server sem a apresentação do jogo e manter em um ponto comum as regras de dano, recursos, modos e resultados. RPCs e snapshots próprios substituíram a dependência do mecanismo de replicação automática descrito no protótipo inicial, tornando explícitas as responsabilidades de cada lado da comunicação.
+A proposta original previa um participante hospedeiro e utilizava a denominação peer-to-peer para sua arquitetura. A implementação passou a separar o programa executado pelos jogadores do processo que mantém as partidas. Essa mudança permitiu executar o servidor sem a apresentação do jogo e manter em um ponto comum as regras de dano, recursos, modos e resultados. RPCs e snapshots próprios substituíram a dependência do mecanismo de replicação automática descrito no protótipo inicial, tornando explícitas as responsabilidades de cada lado da comunicação.
 
-A configuração livre por um jogador hospedeiro também foi substituída por presets compartilhados. Com isso, Client e Server trabalham com combinações previamente conhecidas de mapa, modo, tempo, pontuação e quantidade de participantes, e o gerenciador pode associar solicitações compatíveis ao mesmo lobby. Essa delimitação reduz as variações que precisam ser tratadas e verificadas na versão entregue.
+A configuração livre por um jogador hospedeiro também foi substituída por predefinições compartilhadas. Com isso, cliente e servidor trabalham com combinações previamente conhecidas de mapa, modo, tempo, pontuação e quantidade de participantes, e o gerenciador pode associar solicitações compatíveis à mesma sala. Essa delimitação reduz as variações que precisam ser tratadas e verificadas na versão entregue.
 
-O recorte de conteúdo foi ajustado para concentrar o desenvolvimento e a verificação em um conjunto menor de combinações. Foram disponibilizados Team Deathmatch (TDM) e King of the Hill (KOTH) em Highrise, enquanto Capture the Flag e o mapa Prototype ficaram fora da seleção principal. Highrise passou a reunir os elementos necessários aos dois modos entregues, como pontos de nascimento, recursos, jump pads e zona de controle. Dessa forma, o mesmo mapa pode ser utilizado no fluxo principal e nas duas modalidades disponíveis.
+O recorte de conteúdo foi ajustado para concentrar o desenvolvimento e a verificação em um conjunto menor de combinações. Foram disponibilizados os modos TDM e KOTH no mapa desenvolvido, denominado ``Highrise'', enquanto \textit{Capture the Flag} e o mapa protótipo ficaram fora da seleção principal. O mapa passou a reunir os elementos necessários aos dois modos entregues, como pontos de nascimento, recursos, plataformas de impulso e zona de captura. Dessa forma, o mesmo mapa pode ser utilizado no fluxo principal e nas duas modalidades disponíveis.
 
 O catálogo final de combate também foi revisto. Pistola, submetralhadora (SMG) e espingarda (shotgun) assumem papéis diferenciados por cadência, dispersão e quantidade de traços, enquanto as granadas acrescentam dano em área. A melhoria de velocidade de movimentação prevista inicialmente deu lugar ao aumento temporário de cadência, integrado ao mesmo ciclo de armas, munição e feedback da interface. Essas alterações descrevem o produto efetivamente consolidado e são sintetizadas na seção~\ref{sec:5.3.3}.
 
 \section{Organização do projeto}\label{sec:4.6}
 
-O projeto foi organizado em dois projetos Godot independentes, Client e Server, e um diretório de código comum, \texttt{shared}. Essa estrutura permite executar o servidor separadamente da apresentação do jogo e reutilizar contratos de comunicação e definições nos dois lados. A Figura~\ref{fig:tcc2-2} apresenta os principais agrupamentos de responsabilidades, cujo funcionamento é discutido no relatório técnico.
+O projeto foi organizado em dois projetos Godot independentes, denominados \textit{Client} e \textit{Server}, e um diretório de código comum, \texttt{shared}. Essa estrutura permite executar o servidor separadamente da apresentação do jogo e reutilizar contratos de comunicação e definições nos dois lados. A Figura~\ref{fig:tcc2-2} apresenta os principais agrupamentos de responsabilidades, cujo funcionamento é discutido no relatório técnico.
 
 No desenvolvimento local em Windows, um script cria junções de diretório para que os dois projetos utilizem a mesma origem das definições compartilhadas. Para gerar os executáveis, o builder materializa esse conteúdo em cada projeto dentro de um diretório temporário e realiza as importações separadamente. Os arquivos de autoria dos assets são mantidos em pastas \texttt{import/}. O procedimento de geração dos executáveis é descrito na seção~\ref{sec:5.2.11}.
 
@@ -85,34 +85,50 @@ Este relatório descreve a versão do projeto preparada para entrega. O código-
 
 \section{Método de verificação funcional}\label{sec:4.7}
 
-A verificação funcional prevê executar o Server e conectar dois Clients, percorrendo o fluxo completo de partida. O roteiro inclui entrada no lobby, escolha de modo, nascimento dos personagens, combate, coleta de recursos, atualização da interface, encerramento e retorno ao menu. Para KOTH, é necessário observar separadamente a zona vazia, controlada e contestada, pois cada estado produz uma consequência diferente sobre a pontuação.
+A verificação funcional foi realizada pelo autor com o servidor e dois clientes, percorrendo o fluxo completo de partida. O roteiro contemplou entrada na sala, escolha de modo, nascimento dos personagens, combate, coleta de recursos, atualização da interface, encerramento e retorno ao menu. Em KOTH, foram observadas separadamente as situações em que a zona de captura estava vazia, controlada ou contestada, pois cada estado produz uma consequência diferente sobre a pontuação.
 
-O projeto também dispõe de uma verificação automatizada breve, ou smoke test, que inicia duas instâncias do Client exportado em modo headless e conduz a conexão, a entrada no preset e a escolha de arma. O procedimento verifica o carregamento, a presença de dois jogadores e a recepção de estados da partida. Sua cobertura é limitada a esse fluxo inicial; combate, objetivos, apresentação visual e uso de controles físicos permanecem no roteiro de verificação manual. A existência desse procedimento não substitui o registro de sua execução nem constitui um ensaio de capacidade do servidor.
+O projeto também dispõe de uma verificação automatizada breve, ou \textit{smoke test}, que inicia duas instâncias do cliente exportado em modo \textit{headless}, isto é, executando o processamento do jogo sem renderização gráfica. O procedimento conduz a conexão, a entrada na predefinição de partida e a escolha de arma, verificando o carregamento, a presença de dois jogadores e a recepção de estados da partida. Sua cobertura é limitada a esse fluxo inicial e não constitui um ensaio de capacidade do servidor.
 
-O registro do teste deve identificar a data, a plataforma, os executáveis utilizados e o resultado observado em cada cenário. A Tabela~\ref{tab:tcc2-5} organiza os comportamentos implementados e as situações que precisam ser exercitadas na versão preparada para entrega. Sua aprovação depende dos registros de execução, ainda assinalados como pendentes.
+A Tabela~\ref{tab:tcc2-5} reúne os comportamentos abrangidos pela verificação funcional. Os CSVs apoiam as medições de rede e execução; a verificação de apresentação visual, controles e áudio se apoia na observação do autor, complementada pelas capturas apresentadas no relatório.
 
-\begin{quote}
-\small
-\textbf{Evidência pendente:} registro do teste integrado da versão escolhida para a entrega, com data, identificação da build, participantes ou instâncias utilizadas e resultado de cada cenário. O procedimento acima está definido; sua aprovação não foi presumida.
-\end{quote}
-
+\clearpage
 \section{Método do ensaio exploratório de carga}\label{sec:ensaio-carga-metodo}
 
-Foi realizado um ensaio local para observar o comportamento do jumpnshoot com um número crescente de participantes em uma única sala. Claypool e Claypool relacionam o efeito da latência à precisão e ao prazo das ações em jogos, fundamentando sua observação em um sistema de combate interativo. Esse resultado não estabelece um limite universal de latência aceitável para o jogo desenvolvido. \cite{CLAYPOOL-LATENCIA-2010}
+Foi realizado um ensaio local para observar o comportamento do \textit{Jump'n'Shoot} com um número crescente de participantes em uma única sala. Claypool e Claypool relacionam o efeito da latência à precisão e ao prazo das ações em jogos, fundamentando sua observação em um sistema de combate interativo. Esse resultado não estabelece um limite universal de latência aceitável para o jogo desenvolvido. \cite{CLAYPOOL-LATENCIA-2010}
 
-O Server e todos os Clients foram executados na mesma máquina, por loopback, com endereço \texttt{127.0.0.1}. O computador utilizado tinha processador AMD Ryzen 7 5700G, placa de vídeo NVIDIA GeForce RTX 5070, 16 GB de memória RAM DDR4 e SSD M.2 com velocidade de leitura informada de 7.200 MB/s. O sistema operacional foi Windows 11 Pro. A Godot 4.5.1 executou os projetos-fonte em modo headless, com limite configurado de 60 FPS por processo.
+O servidor e todos os clientes foram executados na mesma máquina, por loopback, com endereço \texttt{127.0.0.1}. A Tabela~\ref{tab:computador-ensaio} apresenta a configuração do computador utilizado. A Godot 4.5.1 executou os projetos-fonte em modo \textit{headless}, com limite configurado de 60 FPS por processo.
 
-Foram utilizadas a arena Highrise e a modalidade KOTH, com oito, 16 e 32 bots, além de uma tentativa com 64. Cada bot executou uma instância real do Client, utilizando os caminhos de entrada, física, armas e comunicação do jogo. O perfil automatizado incluiu movimentação, saltos, tentativas de lançamento de granadas e um pulso de disparo de SMG a cada dois segundos, com defasagem entre participantes. Portanto, a carga de combate corresponde a disparos espaçados. O modo experimental ampliou a lotação da sala, a meta para 10.000 pontos e a munição inicial para 10.000 unidades. Acima de oito participantes, foram reutilizados os pontos de nascimento existentes de cada equipe, sem criar um mapa específico.
+\begin{table}[htbp]
+\centering
+\caption{Configuração do computador utilizado no ensaio}
+\label{tab:computador-ensaio}
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{lp{0.65\textwidth}}
+\toprule
+Componente & Especificação \\
+\midrule
+Processador & AMD Ryzen 7 5700G \\
+Placa de vídeo & NVIDIA GeForce RTX 5070 \\
+Memória RAM & 16 GB DDR4 \\
+Armazenamento & SSD M.2, com leitura informada de 7.200 MB/s \\
+Sistema operacional & Windows 11 Pro \\
+\bottomrule
+\end{tabular}
+\endgroup
+\fonte{especificações informadas pelo autor}
+\end{table}
 
-Cada rodada completa teve 30 segundos de aquecimento e 300 segundos de observação, com coleta do Server em CSV a cada segundo. Foi realizada uma execução por nível de carga; as 300 amostras de uma rodada constituem uma série temporal, e não 300 repetições independentes. Os resultados são descritivos. Logs, identificação dos participantes, resumos de execução e registros de atividade dos bots complementaram os CSVs. Foram observadas as seguintes variáveis:
+Foram utilizados o mapa ``Highrise'' e a modalidade KOTH, com oito, 16 e 32 participantes automatizados, controlados por scripts que simulam ações de jogadores, além de uma tentativa com 64. Cada participante automatizado executou uma instância real do cliente, utilizando os caminhos de entrada, física, armas e comunicação do jogo. O perfil incluiu movimentação, saltos, tentativas de lançamento de granadas e um pulso de disparo de submetralhadora a cada dois segundos, com defasagem entre participantes. A preparação experimental permitiu ampliar a lotação da sala para observar o servidor sob um volume crescente de mensagens de atualização de estado, mantendo esse perfil de combate com disparos espaçados.
+
+Cada rodada completa teve 30 segundos de aquecimento e 300 segundos de observação, com coleta do servidor em CSV a cada segundo. Foi realizada uma execução por nível de carga; as 300 amostras de uma rodada constituem uma série temporal, e não 300 repetições independentes. Os resultados são descritivos. Logs, identificação dos participantes, resumos de execução e registros de atividade dos participantes automatizados complementaram os CSVs. Foram observadas as seguintes variáveis:
 
 \begin{itemize}
-\item \textbf{RTT (ms):} média temporal do RTT médio entre os participantes conectados, obtido das estatísticas do ENet. Representa o tempo de ida e volta do transporte, sem medir diretamente o intervalo entre uma ação física do jogador e sua apresentação na tela.
+\item \textbf{RTT (ms)}\footnote{Do inglês \textit{Round-Trip Time}, intervalo entre o envio de um pacote de rede e o recebimento de sua confirmação (ACK). Neste trabalho, corresponde à estimativa fornecida pelo ENet.}: média temporal do RTT médio entre os participantes conectados, obtido das estatísticas do ENet. Representa o tempo de ida e volta do transporte, sem medir diretamente o intervalo entre uma ação física do jogador e sua apresentação na tela.
 \item \textbf{Perda estimada (\%):} média temporal das estimativas de perda entre participantes. A estatística do ENet refere-se a pacotes confiáveis e é atualizada internamente em intervalos de dez segundos quando há tráfego; sua amostragem a cada segundo pode repetir valores. Ela não equivale ao percentual de snapshots perdidos. \cite{GODOT-ENET-METRICAS}
-\item \textbf{Processamento parcial do lobby (ms):} média e maior amostra do tempo do trecho instrumentado do callback do lobby. O coletor registra o valor disponível em cada amostragem; essa medida não representa todo o trabalho do Server nem o maior tempo de todos os ciclos de física.
-\item \textbf{Atualizações observadas e estabilidade:} taxa média de novos estados observados em cada Client, permanência dos participantes, atividade dos bots e erros registrados. O contador observa o estado mais recente a cada ciclo do Client e não identifica individualmente todos os pacotes recebidos.
+\item \textbf{Tempo parcial do ciclo de atualização da sala (ms):} média e maior amostra do trecho instrumentado desse ciclo, que envolve distribuição e histórico de estados e atualização do modo de jogo. O coletor registra o valor disponível em cada amostragem; essa medida não representa todo o trabalho da física, dos demais nós e das RPCs do servidor, nem o maior tempo de todos os ciclos de física.
+\item \textbf{Atualizações observadas e estabilidade:} taxa média de novos estados observados em cada cliente, permanência dos participantes, atividade dos participantes automatizados e erros registrados. O contador observa o estado mais recente a cada ciclo do cliente e não identifica individualmente todos os pacotes recebidos.
 \end{itemize}
 
-Como controle da carga efetivamente produzida, o piloto exigiu deslocamento de pelo menos um metro e um disparo a cada 20 segundos acumulados de atividade do personagem. Também exigiu que cada bot tivesse personagem ativo por pelo menos 50\% da janela, ou 150 dos 300 segundos. Nesse controle, ativo significa presente, não congelado e com o processamento de física habilitado; períodos de morte e seleção de arma não entram nesse tempo. O percentual foi uma regra operacional escolhida para verificar o gerador de carga, sem corresponder a um critério publicado de desempenho ou jogabilidade. Sua reprovação deve ser distinguida de uma falha de rede ou do Server.
-
-A configuração padrão de física da Godot é de 60 ciclos por segundo, equivalente a um período nominal de 16,67 ms. A cadência efetivamente alcançada e os intervalos entre ciclos do Server não foram medidos. Assim, o tempo parcial do lobby não permite concluir, isoladamente, se houve atraso global da física. \cite{GODOT-FISICA-ENGINE} Como Server e geradores de carga compartilharam a máquina, a contribuição de cada processo para uma degradação também não foi isolada.
+A configuração padrão de física da Godot é de 60 ciclos por segundo, equivalente a um período nominal de 16,67 ms. A cadência efetivamente alcançada e os intervalos entre ciclos do servidor não foram medidos. Assim, o tempo parcial do ciclo de atualização da sala não permite concluir, isoladamente, se houve atraso global da física. \cite{GODOT-FISICA-ENGINE} Como servidor e geradores de carga compartilharam a máquina, a contribuição de cada processo para uma degradação também não foi isolada.
