@@ -2,7 +2,7 @@
 
 Ferramenta opcional, fora do pipeline. Usa os projetos reais, o mapa Highrise existente e peers ENet separados. Sem `--human`, todos os participantes são bots; com essa opção, uma das vagas é humana. **`--players` sempre é o total da sala.**
 
-Requer Python 3, Godot 4.5.1 e os projetos preparados/importados, incluindo as junções `Client/shared` e `Server/shared`. Veja a [preparação do projeto](build-client-and-server.md). Não use executáveis antigos de release para testar estes novos ajustes: o comando abaixo executa os fontes locais pelo Godot.
+Requer Python 3, Godot 4.5.1 e os projetos preparados/importados, incluindo as junções `Client/shared` e `Server/shared`. Veja a [preparação do projeto](../build.md). Não use executáveis antigos de release para testar estes novos ajustes: o comando abaixo executa os fontes locais pelo Godot.
 
 ## Executar localmente
 

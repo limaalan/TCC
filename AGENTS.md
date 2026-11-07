@@ -4,7 +4,7 @@
 - The gameplay code is under `initial_project/`, not the repo root. Root Markdown files cover project setup, contribution guidance and third-party credits.
 - The game is named `jumpnshoot`; technical artifacts use `jumpnshoot-client` and `jumpnshoot-server`. Current Godot application titles still use `Jump'n'Shoot Client/Server`; changing those may affect `user://` data.
 - There are two separate Godot projects: `initial_project/Server` and `initial_project/Client`. The build tooling pins Godot 4.5.1 standard.
-- Current TCC sources live in `docs/report/main.tex` and its included files. `docs/tcc/` is the historical TCC1 reference.
+- Current TCC sources live in `docs/report/main.tex` and its included files. `docs/tcc/TCC1.pdf` is the preserved TCC1 reference. Keep `docs/report/` unchanged during repository-only cleanups unless the author explicitly authorizes report edits.
 
 ## Project Boundaries
 - Treat `Server` and `Client` as separate Godot projects with separate `project.godot` files, scenes, scripts, and `.godot/` state.
@@ -19,7 +19,7 @@
 ## Run And Verify
 - Respect the execution limits authorized for the current task. The following are verification entrypoints, not a record of execution.
 - Run the server before clients when execution is in scope. The Client loads its endpoint from `user://settings.cfg`; `default_settings.cfg` seeds the first profile with an empty address and port 7777. Configure an address before connecting.
-- Canonical build and verification instructions are in `docs/how_to/build-client-and-server.md`; CI/release behavior is documented in `docs/how_to/ci-cd.md`.
+- Canonical build and verification instructions are in `docs/build.md`; CI/release behavior is documented in `docs/publishing.md`.
 - `scripts/tests/` contains Python tests for build/deploy/smoke tooling. `scripts/test_exports.py` and `scripts/smoke/` exercise real exported builds headlessly; the match smoke currently uses two clients and does not replace manual gameplay/audio/visual checks.
 - `.github/workflows/ci.yml` and `release.yml` define CI and release/deploy. Do not equate their presence with checks having passed for the current working tree.
 - If using CLI and Godot is on `PATH`, the projects to launch are:
@@ -36,7 +36,7 @@
   - Client: `res://maps/highrise/map_highrise.tscn`
 - The Highrise Server map has four initial spawn points per team; `spawn_players()` requires enough points for the admitted players.
 - The client persists the player name under `profile/player_name` in `user://settings.cfg`.
-- See `docs/how_to/configure-client-and-server.md` for configuration locations, defaults and precedence.
+- See `docs/configuration.md` for configuration locations, defaults and precedence.
 - The optional one-room pilot is `scripts/run_loadtest.py`; see `docs/how_to/run-load-pilot.md`. `--players` counts all slots; `--human` reserves one, otherwise all are bots. Loadtest flags opt into 2–64 players (reusing existing spawn anchors above eight), high score/time and experimental spawn ammunition; without them normal presets/ammunition remain unchanged. Do not infer VPS capacity or graphical playability from local headless CSVs.
 
 ## Godot-Specific Gotchas
