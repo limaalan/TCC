@@ -53,7 +53,7 @@ def run_checked(command, log):
     return result.stdout
 
 
-def package_target(directory, platform, metadata, output, create_archive=True):
+def package_target(directory, platform, metadata, output):
     (directory / "BUILD.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     readme = "Server" if directory.name.startswith("server") else "Client"
     instructions = f"Jump'n'Shoot {readme} - {metadata['version']}\nCommit: {metadata['commit']}\n"
@@ -64,8 +64,6 @@ def package_target(directory, platform, metadata, output, create_archive=True):
         instructions += "Open jumpnshoot-client and configure the server address/port in Settings.\n"
     instructions += "Use Client and Server from the same release. Keep all package files together.\n"
     (directory / "README.txt").write_text(instructions, encoding="utf-8")
-    if not create_archive:
-        return None
     name = f"jumpnshoot-{directory.name}-x86_64-{metadata['version']}"
     if platform == "windows":
         archive = output / f"{name}.zip"
@@ -117,7 +115,7 @@ def main():
     parser.add_argument("--targets", nargs="+", choices=TARGETS, default=list(TARGETS))
     parser.add_argument("--godot", default="godot")
     parser.add_argument("--no-package", action="store_true",
-                        help="Keep exported binaries/manifests but skip ZIP/tar.gz compression")
+                        help="Keep exports unpacked without generating release archives")
     args = parser.parse_args()
     version = validate_version(args.version)
     source = args.source.resolve()
@@ -166,7 +164,8 @@ def main():
                                      logs / "server-dedicated-check.log")
                 if "EXPORT_SERVER_READY" not in result:
                     raise RuntimeError("Dedicated server/stripped resource check did not pass")
-            package_target(target, platform, metadata, staging, create_archive=not args.no_package)
+            if not args.no_package:
+                package_target(target, platform, metadata, staging)
         (staging / "BUILD.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
         files = sorted(path for path in staging.rglob("*") if path.is_file())
         checksums = [f"{sha256(path)}  "
