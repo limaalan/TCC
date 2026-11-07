@@ -10,8 +10,7 @@ import time
 
 
 def check_log(text, marker, known_errors=()):
-    # Godot 4.5.1 reports this pre-existing teardown issue in the unmodified client.
-    # Keep it visible; never exempt errors during map loading/RPC/gameplay.
+    # Godot 4.5.1 can report retained resources during client shutdown.
     shutdown = re.compile(r"^ERROR: \d+ resources still in use at exit \(run with --verbose for details\)\.$")
     warnings = []
     for line in text.splitlines():
