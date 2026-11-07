@@ -150,7 +150,7 @@ def main(argv=None):
     repo = Path(__file__).resolve().parents[1]
     run = (options.logs or repo / "build/loadtest" /
            f"{datetime.now(timezone.utc):%Y%m%dT%H%M%S%fZ}-{options.players}p").resolve()
-    # Never mix evidence from two runs or erase a user's previous results.
+    # Each run gets a separate results directory.
     run.mkdir(parents=True, exist_ok=False)
     server_command, clients = build_commands(options, repo, run)
     summary = dict(status="running", host=options.host, port=options.port,

@@ -25,9 +25,9 @@ A saída fica em `build/releases/local/`. O processo fixa Godot 4.5.1. Veja os p
 | [Arquitetura](docs/architecture.md) | Responsabilidades, rede e onde alterar cada sistema. |
 | [Publicação](docs/publishing.md) | CI, releases, configuração do deploy e diagnóstico. |
 | [Manutenção](docs/maintenance.md) | Mapas, recursos 3D e contratos compartilhados. |
-| [Métricas](docs/metrics.md) | Coleta CSV, indicadores e ferramenta visual opcional. |
+| [Métricas](docs/metrics.md) | Configuração da coleta e leitura dos CSVs. |
 
-O [piloto de carga](docs/how_to/run-load-pilot.md) acompanha a ferramenta experimental de uma sala nesta branch.
+O [guia de teste de carga](docs/how_to/run-load-pilot.md) explica como executar uma partida com bots e coletar métricas.
 
 ## Código e trabalhos acadêmicos
 

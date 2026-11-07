@@ -30,10 +30,8 @@ Variáveis habilitadoras aceitam `1`, `true` ou `yes`. CLI precede ambiente para
 
 Os Compose atuais não encaminham essas variáveis nem montam um volume específico de coleta. O runtime usa filesystem somente leitura; configurar persistência no container exige indicar uma área gravável e acessível ao processo.
 
-## Ferramenta visual e extensão
+## Adicionar indicadores
 
-A dashboard existente recebe o stream UDP. Seu comando e dependências estão em [metrics_dashboard/README.md](../metrics_dashboard/README.md). Ela é opcional; CPU/RSS obtidos pelo monitor não entram automaticamente nos CSVs da Godot.
-
-Para adicionar um indicador, defina unidade, origem e frequência; atualize `initial_project/Server/server/server_metrics_collector.gd` e a serialização em `initial_project/shared/metrics/network_metrics_logger.gd`. Atualize o receptor/interface da dashboard apenas se ela for consumir o novo campo. Preserve compatibilidade dos nomes existentes.
+Defina a unidade, a origem e a frequência do indicador. Atualize o coletor em `initial_project/Server/server/server_metrics_collector.gd` e a serialização em `initial_project/shared/metrics/network_metrics_logger.gd`, preservando os nomes dos campos existentes.
 
 O [guia do piloto](how_to/run-load-pilot.md) descreve a coleta no ensaio de uma sala e a identificação dos seus resultados.

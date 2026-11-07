@@ -1,6 +1,5 @@
 extends SceneTree
-## Disposable load driver: real Client scenes, input, physics and RPC paths.
-## This file is external to the game and is not part of its normal startup.
+## Client driver for load testing with the game's scenes, physics, and RPCs.
 
 class ShotObserver extends Node:
 	var shots := 0
@@ -235,8 +234,7 @@ func _drive_frame() -> void:
 	if measurement_started:
 		_sample_feed(lobby, now)
 	if mode == "bot":
-		# Headless windows have no OS focus. Override only this driver's instance,
-		# leaving the production focus guard and graphical-human behavior untouched.
+		# Headless bots need to process input without window focus.
 		var guard := root.get_node_or_null("GamepadFocusGuard")
 		if guard != null:
 			guard.set_process(false)

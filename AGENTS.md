@@ -17,11 +17,10 @@
 - Server entrypoint: `initial_project/Server/project.godot` -> main scene `res://game/main_game.tscn`, with the actual startup logic living in the autoload `res://server/server.tscn` / `server/server.gd`.
 
 ## Run And Verify
-- Respect the execution limits authorized for the current task. The following are verification entrypoints, not a record of execution.
 - Run the server before clients when execution is in scope. The Client loads its endpoint from `user://settings.cfg`; `default_settings.cfg` seeds the first profile with an empty address and port 7777. Configure an address before connecting.
 - Canonical build and verification instructions are in `docs/build.md`; CI/release behavior is documented in `docs/publishing.md`.
 - `scripts/tests/` contains Python tests for build/deploy/smoke tooling. `scripts/test_exports.py` and `scripts/smoke/` exercise real exported builds headlessly; the match smoke currently uses two clients and does not replace manual gameplay/audio/visual checks.
-- `.github/workflows/ci.yml` and `release.yml` define CI and release/deploy. Do not equate their presence with checks having passed for the current working tree.
+- `.github/workflows/ci.yml` and `release.yml` define CI, release, and deployment.
 - If using CLI and Godot is on `PATH`, the projects to launch are:
   - `godot --path initial_project/Server`
   - `godot --path initial_project/Client`
@@ -46,7 +45,6 @@
 - `initial_project/shared/` is the source for common contracts, including `net/net_keys.gd` and `net/net_payloads.gd`. Local `Client/shared` and `Server/shared` are junctions prepared by `initial_project/setup_shared_links.ps1`; the release builder materializes shared files in temporary project copies.
 
 ## Repo Workflow Notes
-- Local editorial history is preserved under ignored `tmp/contexto-tcc/`; it is not a build input or a source of current task authorization.
 - Root `.gitignore` ignores `.godot/`, `build/`, local shared junctions and other generated files. Client assets are not globally ignored by the current root rules; use `git ls-files` / `git check-ignore` for the file in question.
 - Preserve pre-existing local changes. Do not rename historical binaries/manifests to simulate a new build, and do not remove documents/assets solely because a text search found no references.
 - README documents a repo-specific commit style: prefix the message with a task number, e.g. `2. Criação do modelo de personagem`.
