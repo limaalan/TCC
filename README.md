@@ -41,4 +41,4 @@ Os testes headless cobrem fluxos específicos e complementam a conferência manu
 
 ## Créditos
 
-Os [avisos de terceiros](THIRD_PARTY_NOTICES.md) registram os ícones identificados, a procedência dos áudios e os limites da verificação de atribuições. Esse registro não define uma licença única para o jogo, suas artes ou o texto acadêmico.
+Os [avisos de terceiros](THIRD_PARTY_NOTICES.md) registram os ícones utilizados no projeto, a procedência dos áudios
