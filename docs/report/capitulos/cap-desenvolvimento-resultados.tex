@@ -230,6 +230,15 @@ O mapa desenvolvido, denominado ``Highrise'', reúne uma área jogável, element
 
 A disposição combina alturas e destinos distintos para o deslocamento. Os grupos de nascimento ocupam níveis diferentes, a zona de KOTH fica em uma região elevada e duas plataformas de impulso ampliam as possibilidades de acesso vertical. Vida, munição, granadas e melhorias temporárias são distribuídos pelo espaço, relacionando a busca por recursos aos percursos entre as áreas da arena.
 
+A Figura~\ref{fig:highrise-corte} mostra um corte do modelo de Highrise, no qual se observam a sobreposição dos níveis e as aberturas entre os pavimentos.
+
+\begin{figure}[!htbp]
+\centering
+\caption{Corte transversal do modelo do mapa Highrise}\label{fig:highrise-corte}
+\includegraphics[width=0.9\linewidth,keepaspectratio]{figuras/tcc2/mapa_vertical.png}
+\fonte{modelagem do autor}
+\end{figure}
+
 O servidor registra os dados das plataformas de impulso e os envia ao cliente, que constrói suas representações locais. As posições de criação dos coletáveis e dessas plataformas também são comunicadas pelo servidor. Essa centralização permite realizar ajustes de balanceamento na distribuição dos recursos e dos pontos de impulso a partir do projeto do servidor. Ao entrar em contato com uma plataforma, o jogador recebe o impulso local. Uma zona de morte abaixo do mapa trata quedas para fora da área útil, encerrando a participação atual antes do retorno previsto pelo modo.
 
 Para manter a correspondência entre as duas representações do mapa, foi criado um script de geração da cena do servidor. Durante a execução do jogo, o servidor remove nós estritamente visuais, como malhas, iluminação e partículas, preservando os elementos necessários às regras. O empacotamento desses recursos é tratado separadamente na seção~\ref{sec:5.2.11}.
