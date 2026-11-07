@@ -3,10 +3,9 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://e1mr1qcd8fuc"
-path.s3tc="res://.godot/imported/shotgun_variation_textura_espiral.png-2dae3b64f9f8be022d5865bd6c9905ec.s3tc.ctex"
+path="res://.godot/imported/shotgun_variation_textura_espiral.png-2dae3b64f9f8be022d5865bd6c9905ec.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 generator_parameters={
 "md5": "c7e010194aed3c3c2f276ee07e928d79"
@@ -15,11 +14,11 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/meus_assets/weapons/shotgun/import/shotgun_variation_textura_espiral.png"
-dest_files=["res://.godot/imported/shotgun_variation_textura_espiral.png-2dae3b64f9f8be022d5865bd6c9905ec.s3tc.ctex"]
+dest_files=["res://.godot/imported/shotgun_variation_textura_espiral.png-2dae3b64f9f8be022d5865bd6c9905ec.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
