@@ -451,6 +451,16 @@ func spawn_players()->void:
 		else:
 			required_red_spawn_points += 1
 
+	# Large experimental rooms reuse existing safe anchors, without changing
+	# the map or the normal match's requirement for unique initial spawns.
+	var experiment := preload("res://shared/loadtest_config.gd").parse(OS.get_cmdline_user_args())
+	if experiment.ok and experiment.enabled:
+		var blue_anchor_count := blue_spawn_points.size()
+		var red_anchor_count := red_spawn_points.size()
+		while blue_spawn_points.size() < required_blue_spawn_points:
+			blue_spawn_points.append(blue_spawn_points[blue_spawn_points.size() % blue_anchor_count])
+		while red_spawn_points.size() < required_red_spawn_points:
+			red_spawn_points.append(red_spawn_points[red_spawn_points.size() % red_anchor_count])
 	if blue_spawn_points.size() < required_blue_spawn_points or red_spawn_points.size() < required_red_spawn_points:
 		push_error(
 			"Cannot spawn players: expected %s blue and %s red spawn points, found %s blue and %s red."
@@ -1039,7 +1049,7 @@ func c_try_throw_grenade(player_state:Dictionary)->void:
 	direction = direction.rotated(Vector3.RIGHT, player_state[NetKeys.ROT_X])
 	direction = direction.rotated(Vector3.UP, player_state[NetKeys.ROT_Y])
 	
-	grenade.set_data(self, direction, player)
+	grenade.set_data(self, direction, player, client_id)
 	grenade.position = player_state[NetKeys.POS] + Vector3.UP * 1.2
 	
 	var grenade_network_id := make_grenade_network_id(client_id)

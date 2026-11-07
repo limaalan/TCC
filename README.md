@@ -1,31 +1,44 @@
-# TCC - Jump'n'Shoot
+# jumpnshoot
 
-Repositorio referente aos recursos do jogo proposto como trabalho de TCC
+Jogo 3D multijogador de tiro em primeira pessoa desenvolvido como TCC. Combina combate em equipes, salto duplo e plataformas de impulso. Possui modos Team Deathmatch e King of the Hill no mapa Highrise, com cliente e servidor dedicado em projetos Godot separados.
 
-## Tarefas
-As tarefas estao listadas no github projects, com a mesma divisao utilizada no cronograma da apresentacao.
-Serao criados cards para as tarefas que surgirem, cada um com uma issue.
+## Começar
 
-O padrao de commit sera: `1. Breve descricao da tarefa`
+As [releases](https://github.com/limaalan/TCC/releases) oferecem cliente e servidor para Windows/Linux. Inicie o servidor antes dos clientes e configure endereço e porta; o padrão é **7777/UDP**. As predefinições normais usam dois participantes por partida.
 
-ex: `2. Criacao do modelo de personagem`
+Para gerar as quatro builds, use Docker Linux x86_64; no Windows, execute no terminal WSL2:
 
-## Build e teste local
+```bash
+mkdir -p build/releases build/smoke build/diagnostics
+docker compose --profile tools build build
+docker compose --profile tools run --rm build
+```
 
-Veja [gerar Client/Server com Docker e testar no WSL/Windows](docs/how_to/build-client-and-server.md).
-O processo gera executáveis Windows/Linux, pacotes e checksums; a imagem de servidor usa o mesmo binário Linux exportado.
+A saída fica em `build/releases/local/`. O processo fixa Godot 4.5.1. Veja os pré-requisitos e comandos de execução no guia de build.
 
-## Coleta de metricas de rede
-O contrato oficial de observabilidade do servidor passa a ser:
+## Documentação técnica
 
-- `--port=7777`
-- `--record-metrics`
-- `--stream-metrics`
-- `--metrics-interval=1.0`
-- `--metrics-output-dir=metrics-logs`
-- `--metrics-stream-host=127.0.0.1`
-- `--metrics-stream-port=8765`
+| Guia | Conteúdo |
+| --- | --- |
+| [Build e execução](docs/build.md) | Exportações, partida local e verificação dos artefatos. |
+| [Configuração](docs/configuration.md) | Arquivos, parâmetros, padrões e precedência. |
+| [Arquitetura](docs/architecture.md) | Responsabilidades, rede e onde alterar cada sistema. |
+| [Publicação](docs/publishing.md) | CI, releases, configuração do deploy e diagnóstico. |
+| [Manutenção](docs/maintenance.md) | Mapas, recursos 3D e contratos compartilhados. |
+| [Métricas](docs/metrics.md) | Coleta CSV, indicadores e ferramenta visual opcional. |
 
-Sem flags de observabilidade o servidor sobe normal, sem CSV e sem stream UDP. Quando `--record-metrics` estiver ativo, os arquivos CSV sao gravados por padrao em `metrics-logs/` na raiz do repositorio. O diretorio tambem pode ser sobrescrito com `--metrics-output-dir=<caminho>` ou `TCC_METRICS_OUTPUT_DIR`.
+O [piloto de carga](docs/how_to/run-load-pilot.md) acompanha a ferramenta experimental de uma sala nesta branch.
 
-As flags antigas `--network-metrics` e `--metrics` permanecem apenas por compatibilidade temporaria. A documentacao completa de build, deploy e scripts de inicializacao esta em `implementation_plan/15_runtime_observabilidade_e_comandos_servidor.md`.
+## Código e trabalhos acadêmicos
+
+- `initial_project/Client/` e `initial_project/Server/`: projetos Godot independentes.
+- `initial_project/shared/`: contratos e definições comuns; não editar pelas junções dentro dos projetos.
+- `scripts/`, `docker/` e `.github/workflows/`: ferramentas de build, verificação e publicação.
+- [TCC2](docs/report/LEIA-ME.md): fontes LaTeX atuais; compilação a partir de `main.tex`.
+- [TCC1](docs/tcc/TCC1.pdf): versão original em PDF.
+
+Os testes headless cobrem fluxos específicos e complementam a conferência manual de controles, imagem, áudio e combate. Tarefas do projeto são acompanhadas no GitHub Projects; o padrão de commit é prefixado pelo número da tarefa, por exemplo `2. Criação do modelo de personagem`.
+
+## Créditos
+
+Os [avisos de terceiros](THIRD_PARTY_NOTICES.md) registram os ícones identificados, a procedência dos áudios e os limites da verificação de atribuições. Esse registro não define uma licença única para o jogo, suas artes ou o texto acadêmico.

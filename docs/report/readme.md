@@ -1,5 +1,7 @@
 # Modelo Latex para desenvolvimento de TCCs do DAINF-PB (UTFPR-PB) e DACOM-CM (UTFPR-CM)
 
+> Documentação original do template, versão de agosto de 2022, preservada com seus créditos e condições de uso. As normas listadas abaixo pertencem a esse registro histórico. Para o TCC atual, consulte [LEIA-ME.md](LEIA-ME.md); este arquivo não certifica conformidade com normas atuais.
+
   Este modelo LaTeX (não oficial) permite a produção de trabalhos acadêmicos (teses, dissertações, trabalhos de conclusão, etc.) da Universidade Tecnológica Federal do Paraná (UTFPR).
 
 # >> Atenção - Leia isso antes de usar esse template<< 

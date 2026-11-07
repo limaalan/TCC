@@ -15,9 +15,15 @@ Important rules:
 - Do not edit `Server/shared` directly.
 - Those paths are local junctions that point back to this directory.
 
-Examples of future shared files:
+Current responsibilities include:
 
 - `game_enums.gd`
-- `net_keys.gd`
-- `net_payloads.gd`
+- `net/net_keys.gd` and `net/net_payloads.gd`
 - `network_config.gd`
+- `match_config.gd` and `match_preset_registry.gd`
+- weapon definitions and inventory under `weapons/`
+- metrics serialization and logging under `metrics/`
+
+The release builder (`scripts/build_release.py`, from the repository root)
+materializes these files into temporary copies of each project. Exported
+builds do not depend on local junctions or a previous `.godot/` cache.
