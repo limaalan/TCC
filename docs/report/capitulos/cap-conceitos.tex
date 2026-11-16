@@ -1,13 +1,13 @@
 % Relatório do TCC2: edição mantida diretamente neste arquivo LaTeX.
 \chapter{Fundamentação teórica}\label{cap:tcc2-2}
 
-Este capítulo apresenta os conceitos necessários para caracterizar o produto desenvolvido. A discussão se concentra nos motores de jogos, nos jogos de tiro em primeira pessoa, nos elementos de plataforma e na organização de partidas multijogador competitivas em tempo real.
+Este capítulo apresenta os conceitos de motores de jogos, tiro em primeira pessoa e jogos de plataforma. Também retoma a classificação dos jogos multijogador do TCC1 e descreve os conceitos de comunicação necessários para compreender as partidas em rede.
 
 \section{Motores de jogos e Godot Engine}\label{sec:2.1}
 
-Neste trabalho, o motor de jogos corresponde ao ambiente que reúne os recursos utilizados para construir e executar a aplicação. Na Godot, nós representam unidades de comportamento e podem ser organizados em cenas reutilizáveis. Uma cena de personagem, por exemplo, pode combinar corpo físico, câmera e apresentação visual. Essa composição também se aplica a menus e ao próprio mapa. A documentação da Godot apresenta nós, cenas, árvore de cenas e sinais como conceitos centrais de sua organização. \cite{GODOT-CONCEITOS}
+Um motor de jogos reúne recursos para construir e executar um jogo, como renderização, física, entrada e áudio. Na Godot, cada cena é composta por uma árvore de nós com um único nó raiz. Um nó pode representar um objeto inteiro ou um componente, como uma câmera ou uma forma de colisão. Os nós possuem propriedades que armazenam dados e podem receber scripts que definem seu comportamento. Por exemplo, uma cena de personagem pode reunir um corpo físico, uma câmera e uma representação visual. \cite{GODOT-CONCEITOS}
 
-Os comportamentos do jogo foram programados em GDScript. Para física tridimensional, entrada, interface, áudio e comunicação em rede, foram utilizados recursos do motor. A mesma base tecnológica é empregada nos dois projetos Godot, embora o cliente e o servidor possuam responsabilidades diferentes. O primeiro concentra a interação e a apresentação; o segundo mantém as regras e os dados compartilhados da partida.
+Uma cena salva pode ser instanciada em outras cenas. Assim, a mesma estrutura de personagem pode ser reutilizada para criar vários jogadores. Durante a execução, as cenas instanciadas passam a integrar a árvore de cenas do jogo. Os sinais permitem que um nó comunique um evento, como o pressionamento de um botão, aos nós interessados. As ferramentas empregadas no trabalho são descritas na seção~\ref{sec:4.1}. \cite{GODOT-CONCEITOS}
 
 \section{Jogos de tiro em primeira pessoa e arena shooters}\label{sec:2.2}
 
@@ -21,9 +21,25 @@ Os elementos de plataforma considerados no projeto são ações e estruturas que
 
 \textit{Lovely Planet} oferece uma referência para a combinação entre saltar, mirar e disparar. A descrição do próprio desenvolvedor enfatiza a alternância entre desviar de projéteis e buscar uma posição de tiro. No presente trabalho, essa referência ajuda a contextualizar a intenção de reunir combate e movimentação, enquanto as regras concretas de salto e impulso são próprias da implementação. \cite{LOVELY}
 
-\section{Jogos multijogador competitivos em tempo real}\label{sec:2.4}
+\section{Classificação dos jogos multijogador}\label{sec:2.4}
 
-O TCC1 organizou os jogos multijogador segundo a disposição dos participantes, sua forma de interação, os papéis desempenhados e o momento das ações. Dentro dessa classificação, o sistema desenvolvido pode ser descrito como um jogo em rede, competitivo, simétrico e de tempo real: os participantes executam instâncias em computadores conectados, disputam objetivos, utilizam o mesmo conjunto de ações e atuam durante a mesma partida. Nesse contexto, a simetria corresponde ao conjunto de ações e regras disponível a ambas as equipes.
+Um jogo multijogador permite a interação de mais de um jogador no mesmo jogo. Essa interação pode ocorrer em um único dispositivo ou entre dispositivos conectados. O TCC1 organizou esses jogos conforme a disposição dos participantes, a forma de interação, os papéis desempenhados e o momento das ações.
+
+\textbf{Disposição dos jogadores.} No multijogador local, os jogadores interagem no mesmo dispositivo. Podem dividir a tela, compartilhar a mesma visão ou alternar o uso do controle. No multijogador em rede, cada jogador utiliza um dispositivo conectado aos demais por uma rede local ou pela internet. Essa forma de jogo exige a troca de informações entre os dispositivos para manter as representações da partida.
+
+\textbf{Forma de interação.} Em jogos cooperativos, os participantes colaboram para alcançar um objetivo comum. Em jogos competitivos, os jogadores ou as equipes disputam resultados entre si. As duas formas podem coexistir em uma partida, como ocorre quando os integrantes de uma equipe cooperam para competir contra outra.
+
+\textbf{Papéis dos jogadores.} No multijogador simétrico, os participantes assumem papéis semelhantes e compartilham as regras centrais de interação, ainda que possam escolher personagens ou equipamentos distintos. No multijogador assimétrico, a divisão de papéis modifica substancialmente as ações ou os objetivos disponíveis a cada grupo. Um exemplo é uma partida em que um participante controla uma criatura e os demais controlam os personagens que precisam enfrentá-la.
+
+\textbf{Momento da interação.} Em uma partida em tempo real, os jogadores atuam durante a mesma sessão, e as ações de cada um influenciam os demais à medida que são processadas. Em jogos assíncronos, os participantes podem realizar ações em momentos diferentes, como em uma partida por turnos jogada por correspondência.
+
+Segundo essa classificação, \textit{Jump'n'Shoot} é um multijogador em rede, competitivo, simétrico e em tempo real. Os participantes executam instâncias conectadas, atuam durante a mesma partida e disputam objetivos em equipes que compartilham as mesmas regras e possibilidades de ação.
+
+\section{Arquitetura e comunicação em rede}\label{sec:2.5}
+
+No modelo cliente-servidor, os clientes se comunicam com um servidor que mantém uma referência comum para o estado do jogo. O servidor pode executar em um processo dedicado ou na instância de um dos jogadores. Em uma arquitetura entre pares (\textit{peer-to-peer}), a comunicação da partida ocorre entre os próprios participantes. Em uma simulação determinística entre pares, por exemplo, cada dispositivo calcula o estado a partir das mesmas condições iniciais e dos comandos compartilhados. \cite{FIEDLER-REDE}
+
+Chamadas remotas de procedimento (\textit{remote procedure calls}, ou RPCs) permitem executar uma função em outro participante conectado. Em uma arquitetura cliente-servidor, um cliente pode usar uma RPC para informar uma ação, e o servidor pode usar outra para comunicar seu resultado aos clientes. A implementação dessas chamadas e os modos de transferência utilizados são apresentados na seção~\ref{sec:4.2.2}. \cite{GODOT-REDE}
 
 A participação em tempo real não implica ausência de atraso. Cada computador possui seu próprio ciclo de execução, e as informações levam tempo para atravessar a rede. Por isso, a aplicação precisa conciliar a resposta percebida pelo jogador com o estado conhecido pelos demais participantes. Predição e interpolação são estratégias distintas para lidar com esse problema: a primeira antecipa localmente uma resposta; a segunda constrói uma transição entre estados recebidos. \cite{FIEDLER-REDE} \cite{FIEDLER-INTERPOLACAO}
 
