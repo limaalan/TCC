@@ -13,7 +13,7 @@ O ensaio exploratório reuniu o servidor e participantes automatizados na mesma 
 
 \section{Objetivos alcançados}\label{sec:6.2}
 
-As funcionalidades centrais do objetivo geral foram implementadas e integradas ao projeto. A Tabela~\ref{tab:tcc2-7} relaciona os objetivos específicos ao produto desenvolvido. A verificação funcional realizada pelo autor percorreu os sistemas apresentados na seção~\ref{sec:5.3.1}, enquanto o ensaio exploratório forneceu uma referência local para seu comportamento sob carga.
+O objetivo geral foi atendido pela integração dos sistemas em uma versão jogável. A Tabela~\ref{tab:tcc2-7} relaciona os objetivos específicos retomados do TCC1 aos resultados obtidos. A verificação funcional percorreu os sistemas apresentados na seção~\ref{sec:5.3.1}, e o ensaio exploratório forneceu uma referência local para o comportamento do sistema sob carga.
 
 \begingroup
 \small
@@ -35,22 +35,22 @@ Objetivo & Resultado sustentado nesta versão \\
 \endfoot
 \bottomrule
 \endlastfoot
-Movimentação e plataforma & Controle em primeira pessoa, corrida, salto duplo e impulso local implementados. \\
-Combate e recursos & Três armas, granadas, vida, retorno à partida, inventário e coletáveis implementados. \\
-Modos competitivos & TDM e KOTH configurados em predefinições, com regras próprias de pontuação. \\
-Comunicação e contratos & Cliente e servidor utilizam RPCs, snapshots e definições compartilhadas. \\
-Mapa e apresentação & Mapa desenvolvido, HUD, materiais de time e tratamento de áudio integrados ao projeto. \\
-Exportação & Cliente e servidor exportados para Windows/Linux, verificados pelo GitHub Actions e publicados na versão \texttt{v0.1.0}; versão publicada utilizada pelo autor. \\
+Investigar técnicas de jogos de tiro & O projeto integrou controle em primeira pessoa, armas com características distintas, detecção de acertos por traços e cálculo de dano no servidor. \\
+Investigar técnicas de jogos de plataforma & O projeto implementou salto duplo e plataformas de impulso. A arena Highrise utiliza essas mecânicas em percursos entre diferentes alturas. \\
+Investigar técnicas de jogos multijogador em rede & A arquitetura cliente-servidor integra RPCs, distribuição de estados, interpolação e compensação de latência de disparos. A verificação funcional e o ensaio de carga avaliaram aspectos distintos dessa implementação. \\
+Fomentar o interesse pelo desenvolvimento de jogos no país & O código-fonte, os guias técnicos e os executáveis publicados oferecem material de consulta e experimentação para estudantes e desenvolvedores. \\
 \end{longtable}
 \endgroup
 
 Fonte: correspondência entre os objetivos da seção~\ref{sec:1.3.2} e as evidências apresentadas no Capítulo~\ref{cap:tcc2-5}.
 
+A disponibilização do projeto foi a ação adotada para apoiar o quarto objetivo. O alcance desse material entre estudantes e desenvolvedores ficou fora da avaliação.
+
 \section{Contribuições e aprendizado}\label{sec:6.3}
 
 A principal contribuição técnica está na integração de funcionalidades que dependem umas das outras durante uma partida. O combate altera vida e estatísticas; a morte interfere na ocupação de objetivos e nas melhorias temporárias; a coleta modifica recursos; e a interface precisa apresentar essas mudanças em cada cliente. A organização por responsabilidades tornou possível descrever essas relações e identificar quais decisões pertencem ao servidor e quais permanecem locais.
 
-O projeto também oferece um material de estudo sobre escolhas de sincronização em um jogo concreto. Posição, munição, objetivos, efeitos e skins utilizam fluxos distintos conforme a frequência de mudança e a necessidade de atualização. A documentação desses casos, acompanhada de suas limitações, contribui para a manutenção e para a compreensão das consequências de cada escolha.
+A documentação do jogo oferece material de estudo sobre escolhas de sincronização em uma implementação jogável. Posição, munição, objetivos e efeitos utilizam fluxos distintos conforme a frequência de mudança e a necessidade de atualização. O relatório descreve essas decisões e suas limitações, e os guias do Apêndice~\ref{ap:fontes-tecnicas} indicam onde consultar e ampliar a implementação.
 
 \section{Trabalhos futuros}\label{sec:6.4}
 
