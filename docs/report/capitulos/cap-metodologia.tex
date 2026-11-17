@@ -1,11 +1,14 @@
-% Relatório do TCC2: edição mantida diretamente neste arquivo LaTeX.
 \chapter{Materiais e métodos}\label{cap:tcc2-4}
 
-Este capítulo descreve os recursos e procedimentos empregados no desenvolvimento. São apresentadas as ferramentas, a arquitetura de comunicação, as tecnologias de rede, o registro de métricas, a organização do projeto e o método de verificação funcional. Os registros dessa verificação são reunidos na seção~\ref{sec:5.3}.
+\section{Processo de desenvolvimento}\label{sec:4.4}
+
+No TCC1, o Double Diamond serviu de referência para o planejamento do jogo. O modelo divide o processo em quatro etapas: descoberta, definição, desenvolvimento e entrega. \cite{DOUBLE-DIAMOND}
+
+No TCC2, o trabalho foi organizado por funcionalidade. Durante a implementação, o autor registrou em arquivos Markdown como cada sistema funcionava e quais decisões havia tomado. Esses registros serviram de base para o relatório técnico.
 
 \section{Ferramentas e tecnologias}\label{sec:4.1}
 
-A Godot 4.5 foi utilizada para desenvolver o cliente e o servidor dedicado, com comportamentos programados em GDScript. O Blender integra o fluxo de autoria dos recursos visuais, e o projeto utiliza Git para controle de versão. Scripts PowerShell dão suporte à preparação dos diretórios compartilhados no desenvolvimento local e à sincronização do mapa. O empacotamento utiliza scripts Python em um ambiente Docker com a Godot 4.5.1. A Tabela~\ref{tab:tcc2-1} resume o papel desses materiais.
+A Tabela~\ref{tab:tcc2-1} reúne as ferramentas usadas para desenvolver, versionar e exportar o jogo.
 
 \begingroup
 \small
@@ -27,7 +30,7 @@ Material & Utilização no trabalho \\
 \endfoot
 \bottomrule
 \endlastfoot
-Godot e GDScript & Cenas, física, regras, interface, áudio e comunicação do jogo. \\
+Godot 4.5.1 e GDScript & Desenvolvimento do cliente e do servidor dedicado. \\
 Blender & Autoria e manutenção dos modelos e recursos visuais. \\
 Git & Organização e versionamento do projeto. \\
 PowerShell & Preparação dos links compartilhados no desenvolvimento local e geração de cenas do mapa de servidor. \\
@@ -37,66 +40,17 @@ Python e Docker & Preparação do ambiente de build e geração dos executáveis
 
 Fonte: elaboração própria.
 
-\section{Arquitetura e tecnologias de rede}\label{sec:4.2}
-
-\subsection{Arquitetura de comunicação}\label{sec:4.2.1}
-
-A arquitetura define como os participantes trocam informações e onde são decididos os resultados. Fiedler apresenta tanto a troca de comandos entre pares quanto a organização cliente-servidor. Nesta última, o servidor mantém uma referência comum para os clientes; no modelo de simulação determinística entre pares, a reprodução consistente dos comandos depende de condições iniciais e regras equivalentes. Esses modelos exigem soluções diferentes para sincronização. \cite{FIEDLER-REDE}
-
-No projeto, adotou-se um processo servidor separado dos programas executados pelos jogadores. A entrada e a movimentação permanecem no cliente, enquanto dano, recursos e pontuação são decididos pelo servidor. Essa divisão combina resposta local ao controle com uma referência comum para os resultados das partidas. A organização dos componentes e o alcance dessa autoridade são detalhados na seção~\ref{sec:5.2}.
-
-\subsection{Tecnologias de comunicação utilizadas}\label{sec:4.2.2}
-
-O UDP é um protocolo de transporte baseado em datagramas. Sua especificação não garante entrega nem proteção contra duplicação de mensagens; requisitos adicionais devem ser tratados por outras camadas. No trabalho, ele é utilizado como base da comunicação multijogador por ENet. A escolha do transporte, por si só, não determina se uma mensagem da aplicação será reenviada. \cite{UDP} \cite{GODOT-REDE}
-
-A Godot disponibiliza comunicação de alto nível por chamadas remotas de procedimento, ou RPCs. Uma função pode ser executada em outro participante, com restrições sobre quem pode chamá-la e sobre a forma de transferência. Essa API permite usar a estrutura de nós do jogo para organizar a comunicação; o projeto a utiliza nos componentes que representam o servidor e cada sala. \cite{GODOT-REDE}
-
-Os modos de transferência usados são confiável, não confiável e não confiável ordenado. No primeiro, há confirmação e tentativas de reenvio; no segundo, uma mensagem pode se perder ou chegar fora de ordem; no terceiro, mensagens atrasadas podem ser descartadas quando uma atualização posterior já foi recebida. Essa diferença fundamenta o uso de eventos confiáveis para mudanças discretas e de atualizações substituíveis para movimento. \cite{GODOT-PEER}
-
-Outra técnica utilizada foi a interpolação de snapshots. Um snapshot é um registro do estado em determinado instante. Ao manter um pequeno histórico dos registros recebidos, o cliente pode apresentar posições intermediárias entre dois deles. Visualmente, o movimento dos outros jogadores é apresentado por transições suaves entre as posições recebidas, reduzindo os saltos bruscos a cada atualização. O buffer acrescenta um atraso de apresentação, em troca dessa continuidade visual. \cite{FIEDLER-INTERPOLACAO}
-
-\section{Registro de métricas}\label{sec:4.3}
-
-Métricas são medições que ajudam a descrever o comportamento de um sistema. O projeto possui coleta própria e registro em CSV, utilizados no ensaio exploratório descrito na seção~\ref{sec:ensaio-carga-metodo} e disponíveis para análises posteriores. O funcionamento básico desse registro é apresentado na seção~\ref{sec:5.2.10}. A referência conceitual é a documentação do OpenTelemetry, sem integração do jogo com essa ferramenta. \cite{OBSERVABILIDADE}
-
-\section{Processo de desenvolvimento}\label{sec:4.4}
-
-O planejamento original do TCC1 adotou o Double Diamond como referência de processo. O modelo apresentado pelo Design Council organiza atividades de descoberta, definição, desenvolvimento e entrega. Neste trabalho, ele contextualiza o planejamento inicial, sem caracterizar um protocolo de avaliação das iterações realizadas. \cite{DOUBLE-DIAMOND}
-
-O desenvolvimento integrou progressivamente os sistemas de jogador, combate, modos de partida e interface. O relatório apresenta essa organização por responsabilidades, relacionando as soluções adotadas aos problemas de interação e sincronização. A evolução do escopo é discutida na seção seguinte, e o funcionamento dos sistemas é detalhado no capítulo~\ref{cap:tcc2-5}.
-
-\section{Da proposta do TCC1 à implementação}\label{sec:4.5}
-
-A proposta original previa um participante hospedeiro e utilizava a denominação peer-to-peer para sua arquitetura. A implementação passou a separar o programa executado pelos jogadores do processo que mantém as partidas. Essa mudança permitiu executar o servidor sem a apresentação do jogo e manter em um ponto comum as regras de dano, recursos, modos e resultados. RPCs e snapshots próprios substituíram a dependência do mecanismo de replicação automática descrito no protótipo inicial, tornando explícitas as responsabilidades de cada lado da comunicação.
-
-A configuração livre por um jogador hospedeiro também foi substituída por predefinições compartilhadas. Com isso, cliente e servidor trabalham com combinações previamente conhecidas de mapa, modo, tempo, pontuação e quantidade de participantes, e o gerenciador pode associar solicitações compatíveis à mesma sala. Essa delimitação reduz as variações que precisam ser tratadas e verificadas na versão entregue.
-
-O recorte de conteúdo foi ajustado para concentrar o desenvolvimento e a verificação em um conjunto menor de combinações. Foram disponibilizados os modos TDM e KOTH no mapa desenvolvido, denominado ``Highrise'', enquanto \textit{Capture the Flag} e o mapa protótipo ficaram fora da seleção principal. O mapa passou a reunir os elementos necessários aos dois modos entregues, como pontos de nascimento, recursos, plataformas de impulso e zona de captura. Dessa forma, o mesmo mapa pode ser utilizado no fluxo principal e nas duas modalidades disponíveis.
-
-O catálogo final de combate também foi revisto. Pistola, submetralhadora (SMG) e espingarda (shotgun) assumem papéis diferenciados por cadência, dispersão e quantidade de traços, enquanto as granadas acrescentam dano em área. A melhoria de velocidade de movimentação prevista inicialmente deu lugar ao aumento temporário de cadência, integrado ao mesmo ciclo de armas, munição e feedback da interface. Essas alterações descrevem o produto efetivamente consolidado e são sintetizadas na seção~\ref{sec:5.3.3}.
-
-\section{Organização do projeto}\label{sec:4.6}
-
-O projeto foi organizado em dois projetos Godot independentes, denominados \textit{Client} e \textit{Server}, e um diretório de código comum, \texttt{shared}. Essa estrutura permite executar o servidor separadamente da apresentação do jogo e reutilizar contratos de comunicação e definições nos dois lados. A Figura~\ref{fig:tcc2-2} apresenta os principais agrupamentos de responsabilidades, cujo funcionamento é discutido no relatório técnico.
-
-No desenvolvimento local em Windows, um script cria junções de diretório para que os dois projetos utilizem a mesma origem das definições compartilhadas. Para gerar os executáveis, o builder materializa esse conteúdo em cada projeto dentro de um diretório temporário e realiza as importações separadamente. Os arquivos de autoria dos assets são mantidos em pastas \texttt{import/}. O procedimento de geração dos executáveis é descrito na seção~\ref{sec:5.2.11}.
-
-Este relatório descreve a versão do projeto preparada para entrega. O código-fonte e a documentação técnica complementar estão disponíveis em \url{https://github.com/limaalan/TCC}. O Apêndice~\ref{ap:fontes-tecnicas} reúne os caminhos de consulta desse material.
-
 \section{Método de verificação funcional}\label{sec:4.7}
 
-A verificação funcional foi realizada pelo autor com o servidor e dois clientes, percorrendo o fluxo completo de partida. O roteiro contemplou entrada na sala, escolha de modo, nascimento dos personagens, combate, coleta de recursos, atualização da interface, encerramento e retorno ao menu. Em KOTH, foram observadas separadamente as situações em que a zona de captura estava vazia, controlada ou contestada, pois cada estado produz uma consequência diferente sobre a pontuação.
+O autor executou partidas com um servidor e dois clientes. O roteiro cobriu a entrada na sala, a escolha de arma, o combate, a coleta de recursos, a atualização da interface e o retorno ao menu após o encerramento. Em \textit{King of the Hill}, o autor verificou a pontuação com a zona vazia, controlada por uma equipe e disputada pelas duas equipes. A verificação manual também abrangeu a entrada por controle, a interface e o áudio.
 
-O projeto também dispõe de uma verificação automatizada breve, ou \textit{smoke test}, que inicia duas instâncias do cliente exportado em modo \textit{headless}, isto é, executando o processamento do jogo sem renderização gráfica. O procedimento conduz a conexão, a entrada na predefinição de partida e a escolha de arma, verificando o carregamento, a presença de dois jogadores e a recepção de estados da partida. Sua cobertura é limitada a esse fluxo inicial e não constitui um ensaio de capacidade do servidor.
+O teste automatizado iniciou duas instâncias do cliente exportado sem renderização gráfica. O teste verificou a conexão, o carregamento da partida, a presença dos dois jogadores e o recebimento das atualizações do servidor.
 
-A Tabela~\ref{tab:tcc2-5} reúne os comportamentos abrangidos pela verificação funcional. Os CSVs apoiam as medições de rede e execução; a verificação de apresentação visual, controles e áudio se apoia na observação do autor, complementada pelas capturas apresentadas no relatório.
-
-\clearpage
 \section{Método do ensaio exploratório de carga}\label{sec:ensaio-carga-metodo}
 
-Foi realizado um ensaio local para observar o comportamento do \textit{Jump'n'Shoot} com um número crescente de participantes em uma única sala. Claypool e Claypool relacionam o efeito da latência à precisão e ao prazo das ações em jogos, fundamentando sua observação em um sistema de combate interativo. Esse resultado não estabelece um limite universal de latência aceitável para o jogo desenvolvido. \cite{CLAYPOOL-LATENCIA-2010}
+O ensaio comparou o comportamento de uma sala com diferentes quantidades de participantes. A escolha de observar a latência se apoia no trabalho de Claypool e Claypool, que relaciona o atraso na rede à precisão e ao tempo disponível para agir em jogos de combate. \cite{CLAYPOOL-LATENCIA-2010}
 
-O servidor e todos os clientes foram executados na mesma máquina, por loopback, com endereço \texttt{127.0.0.1}. A Tabela~\ref{tab:computador-ensaio} apresenta a configuração do computador utilizado. A Godot 4.5.1 executou os projetos-fonte em modo \textit{headless}, com limite configurado de 60 FPS por processo.
+O servidor e os clientes rodaram no computador da Tabela~\ref{tab:computador-ensaio}. Os clientes se conectaram ao endereço local \texttt{127.0.0.1}, sem passar por uma rede externa. Os projetos rodaram na Godot 4.5.1 em modo \textit{headless}, sem renderização gráfica, com limite de 60 quadros por segundo em cada processo.
 
 \begin{table}[htbp]
 \centering
@@ -120,15 +74,15 @@ Sistema operacional & Windows 11 Pro \\
 \fonte{especificações informadas pelo autor}
 \end{table}
 
-Foram utilizados o mapa ``Highrise'' e a modalidade KOTH, com oito, 16 e 32 participantes automatizados, controlados por scripts que simulam ações de jogadores, além de uma tentativa com 64. Cada participante automatizado executou uma instância real do cliente, utilizando os caminhos de entrada, física, armas e comunicação do jogo. O perfil incluiu movimentação, saltos, tentativas de lançamento de granadas e um pulso de disparo de submetralhadora a cada dois segundos, com defasagem entre participantes. A preparação experimental permitiu ampliar a lotação da sala para observar o servidor sob um volume crescente de mensagens de atualização de estado, mantendo esse perfil de combate com disparos espaçados.
+O ensaio usou o mapa Highrise no modo \textit{King of the Hill}, com rodadas de 8, 16 e 32 participantes automatizados e uma tentativa com 64. Cada participante executou uma instância do cliente. Scripts acionaram os controles do jogo para movimentar, saltar, tentar lançar granadas e disparar com a submetralhadora a cada dois segundos, em instantes diferentes para cada participante.
 
-Cada rodada completa teve 30 segundos de aquecimento e 300 segundos de observação, com coleta do servidor em CSV a cada segundo. Foi realizada uma execução por nível de carga; as 300 amostras de uma rodada constituem uma série temporal, e não 300 repetições independentes. Os resultados são descritivos. Logs, identificação dos participantes, resumos de execução e registros de atividade dos participantes automatizados complementaram os CSVs. Foram observadas as seguintes variáveis:
+Cada rodada completa teve 30 segundos de aquecimento e 300 segundos de observação. O servidor registrou os dados em CSV a cada segundo. Houve uma execução por quantidade de participantes. A análise descritiva comparou os indicadores das três rodadas que completaram a janela de observação:
 
 \begin{itemize}
-\item \textbf{RTT (ms)}\footnote{Do inglês \textit{Round-Trip Time}, intervalo entre o envio de um pacote de rede e o recebimento de sua confirmação (ACK). Neste trabalho, corresponde à estimativa fornecida pelo ENet.}: média temporal do RTT médio entre os participantes conectados, obtido das estatísticas do ENet. Representa o tempo de ida e volta do transporte, sem medir diretamente o intervalo entre uma ação física do jogador e sua apresentação na tela.
-\item \textbf{Perda estimada (\%):} média temporal das estimativas de perda entre participantes. A estatística do ENet refere-se a pacotes confiáveis e é atualizada internamente em intervalos de dez segundos quando há tráfego; sua amostragem a cada segundo pode repetir valores. Ela não equivale ao percentual de snapshots perdidos. \cite{GODOT-ENET-METRICAS}
-\item \textbf{Tempo parcial do ciclo de atualização da sala (ms):} média e maior amostra do trecho instrumentado desse ciclo, que envolve distribuição e histórico de estados e atualização do modo de jogo. O coletor registra o valor disponível em cada amostragem; essa medida não representa todo o trabalho da física, dos demais nós e das RPCs do servidor, nem o maior tempo de todos os ciclos de física.
-\item \textbf{Atualizações observadas e estabilidade:} taxa média de novos estados observados em cada cliente, permanência dos participantes, atividade dos participantes automatizados e erros registrados. O contador observa o estado mais recente a cada ciclo do cliente e não identifica individualmente todos os pacotes recebidos.
+\item \textbf{RTT (ms).} Tempo de ida e volta (\textit{round-trip time}) entre o envio de um pacote e o recebimento da confirmação, estimado pelo ENet. A média permite comparar o tempo de resposta da conexão sob diferentes cargas. \cite{GODOT-ENET-METRICAS}
+\item \textbf{Perda estimada (\%).} Estimativa de perda de pacotes confiáveis fornecida pelo ENet. A média permite verificar se a perda cresceu com a quantidade de clientes. O ENet recalcula a estimativa a cada dez segundos quando há tráfego. \cite{GODOT-ENET-METRICAS}
+\item \textbf{Tempo parcial da atualização da sala (ms).} Tempo gasto no trecho medido do servidor, que inclui a distribuição e o histórico de estados e a atualização do modo. A média permite comparar o custo desse trecho, e a maior amostra é o maior valor registrado nas coletas de um segundo.
+\item \textbf{Atualizações observadas por segundo.} O cliente contou as mudanças do estado mais recente para verificar se as atualizações continuavam chegando com frequência semelhante.
 \end{itemize}
 
-A configuração padrão de física da Godot é de 60 ciclos por segundo, equivalente a um período nominal de 16,67 ms. A cadência efetivamente alcançada e os intervalos entre ciclos do servidor não foram medidos. Assim, o tempo parcial do ciclo de atualização da sala não permite concluir, isoladamente, se houve atraso global da física. \cite{GODOT-FISICA-ENGINE} Como servidor e geradores de carga compartilharam a máquina, a contribuição de cada processo para uma degradação também não foi isolada.
+Os registros dos clientes também permitiram acompanhar a atividade dos participantes e identificar desconexões.

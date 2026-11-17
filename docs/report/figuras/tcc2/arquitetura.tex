@@ -1,15 +1,25 @@
-% shared representa arquivos usados pelos dois projetos, não um serviço.
-\resizebox{0.96\linewidth}{!}{%
+\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
-  bloco/.style={draw,rounded corners,align=center,text width=4.5cm,minimum height=1.3cm,font=\small},
-  seta/.style={-{Latex[length=2mm]},thick}
+  bloco/.style={draw,rounded corners=2pt,align=center,text width=4cm,minimum height=2.1cm},
+  seta/.style={-{Latex[length=2.5mm]},thick},
+  rotulo/.style={align=center,font=\small,inner sep=3pt}
 ]
-\node[bloco] (client) at (-4,0) {Client\\Entrada, movimento local\\e apresentação};
-\node[bloco] (server) at (4,0) {Server\\Lobbies, combate,\\recursos e modos};
-\node[bloco] (shared) at (0,3.1) {shared\\Contratos, presets e definições};
-\draw[seta] (client.north east) -- node[above,align=center,font=\footnotesize] {Estado local\\e solicitações} (server.north west);
-\draw[seta] (server.south west) -- node[below,font=\footnotesize] {Snapshots e eventos} (client.south east);
-\draw[seta,dashed] (shared) -- node[left,font=\footnotesize] {Usado pelo código} (client);
-\draw[seta,dashed] (shared) -- node[right,font=\footnotesize] {Usado pelo código} (server);
+\node[bloco,fill=blue!6] (cliente) at (-4.65,0)
+  {\textbf{Cliente}\\Controles e movimento\\Apresentação do jogo};
+\node[bloco,fill=blue!6] (servidor) at (4.65,0)
+  {\textbf{Servidor}\\Salas, dano, munição\\e pontuação};
+\node[bloco,fill=black!5,text width=7cm,minimum height=1.3cm] (shared) at (0,-4)
+  {\textbf{Código compartilhado (\texttt{shared})}\\Mensagens, predefinições e armas};
+
+\draw[seta] ([yshift=6mm]cliente.east)
+  -- node[rotulo,above] {RPCs do cliente\\Posição e pedidos de ação}
+  ([yshift=6mm]servidor.west);
+\draw[seta] ([yshift=-6mm]servidor.west)
+  -- node[rotulo,below] {RPCs do servidor\\Estados da partida e eventos}
+  ([yshift=-6mm]cliente.east);
+
+\draw[seta,dashed] (cliente.south) |- (shared.west);
+\draw[seta,dashed] (servidor.south) |- (shared.east);
+\node[rotulo] at (0,-2.75) {Uso das definições pelos dois projetos};
 \end{tikzpicture}%
 }

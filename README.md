@@ -2,6 +2,8 @@
 
 Jogo 3D multijogador de tiro em primeira pessoa desenvolvido como TCC. Combina combate em equipes, salto duplo e plataformas de impulso. Possui modos Team Deathmatch e King of the Hill no mapa Highrise, com cliente e servidor dedicado em projetos Godot separados.
 
+Veja a [playlist com vídeos de demonstração no YouTube](https://www.youtube.com/watch?v=zsKubjGAzS4&list=PLZ1RAzIp2PqY).
+
 ## Começar
 
 As [releases](https://github.com/limaalan/TCC/releases) oferecem cliente e servidor para Windows/Linux. Inicie o servidor antes dos clientes e configure endereço e porta; o padrão é **7777/UDP**. As predefinições normais usam dois participantes por partida.
