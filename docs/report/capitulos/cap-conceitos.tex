@@ -1,7 +1,7 @@
 % Relatório do TCC2: edição mantida diretamente neste arquivo LaTeX.
 \chapter{Fundamentação teórica}\label{cap:tcc2-2}
 
-Este capítulo apresenta os conceitos de motores de jogos, tiro em primeira pessoa e jogos de plataforma. Também retoma a classificação dos jogos multijogador do TCC1 e descreve os conceitos de comunicação necessários para compreender as partidas em rede.
+Este capítulo apresenta os conceitos de motores de jogos, tiro em primeira pessoa, jogos de plataforma e comunicação em rede.
 
 \section{Motores de jogos e Godot Engine}\label{sec:2.1}
 
@@ -21,25 +21,11 @@ Os elementos de plataforma considerados no projeto são ações e estruturas que
 
 \textit{Lovely Planet} oferece uma referência para a combinação entre saltar, mirar e disparar. A descrição do próprio desenvolvedor enfatiza a alternância entre desviar de projéteis e buscar uma posição de tiro. No presente trabalho, essa referência ajuda a contextualizar a intenção de reunir combate e movimentação, enquanto as regras concretas de salto e impulso são próprias da implementação. \cite{LOVELY}
 
-\section{Classificação dos jogos multijogador}\label{sec:2.4}
+\section{Jogos multijogador em rede}\label{sec:2.4}
 
-Um jogo multijogador permite a interação de mais de um jogador no mesmo jogo. Essa interação pode ocorrer em um único dispositivo ou entre dispositivos conectados. O TCC1 organizou esses jogos conforme a disposição dos participantes, a forma de interação, os papéis desempenhados e o momento das ações.
+Em jogos multijogador em rede, os jogadores se conectam por uma rede local ou pela internet. Em \textit{Jump'n'Shoot}, cada jogador acompanha a partida pela perspectiva de seu personagem, e duas equipes disputam objetivos em tempo real. O atraso na comunicação exige estratégias para sincronizar as informações que cada jogador recebe sobre o estado do jogo. \cite{FIEDLER-REDE}
 
-\textbf{Disposição dos jogadores.} No multijogador local, os jogadores interagem no mesmo dispositivo. Podem dividir a tela, compartilhar a mesma visão ou alternar o uso do controle. No multijogador em rede, cada jogador utiliza um dispositivo conectado aos demais por uma rede local ou pela internet. Essa forma de jogo exige a troca de informações entre os dispositivos para manter as representações da partida.
+Na arquitetura cliente-servidor, cada jogador executa o jogo em um dispositivo cliente e envia informações ao servidor, que atualiza o estado da partida e distribui essas informações aos clientes. Parte do processamento pode ocorrer no cliente. Neste trabalho, o cliente calcula a movimentação do personagem, e o servidor dedicado decide os resultados de combate e a pontuação, conforme a seção~\ref{sec:5.2.2}. \cite{FIEDLER-REDE}
 
-\textbf{Forma de interação.} Em jogos cooperativos, os participantes colaboram para alcançar um objetivo comum. Em jogos competitivos, os jogadores ou as equipes disputam resultados entre si. As duas formas podem coexistir em uma partida, como ocorre quando os integrantes de uma equipe cooperam para competir contra outra.
-
-\textbf{Papéis dos jogadores.} No multijogador simétrico, os participantes assumem papéis semelhantes e compartilham as regras centrais de interação, ainda que possam escolher personagens ou equipamentos distintos. No multijogador assimétrico, a divisão de papéis modifica substancialmente as ações ou os objetivos disponíveis a cada grupo. Um exemplo é uma partida em que um participante controla uma criatura e os demais controlam os personagens que precisam enfrentá-la.
-
-\textbf{Momento da interação.} Em uma partida em tempo real, os jogadores atuam durante a mesma sessão, e as ações de cada um influenciam os demais à medida que são processadas. Em jogos assíncronos, os participantes podem realizar ações em momentos diferentes, como em uma partida por turnos jogada por correspondência.
-
-Segundo essa classificação, \textit{Jump'n'Shoot} é um multijogador em rede, competitivo, simétrico e em tempo real. Os participantes executam instâncias conectadas, atuam durante a mesma partida e disputam objetivos em equipes que compartilham as mesmas regras e possibilidades de ação.
-
-\section{Arquitetura e comunicação em rede}\label{sec:2.5}
-
-No modelo cliente-servidor, os clientes se comunicam com um servidor que mantém uma referência comum para o estado do jogo. O servidor pode executar em um processo dedicado ou na instância de um dos jogadores. Em uma arquitetura entre pares (\textit{peer-to-peer}), a comunicação da partida ocorre entre os próprios participantes. Em uma simulação determinística entre pares, por exemplo, cada dispositivo calcula o estado a partir das mesmas condições iniciais e dos comandos compartilhados. \cite{FIEDLER-REDE}
-
-Chamadas remotas de procedimento (\textit{remote procedure calls}, ou RPCs) permitem executar uma função em outro participante conectado. Em uma arquitetura cliente-servidor, um cliente pode usar uma RPC para informar uma ação, e o servidor pode usar outra para comunicar seu resultado aos clientes. A implementação dessas chamadas e os modos de transferência utilizados são apresentados na seção~\ref{sec:4.2.2}. \cite{GODOT-REDE}
-
-A participação em tempo real não implica ausência de atraso. Cada computador possui seu próprio ciclo de execução, e as informações levam tempo para atravessar a rede. Por isso, a aplicação precisa conciliar a resposta percebida pelo jogador com o estado conhecido pelos demais participantes. Predição e interpolação são estratégias distintas para lidar com esse problema: a primeira antecipa localmente uma resposta; a segunda constrói uma transição entre estados recebidos. \cite{FIEDLER-REDE} \cite{FIEDLER-INTERPOLACAO}
+As chamadas remotas de procedimento (\textit{remote procedure calls}, ou RPCs) permitem que um programa chame, pela rede, uma função executada em outro dispositivo. No jogo, essas chamadas permitem comunicar ações ao servidor e distribuir eventos e atualizações aos clientes. A seção~\ref{sec:5.2.2} apresenta como essas chamadas são usadas. \cite{GODOT-REDE}
 

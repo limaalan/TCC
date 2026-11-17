@@ -1,17 +1,13 @@
 % Relatório do TCC2: edição mantida diretamente neste arquivo LaTeX.
 \chapter{Desenvolvimento e resultados}\label{cap:tcc2-5}
 
-Este capítulo apresenta o produto desenvolvido e os resultados disponíveis. A primeira parte descreve a experiência do ponto de vista do jogador, funcionando como um guia conciso do jogo entregue. A segunda constitui o relatório técnico, no qual são discutidas a arquitetura, a sincronização e a implementação das principais funcionalidades. A parte final reúne a verificação funcional, a comparação com a proposta e as limitações identificadas.
-
 \section{Visão geral do jogo final}\label{sec:5.1}
-
-Esta seção apresenta o jogo conforme percebido pelo participante, desde a entrada em uma partida até a exibição do resultado. Os detalhes internos que sustentam esse funcionamento são discutidos posteriormente, no relatório técnico.
 
 \subsection{Conceito e ciclo principal de jogabilidade}\label{sec:5.1.1}
 
 O jogo desenvolvido organiza confrontos entre duas equipes em uma arena tridimensional. O participante informa seu nome, escolhe um modo de jogo e aguarda a formação da partida. Após o carregamento do mapa e a escolha de arma, passa a controlar seu personagem, podendo buscar recursos, enfrentar o adversário e disputar o objetivo do modo. A partida termina conforme suas regras, e uma tela apresenta os resultados por equipe e por jogador.
 
-O ciclo de interação combina deslocamento, gerenciamento de munição e confronto. Ao perder todos os pontos de vida, o personagem é removido e, caso a partida continue, o jogador recebe uma nova oportunidade de escolher sua arma e retornar ao mapa. Dessa forma, a participação se organiza em torno da disputa em andamento. O inventário é preparado novamente no nascimento, sem representar uma progressão persistente entre partidas.
+O personagem começa com 100 pontos de vida. Ao chegar a zero, ele é removido da partida. Se ela continuar, o jogador aguarda cinco segundos para escolher uma arma e voltar à arena com um novo inventário.
 
 \subsection{Controles e movimentação}\label{sec:5.1.2}
 
@@ -64,23 +60,77 @@ O gerenciador de cenas abre o menu principal quando o cliente inicia. A formaç�
 \fonte{elaboração própria}
 \end{figure}
 
+A Figura~\ref{fig:menu-resultado} mostra as telas de entrada e resultado da partida.
+
+\begin{figure}[htbp]
+\centering
+\caption{Menu principal e resultado de uma partida}
+\label{fig:menu-resultado}
+\includegraphics[width=0.72\linewidth,height=0.28\textheight,keepaspectratio]{figuras/tcc2/menu-principal.png}
+
+\small (a) Menu principal.
+\par\medskip
+\includegraphics[width=0.72\linewidth,height=0.28\textheight,keepaspectratio]{figuras/tcc2/resultado-partida.png}
+
+\small (b) Resultado da partida.
+\fonte{capturas do jogo desenvolvido pelo autor}
+\end{figure}
+
 \subsection{Modos de jogo e objetivos}\label{sec:5.1.4}
 
-O jogador pode participar de Team Deathmatch ou King of the Hill. No primeiro modo, as equipes disputam pontos por meio das eliminações, e quedas que provoquem a morte também favorecem a equipe adversária. No segundo, o objetivo é ocupar a zona demarcada no mapa: uma equipe pontua enquanto controla sozinha a região, e a progressão é interrompida quando adversários entram na área.
+O jogador pode participar de \textit{Team Deathmatch} (TDM) ou \textit{King of the Hill} (KOTH). Em TDM, a equipe pontua quando um adversário morre, inclusive por queda. Em KOTH, a equipe ganha um ponto por segundo enquanto ocupa sozinha a zona demarcada no mapa. A pontuação fica suspensa quando a zona está vazia ou quando há jogadores das duas equipes na área.
 
 Na configuração padrão adotada, as partidas utilizam uma meta de 20 pontos e duração máxima de 300 segundos. Ao atingir a meta ou terminar o tempo, o jogo apresenta a equipe vencedora e os dados individuais dos participantes.
 
+A Figura~\ref{fig:hud-koth} mostra a zona de captura. A marcação (5) identifica o indicador de controle, que na imagem mostra o domínio da equipe vermelha.
+
+\begin{figure}[htbp]
+\centering
+\caption{Zona de King of the Hill e indicação da equipe controladora}
+\label{fig:hud-koth}
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{figuras/tcc2/hud-koth-anotada.png}
+\fonte{captura do jogo desenvolvido, com marcação explicativa de autoria própria}
+\end{figure}
+
 \subsection{Armas, granadas e recursos da arena}\label{sec:5.1.5}
 
-O arsenal é formado por pistola, submetralhadora (SMG) e espingarda. A pistola realiza disparos individuais, a SMG permite manter o gatilho pressionado e a espingarda dispara vários traços simultaneamente. O jogador escolhe uma arma antes de entrar ou retornar à arena e precisa administrar sua munição durante a partida. Também pode lançar granadas, que explodem após um intervalo e causam dano de acordo com a distância.
+O arsenal é formado por pistola, submetralhadora (SMG) e espingarda. A SMG permite manter o gatilho pressionado, e a espingarda dispara seis traços simultâneos. A Tabela~\ref{tab:tcc2-3} compara as três armas. O jogador também pode lançar granadas, que explodem após um intervalo e causam dano de acordo com a distância.
 
 O mapa distribui coletáveis de vida, munição e granadas, além de duas melhorias temporárias. Uma delas aumenta o dano dos disparos e a outra reduz o intervalo entre tiros. Depois de coletados, os recursos permanecem indisponíveis por um período antes de reaparecer.
 
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr0.15\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.16\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.16\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.17\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.15\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.21\textwidth-2\tabcolsep\relax}}
+\caption{Configuração das armas}\label{tab:tcc2-3}\\
+\toprule
+Arma & Dano base por traço & Traços por disparo & Intervalo local & Automática & Munição inicial / máxima \\
+\midrule
+\endfirsthead
+\multicolumn{6}{l}{\small Configuração das armas (continuação)}\\
+\toprule
+Arma & Dano base por traço & Traços por disparo & Intervalo local & Automática & Munição inicial / máxima \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\small Continua na próxima página.}\\
+\endfoot
+\bottomrule
+\endlastfoot
+Pistola & 35 & 1 & 0,3 s & Não & 36 / 72 \\
+SMG & 20 & 1 & 0,1 s & Sim & 90 / 180 \\
+Espingarda & 18 & 6 & 0,8 s & Não & 18 / 36 \\
+\end{longtable}
+\endgroup
+
+{\small\noindent Fonte: recursos do catálogo compartilhado.\par}\medskip
+
 \subsection{Interface e feedback ao jogador}\label{sec:5.1.6}
 
-A HUD informa vida, equipe, arma equipada, munição, granadas e efeitos temporários. Durante a partida, também apresenta o tempo, o placar e, em KOTH, o estado da zona de controle. Cores e ícones auxiliam na identificação das equipes.
+A interface exibida durante a partida (\textit{heads-up display}, ou HUD) informa vida, equipe, arma equipada, munição, granadas e efeitos temporários. Também apresenta o tempo, o placar e, em KOTH, o estado da zona de controle.
 
-A Figura~\ref{fig:hud-geral} apresenta os elementos comuns dessa interface. A marcação (1) identifica a barra de vida e o ícone da equipe; (2) reúne a pontuação das duas equipes e o tempo restante; (3) indica a quantidade de granadas e a munição disponível; e (4) mostra a pontuação necessária para vencer a partida. As informações específicas de KOTH e dos efeitos temporários são apresentadas, respectivamente, nas Figuras~\ref{fig:hud-koth} e~\ref{fig:hud-buffs}, mantendo a sequência das marcações sem repetir os elementos comuns.
+A Figura~\ref{fig:hud-geral} mostra a barra de vida e o ícone da equipe (1), o placar e o tempo restante (2), a quantidade de granadas e a munição disponível (3) e a pontuação necessária para vencer a partida (4). As Figuras~\ref{fig:hud-koth} e~\ref{fig:hud-buffs} detalham a zona de KOTH e os efeitos temporários.
 
 \begin{figure}[htbp]
 \centering
@@ -92,29 +142,29 @@ A Figura~\ref{fig:hud-geral} apresenta os elementos comuns dessa interface. A ma
 
 Sons, recuo, efeitos de disparo e impacto e alterações visuais dos personagens complementam essas informações. Esses sinais permitem perceber a ocorrência de ações como disparos, coletas, explosões e recebimento de dano sem depender exclusivamente de mensagens textuais.
 
-\section{Relatório técnico}\label{sec:5.2}
+\input{capitulos/cap-produtos-similares}
 
-Esta seção descreve as soluções técnicas adotadas no desenvolvimento, relacionando a organização dos componentes ao funcionamento da rede, das regras e da apresentação. As subseções partem da arquitetura geral e detalham os sistemas responsáveis pela experiência apresentada na seção~\ref{sec:5.1}.
+\section{Relatório técnico}\label{sec:5.2}
 
 \subsection{Organização dos projetos e do código compartilhado}\label{sec:5.2.1}
 
 A implementação foi organizada em dois projetos Godot independentes, \textit{Client} e \textit{Server}, e um diretório comum, \texttt{shared}. O cliente reúne interface e apresentação, controle do jogador e comunicação com interpolação dos estados remotos. O servidor reúne conexões e salas de partida, regras e objetivos, combate e entidades da partida. O diretório comum concentra contratos de mensagens, identificadores, predefinições e definições de armas e inventário. Essa divisão permite executar as regras em um processo separado da apresentação e manter uma única origem para as definições usadas pelos dois projetos.
 
-A Figura~\ref{fig:tcc2-2} apresenta esses agrupamentos por responsabilidade, sem representar um diagrama de classes ou fronteiras rígidas entre módulos. As setas contínuas indicam as mensagens trocadas em execução; as tracejadas indicam o uso do código comum. O diretório \texttt{shared} não é um terceiro processo nem um serviço da rede.
+A Figura~\ref{fig:tcc2-2} mostra a direção das mensagens entre cliente e servidor. As setas tracejadas indicam que os dois projetos usam as mesmas definições de \texttt{shared}.
 
 \begin{figure}[htbp]
 \centering
-\caption{Arquitetura geral do jogo organizada por responsabilidades}
+\caption{Comunicação entre cliente e servidor e uso do código compartilhado}
 \label{fig:tcc2-2}
-\includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{figuras/tcc2/arquitetura-geral.png}
+\input{figuras/tcc2/arquitetura.tex}
 \fonte{elaboração própria}
 \end{figure}
 
 \subsection{Comunicação e autoridade do servidor}\label{sec:5.2.2}
 
-O disparo exemplifica essa divisão. O cliente apresenta o efeito local e envia a solicitação. O servidor verifica se o jogador possui uma instância ativa, identifica a arma registrada e tenta consumir a munição correspondente. Se houver saldo, calcula os acertos e aplica o dano. As alterações de vida e os efeitos de impacto são então comunicados aos participantes. A apresentação imediata do disparo não concede ao cliente a responsabilidade de decidir quem foi atingido.
+O cliente processa os comandos de movimento e envia sua posição ao servidor. O servidor decide dano, munição e pontuação e distribui estados da partida e eventos aos clientes. A comunicação usa chamadas remotas de procedimento (RPCs) da Godot, que permitem executar uma função em outro participante conectado. A Godot usa o ENet, uma biblioteca que transporta essas mensagens sobre UDP e oferece modos de envio com diferentes garantias de entrega e ordem. \cite{GODOT-REDE} \cite{GODOT-PEER}
 
-A autoridade é distribuída por responsabilidade: o servidor decide dano, munição e pontuação, mas recebe a transformação calculada pelo cliente. O intervalo entre disparos e seu multiplicador de cadência também são aplicados localmente. Portanto, a arquitetura não realiza uma nova simulação autoritativa de todo o movimento nem uma validação completa da frequência de tiro; as implicações dessa delimitação são reunidas na seção~\ref{sec:5.3.4}.
+No disparo, o cliente apresenta o efeito local e envia uma RPC ao servidor. O servidor verifica a arma e a munição, calcula o acerto e aplica o dano. Em seguida, envia as alterações de vida e os efeitos de impacto aos clientes. O intervalo entre disparos também é aplicado localmente, como discutido na seção~\ref{sec:5.3.4}.
 
 \subsection{Sessões e configurações de partida}\label{sec:5.2.3}
 
@@ -124,13 +174,77 @@ A quantidade máxima de salas e a quantidade de jogadores por partida são confi
 
 \subsection{Sincronização de rede}\label{sec:5.2.4}
 
-\textbf{Envio contínuo de movimento.} A cada ciclo de física, o cliente envia posição, rotação horizontal, inclinação da mira e animação. O servidor copia esses dados para a representação do jogador e os utiliza na composição do estado da partida. Esse envio emprega o modo não confiável ordenado, adequado ao tratamento de informações que serão substituídas por novas atualizações. O fluxo transmite o resultado local do movimento, em vez de uma sequência de comandos para o servidor simular novamente.
+A cada ciclo de física, o cliente envia o estado de seu personagem ao servidor pela RPC \texttt{c\_send\_player\_state}. A mensagem utiliza um dicionário com os campos da Tabela~\ref{tab:mensagem-estado-jogador}. O envio usa o modo não confiável ordenado, que descarta mensagens atrasadas após o recebimento de uma atualização mais recente. \cite{GODOT-PEER}
+
+\begin{table}[!htbp]
+\centering
+\caption{Campos da mensagem de estado do jogador}\label{tab:mensagem-estado-jogador}
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.60\textwidth}}
+\toprule
+Campo & Tipo na Godot & Significado \\
+\midrule
+\texttt{v} & \texttt{int} & Versão da estrutura da mensagem, atualmente 1. \\
+\texttt{pos} & \texttt{Vector3} & Posição do personagem na cena da partida. \\
+\texttt{rot\_y} & \texttt{float} & Rotação horizontal do personagem, em radianos. \\
+\texttt{rot\_x} & \texttt{float} & Inclinação vertical da cabeça, em radianos. \\
+\texttt{anim} & \texttt{String} & Nome da animação atual do personagem. \\
+\bottomrule
+\end{tabular}
+\endgroup
+\fonte{elaboração própria a partir da implementação}
+\end{table}
+
+O Código~\ref{lst:mensagem-estado-jogador} exemplifica a estrutura em GDScript, com valores ilustrativos.
+
+\par\addvspace{0.5\baselineskip}\noindent
+\begin{minipage}{\linewidth}
+\renewcommand{\lstlistingname}{Código}
+\setstretch{1}
+\begin{lstlisting}[basicstyle=\small\ttfamily,breaklines=true,caption={Exemplo de mensagem de estado do jogador},label={lst:mensagem-estado-jogador}]
+{
+    "v": 1,
+    "pos": Vector3(12.5, 3.0, -8.2),
+    "rot_y": 1.57,
+    "rot_x": -0.20,
+    "anim": "Walk_Shoot"
+}
+\end{lstlisting}
+\end{minipage}
+\par\addvspace{0.5\baselineskip}
+
+O servidor identifica o jogador pelo remetente da RPC, verifica os campos recebidos e incorpora os dados ao estado da partida.
 
 \subsubsection{Interpolação dos estados remotos}\label{sec:5.2.4.1}
 
-O servidor distribui snapshots do estado do mundo a cada três ciclos de física, enquanto o cliente produz novos quadros continuamente. Como o tempo de trânsito pela rede pode variar, os snapshots podem chegar em intervalos irregulares. Se cada quadro utilizasse apenas o estado mais recente, uma renderização poderia ocorrer antes da chegada da atualização seguinte, mantendo temporariamente a última posição conhecida ou exigindo uma estimativa do movimento.
+O servidor envia aos clientes um \textit{snapshot}, um registro do estado da partida, a cada três ciclos de física. Como os estados podem chegar em intervalos irregulares, exibir sempre a última posição recebida pode fazer os jogadores remotos parecerem saltar entre posições. \cite{FIEDLER-INTERPOLACAO}
 
-Para reduzir essas descontinuidades, o cliente mantém um buffer e calcula um instante de apresentação 100 milissegundos no passado. O desvio estimado entre os relógios do cliente e do servidor também participa desse cálculo. A cada ciclo de física do cliente, o sistema procura dois estados conhecidos ao redor do instante de apresentação e interpola entre eles as posições e rotações dos jogadores remotos.
+O projeto monta os snapshots no servidor e guarda os estados recebidos em um buffer no cliente. A cada passo da simulação, o cliente usa o desvio estimado entre os relógios para converter o horário local para a referência do servidor e retrocede 100 milissegundos. Em seguida, descarta estados antigos para selecionar o par usado no cálculo. A Godot fornece as RPCs e as funções \texttt{remap()}, \texttt{lerp()} e \texttt{lerp\_angle()}. O buffer, a estimativa do desvio dos relógios e a escolha dos estados foram implementados no projeto.
+
+\par\addvspace{0.5\baselineskip}\noindent
+\begin{minipage}{\linewidth}
+\renewcommand{\lstlistingname}{Código}
+\setstretch{1}
+\begin{lstlisting}[basicstyle=\small\ttfamily,breaklines=true,caption={Armazenamento e interpolação dos estados recebidos},label={lst:interpolacao-remota}]
+# Ao receber um estado da partida (lobby.gd)
+world_state_buffer.append(new_word_state)
+
+# A cada ciclo de física (lobby.gd)
+var lerp_weight = remap(
+    target_render_unix_ms,
+    world_state_buffer[0][NetKeys.WORLD_TIME_MS],
+    world_state_buffer[1][NetKeys.WORLD_TIME_MS], 0, 1)
+
+# Ao atualizar o jogador remoto (player_remote.gd)
+position = lerp(old_data[NetKeys.POS],
+    new_data[NetKeys.POS], lerp_weight)
+\end{lstlisting}
+\end{minipage}
+\par\addvspace{0.5\baselineskip}
+
+O Código~\ref{lst:interpolacao-remota} reúne trechos de \texttt{lobby.gd} e \texttt{player\_remote.gd}, ambos do cliente. Os horários dos estados selecionados determinam o peso aplicado às duas posições do jogador remoto.
 
 A Figura~\ref{fig:tcc2-3} compara os dois casos com o mesmo conjunto de snapshots disponíveis, posicionados na linha do tempo pelo timestamp do servidor, e não pelo instante de chegada ao cliente. Sem atraso de apresentação, o instante desejado de 10,000 segundos está além do último estado conhecido, sem um estado posterior para formar o par de interpolação. Com o buffer de 100 milissegundos, o instante de apresentação $R$ passa a ser 9,900 segundos, entre os estados S1 e S2, permitindo calcular uma posição intermediária. Os valores temporais do diagrama são ilustrativos.
 
@@ -172,7 +286,9 @@ A Figura~\ref{fig:tcc2-4} ilustra o processo com todos os instantes expressos na
 
 Esse procedimento pode ser entendido como uma consulta ao passado para validar o disparo, mas não realiza um rollback completo da partida. O estado corrente do mundo não é integralmente reconstruído nem simulado novamente. Somente as representações auxiliares usadas nos testes de colisão são reposicionadas a partir do histórico recente. O mecanismo busca aproximar a decisão autoritativa da situação vista pelo jogador, sem garantir sincronização exata entre os relógios.
 
-\textbf{Sincronização inicial do mapa.} O cliente recebe o identificador do mapa e carrega sua cena local. Após confirmar o carregamento, recebe mensagens confiáveis para criar coletáveis, objetivos e plataformas especiais. São enviados identificadores e parâmetros de criação, sem retransmitir continuamente toda a geometria visual. Assim, a posição inicial da zona de KOTH e das plataformas de impulso faz parte da preparação da partida.
+\subsubsection{Preparação e atualização do estado da partida}
+
+Ao entrar na partida, o cliente recebe o identificador do mapa e carrega sua cena local. Após confirmar o carregamento, recebe mensagens confiáveis com os identificadores e parâmetros para criar coletáveis, a zona de KOTH e plataformas de impulso.
 
 \textbf{Atualizações do objetivo.} A criação inicial da zona de controle não elimina a necessidade de comunicar suas mudanças. O KOTH verifica a ocupação durante a execução e transmite o estado da zona de captura a cada 0,25 segundo. A mensagem contém a condição da zona, o time controlador e os jogadores presentes. O placar possui outro fluxo de atualização, permitindo distinguir a existência do objetivo, seu estado atual e a pontuação acumulada.
 
@@ -194,35 +310,15 @@ Cada participante possui uma representação local em seu cliente e representaç
 
 A identificação das equipes utiliza o mesmo modelo 3D de personagem com materiais e cores diferentes para cada time. Um ícone na HUD permite ao jogador consultar o próprio time sem depender de enxergar o corpo do personagem em primeira pessoa.
 
-O jogador possui vida máxima de 100 pontos. Quando o valor chega a zero, o servidor remove suas representações, retira sua presença dos objetivos e limpa as melhorias temporárias. Se a partida continuar, aguarda cinco segundos antes de solicitar uma nova escolha de arma. O retorno ocorre com a preparação do estado de nascimento e da munição correspondente à escolha.
+Quando a vida chega a zero, o servidor remove as representações do personagem, retira sua presença dos objetivos e limpa as melhorias temporárias. No retorno, cria o novo personagem e inicializa a munição da arma escolhida.
 
 \subsection{Modos de jogo e fluxo da partida}\label{sec:5.2.6}
 
-\textbf{Team Deathmatch.}
+Em TDM, o servidor atualiza o placar a cada morte e verifica a meta da partida. A pontuação da equipe e o contador individual são mantidos separadamente. Uma queda, por exemplo, aumenta o placar adversário sem registrar uma eliminação individual.
 
-No Team Deathmatch, o objetivo é obter a maior pontuação no confronto entre equipes. Na implementação, a pontuação de cada time corresponde à soma das mortes do time adversário. Isso produz uma particularidade: uma queda que provoque a morte também concede ponto à outra equipe, mesmo sem um abate atribuído a um adversário. O contador individual de eliminações é atualizado separadamente e não é incrementado quando o jogador é registrado como responsável por sua própria morte.
+Em KOTH, o servidor soma à pontuação da equipe controladora o tempo decorrido em cada passo da simulação. O valor é mantido com casas decimais e apresentado como inteiro no placar. O estado da zona e a pontuação são enviados separadamente aos clientes.
 
-Após cada morte, o modo atualiza o placar e verifica se a meta foi atingida. Na configuração padrão adotada, o limite é de 20 pontos e a duração máxima é de 300 segundos. Portanto, a interpretação do resultado deve considerar a pontuação por mortes adversárias, em vez de presumir que o placar coletivo seja sempre igual à soma dos abates individuais.
-
-\textbf{King of the Hill.}
-
-No King of the Hill, os jogadores disputam uma zona do mapa. Quando não há participantes válidos, a zona permanece vazia; quando apenas uma equipe está presente, ela controla a área; quando as duas equipes estão presentes, o estado é contestado. O modo consulta a equipe controladora e acumula um ponto por segundo de domínio, utilizando o tempo decorrido em cada ciclo de física. Não há ganho simultâneo para as duas equipes durante a contestação.
-
-O valor acumulado é mantido com casas decimais e convertido para inteiro na apresentação do placar. As eliminações e mortes continuam sendo registradas, mas não são a origem direta dos pontos do objetivo. A atualização da zona comunica aos clientes a condição de controle, e a pontuação é enviada pelo fluxo correspondente. Esse arranjo permite utilizar o mesmo combate do TDM com uma finalidade espacial diferente.
-
-A Figura~\ref{fig:hud-koth} mostra a apresentação desse objetivo durante uma partida. A marcação (5) identifica o indicador de controle da zona, que, na captura, informa o domínio da equipe vermelha. A imagem também permite observar a representação visual da zona na arena. Os demais elementos da HUD seguem a organização já descrita na Figura~\ref{fig:hud-geral}.
-
-\begin{figure}[htbp]
-\centering
-\caption{Zona de King of the Hill e indicação da equipe controladora}
-\label{fig:hud-koth}
-\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{figuras/tcc2/hud-koth-anotada.png}
-\fonte{captura do jogo desenvolvido, com marcação explicativa de autoria própria}
-\end{figure}
-
-\textbf{Encerramento e resultado.}
-
-A partida termina quando o modo identifica o limite de pontuação ou quando o temporizador se esgota. Os modos também preveem encerramento quando, após uma desconexão, uma das equipes fica sem participantes conectados. O servidor prepara então os pontos das equipes e os dados individuais, que são apresentados na tela final. A implementação dessa tela organiza os jogadores por time e mostra eliminações e mortes; sua função é apresentar o resultado recebido, sem recalcular a partida.
+O servidor também verifica o término pelo tempo ou pela saída de todos os participantes de uma equipe. Quando a partida termina, envia os pontos das equipes e as estatísticas individuais que o cliente apresenta na tela de resultado.
 
 \subsection{Mapa implementado}\label{sec:5.2.7}
 
@@ -247,35 +343,7 @@ Para manter a correspondência entre as duas representações do mapa, foi criad
 
 \textbf{Armas disponíveis.}
 
-As armas foram definidas em recursos compartilhados contendo dano, precisão, quantidade de traços por disparo, intervalo e limites de munição. O cliente associa esses dados à apresentação da arma, enquanto o servidor consulta o catálogo para processar o ataque. A Tabela~\ref{tab:tcc2-3} apresenta os parâmetros definidos para as três armas da versão preparada para entrega.
-
-\begingroup
-\small
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.18}
-\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr0.15\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.16\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.16\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.17\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.15\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr0.21\textwidth-2\tabcolsep\relax}}
-\caption{Configuração das armas}\label{tab:tcc2-3}\\
-\toprule
-Arma & Dano base por traço & Traços por disparo & Intervalo local & Automática & Munição inicial / máxima \\
-\midrule
-\endfirsthead
-\multicolumn{6}{l}{\small Configuração das armas (continuação)}\\
-\toprule
-Arma & Dano base por traço & Traços por disparo & Intervalo local & Automática & Munição inicial / máxima \\
-\midrule
-\endhead
-\midrule
-\multicolumn{6}{r}{\small Continua na próxima página.}\\
-\endfoot
-\bottomrule
-\endlastfoot
-Pistola & 35 & 1 & 0,3 s & Não & 36 / 72 \\
-SMG & 20 & 1 & 0,1 s & Sim & 90 / 180 \\
-Espingarda & 18 & 6 & 0,8 s & Não & 18 / 36 \\
-\end{longtable}
-\endgroup
-
-{\small\noindent Fonte: recursos do catálogo compartilhado.\par}\medskip
+O catálogo compartilhado define os parâmetros da Tabela~\ref{tab:tcc2-3}. O cliente associa essas definições à apresentação da arma, e o servidor consulta o catálogo para processar o ataque.
 
 Cada disparo consome uma unidade de munição, inclusive o da espingarda, que realiza seis raycasts. O dano efetivo também depende da região atingida, da distância e do multiplicador de melhoria temporária.
 
@@ -327,23 +395,9 @@ A Figura~\ref{fig:hud-buffs} apresenta um detalhe desses indicadores. A marcaç�
 
 A interface reúne as informações necessárias para acompanhar a participação na partida, distribuídas entre a HUD geral, o indicador de objetivo e os efeitos temporários ilustrados nas Figuras~\ref{fig:hud-geral}, \ref{fig:hud-koth} e~\ref{fig:hud-buffs}. Cada componente recebe alterações do estado local ou mensagens originadas no servidor, conforme a responsabilidade de cada dado.
 
-O menu principal e a tela de resultado utilizam recursos de tema para compartilhar características visuais. O menu permite informar o nome e escolher o modo de jogo, enquanto a tela final agrupa os participantes por equipe e apresenta seus resultados. A ação ``Voltar ao menu'' encerra esse percurso e devolve o jogador à seleção inicial. A Figura~\ref{fig:menu-resultado} apresenta essas duas telas.
+O menu principal e a tela de resultado compartilham os mesmos recursos de tema.
 
 O controle da pausa considera conflitos entre navegação e ações do personagem. Ao retornar ao jogo, ações como salto, disparo e granada que ainda estiverem pressionadas são bloqueadas até sua liberação. Esse tratamento busca evitar que o mesmo botão utilizado para sair de uma tela produza imediatamente uma ação de combate. A verificação de foco também participa do tratamento da entrada por controle.
-
-\begin{figure}[htbp]
-\centering
-\caption{Menu principal e resultado de uma partida}
-\label{fig:menu-resultado}
-\includegraphics[width=0.72\linewidth,height=0.28\textheight,keepaspectratio]{figuras/tcc2/menu-principal.png}
-
-\small (a) Menu principal.
-\par\medskip
-\includegraphics[width=0.72\linewidth,height=0.28\textheight,keepaspectratio]{figuras/tcc2/resultado-partida.png}
-
-\small (b) Resultado da partida.
-\fonte{capturas do jogo desenvolvido pelo autor}
-\end{figure}
 
 \textbf{Áudio e feedback visual.}
 
@@ -369,7 +423,7 @@ A geração dos artefatos parte dos arquivos-fonte e dos recursos visuais e sono
 
 \subsection{Resultados funcionais}\label{sec:5.3.1}
 
-O desenvolvimento reuniu o ciclo de partida, os dois modos, combate, coleta de recursos e interface. A verificação funcional manual foi realizada pelo autor com a versão publicada do jogo, com foco no ciclo de entrada, participação e encerramento da partida. A Tabela~\ref{tab:tcc2-5} relaciona as funcionalidades aos cenários de verificação. As capturas de tela ilustram a apresentação do produto, enquanto os CSVs sustentam os indicadores do ensaio de carga descrito na seção seguinte. A geração, a verificação automatizada e a publicação dos artefatos são descritas na seção~\ref{sec:5.2.11}.
+A verificação funcional conferiu se as ações e as regras produziram os efeitos esperados nos dois clientes da versão publicada. Em KOTH, por exemplo, o autor observou a pontuação durante o domínio da zona e sua interrupção quando o adversário entrou na área. A Tabela~\ref{tab:tcc2-5} reúne os cenários verificados.
 
 Na verificação manual, a entrada por controle foi testada com os modelos 8BitDo Ultimate 2 e DualShock 4 (PlayStation 4). A interface foi testada em diferentes resoluções de tela.
 
@@ -421,7 +475,7 @@ A Tabela~\ref{tab:carga-local} apresenta os indicadores das três rodadas locais
 \renewcommand{\arraystretch}{1.18}
 \begin{tabular}{rrrr}
 \toprule
-Participantes & RTT (ms) & Perda ENet (\%) & Ciclo parcial (ms) \\
+Participantes & RTT (ms) & Perda estimada (\%) & Tempo parcial da sala (ms) \\
 \midrule
 8 & 18,73 & 0,108 & 0,376 \\
 16 & 18,69 & 0,095 & 0,698 \\
@@ -432,17 +486,19 @@ Participantes & RTT (ms) & Perda ENet (\%) & Ciclo parcial (ms) \\
 \fonte{elaboração própria a partir dos CSVs do ensaio}
 \end{table}
 
-O RTT médio permaneceu próximo de 19 ms nas três cargas. O custo parcial médio da sala passou de 0,376 ms, com oito participantes, para 2,302 ms, com 32; a maior amostra desse trecho em cada rodada foi, respectivamente, 0,834 ms, 1,321 ms e 4,471 ms. A perda estimada pelo ENet foi maior na rodada com 32 participantes. As médias de atualizações observadas por cliente ficaram entre 19,886 e 20,003 por segundo no conjunto das três rodadas. Essa proximidade entre médias não demonstra ausência de oscilações curtas: na rodada com 32, houve um intervalo de amostragem próximo de um segundo com taxa de aproximadamente 12,8 atualizações por segundo.
+O RTT médio permaneceu próximo de 19 ms nas três rodadas. A estimativa de perda de pacotes confiáveis caiu de 8 para 16 participantes e subiu com 32, quando atingiu 0,324\%. O tempo médio do trecho medido no servidor aumentou 0,322 ms entre 8 e 16 participantes e 1,604 ms entre 16 e 32. O aumento por participante adicional foi maior no segundo intervalo. Com uma rodada por quantidade de participantes, essa comparação descreve o ensaio e deixa a relação entre carga e custo em aberto.
 
-O perfil automatizado produziu 724, 1.453 e 2.692 disparos nas rodadas com oito, 16 e 32 participantes, respectivamente. Esses registros caracterizam a atividade de combate produzida durante as janelas de observação.
+A maior amostra de tempo parcial foi de 0,834 ms, 1,321 ms e 4,471 ms, respectivamente. A frequência média de atualização observada pelos clientes ficou próxima de 20 por segundo nas três rodadas. Na rodada com 32 participantes, houve um intervalo de cerca de um segundo com taxa de aproximadamente 12,8 por segundo.
+
+Os clientes automatizados registraram 724, 1.453 e 2.692 disparos nas rodadas com 8, 16 e 32 participantes, respectivamente.
 
 \textbf{Tentativa com 64 participantes.} A execução foi interrompida durante o aquecimento, após degradação aguda do desempenho da aplicação e uma desconexão. Todos os participantes chegaram à mesma sala, mas a janela de 300 segundos de observação não foi completada. Por isso, as rodadas completas apresentadas na tabela se limitam a 32 participantes. As condições e limitações desse ensaio são discutidas na seção~\ref{sec:5.3.4}.
 
-Os resultados mostram crescimento do custo parcial de processamento conforme a quantidade de participantes aumenta nas rodadas completas. O ensaio estabelece uma referência descritiva para as condições locais apresentadas. Para a demonstração do cenário com 32 participantes, um jogador substitui um dos participantes automatizados, mantendo o total de participantes.
+Para a demonstração do cenário com 32 participantes, um jogador substitui um dos participantes automatizados.
 
 \subsection{Comparação entre proposta e entrega}\label{sec:5.3.3}
 
-A Tabela~\ref{tab:tcc2-6} consolida as principais diferenças entre o TCC1 e a entrega descrita. A comparação relaciona os compromissos originais às funcionalidades desenvolvidas e às alterações de escopo. As justificativas e consequências dessas alterações foram discutidas na seção~\ref{sec:4.5} e não são repetidas integralmente nesta síntese.
+A proposta do TCC1 previa que um jogador hospedasse a partida. A versão entregue usa um servidor dedicado para centralizar as regras e permitir que a partida seja hospedada em um processo separado. O trabalho concentrou o desenvolvimento e a verificação em uma arena, Highrise, com dois modos. A Tabela~\ref{tab:tcc2-6} reúne as principais diferenças entre a proposta e a entrega.
 
 \begingroup
 \small
@@ -488,4 +544,4 @@ Na apresentação remota, a explosão de granadas depende da transição entre s
 
 Quanto ao conteúdo, a versão reúne um mapa e dois modos, com dois jogadores por predefinição. A distribuição das áreas de nascimento, alturas e recursos ainda exige avaliação de equilíbrio entre equipes, considerando percursos, tempos de chegada e resultados de partidas.
 
-O ensaio de carga constitui uma referência inicial de comportamento na máquina e no mapa descritos. O servidor, os clientes automatizados e outros processos compartilharam os recursos do mesmo computador, sem isolamento do gerador de carga. Houve uma execução por quantidade de participantes e não foram medidos o consumo individual de recursos nem os intervalos efetivos entre ciclos de física. A tentativa com 64 participantes foi interrompida durante o aquecimento após degradação aguda, sem que fosse isolada a contribuição de cada processo para esse resultado. Essas condições limitam a generalização dos números e não estabelecem uma capacidade máxima para outros cenários ou equipamentos.
+O servidor e os clientes automatizados compartilharam o mesmo computador. O ensaio mediu apenas parte do processamento da sala. A cadência da física e o consumo por processo ficaram fora da medição. Os números caracterizam o cenário local, e uma comparação com outros jogos exigiria medições com condições de rede, carga e indicadores equivalentes. Em um ensaio posterior, medir separadamente a montagem e o envio dos estados, a manutenção do histórico e a atualização das regras ajudaria a identificar onde otimizar o servidor.
